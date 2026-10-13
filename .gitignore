@@ -1,0 +1,9 @@
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+appsettings.Local.json
+.vs/
+bin/
+obj/
