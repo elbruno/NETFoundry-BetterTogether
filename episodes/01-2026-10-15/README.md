@@ -20,7 +20,6 @@ The recording link will be added after the episode.
 
 - [Decision Space Game: code, setup, controls, tests, and validation](demos/01-decision-space-game/README.md)
   — .NET 10, ElBruno.AI.Decisions 0.6.2, manual/Ollama/Foundry/offline replay.
-- [Episode announcement and promotional image](promotion.md).
 - [ElBruno.AI.Decisions](https://github.com/elbruno/ElBruno.AI.Decisions)
 - [Microsoft SpaceAINet reference](https://github.com/microsoft/Generative-AI-for-beginners-dotnet/tree/main/samples/AppsWithGenAI/SpaceAINet)
 

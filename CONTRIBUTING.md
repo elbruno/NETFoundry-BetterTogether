@@ -18,6 +18,8 @@ Use the existing episode folder for related contributions. Keep published folder
 
 The root README is the series index. Each episode README links to its event, recording, demos, and resources. Add only confirmed links and information, and update the index when adding an episode or recording.
 
+Keep promotional drafts, social-media copy, promotional artwork, agendas, and rehearsal notes out of this repository. They belong in the private planning repository. Episode assets here must support audience-facing demos or learning resources.
+
 ## Demo checklist
 
 - Keep the demo independently runnable and document tested SDK/package versions and prerequisites.
