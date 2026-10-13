@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="DecisionSpaceGame.csproj" />
+  <Project Path="tests/DecisionSpaceGame.Tests.csproj" />
+</Solution>

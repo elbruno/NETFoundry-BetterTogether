@@ -6,7 +6,11 @@
 
 ## Overview
 
-Explore the latest .NET and Microsoft Foundry updates with live demos and C# code. Specific topics will be shared closer to the session.
+Explore .NET 10 and Microsoft Foundry with an original console invader-defense game.
+Compare manual play, local Ollama, and Foundry native bounded decisions through the
+same `IDecisionClient` API: text snapshots, four legal actions, probability
+distributions, and confidence rather than generated chat JSON. An explicitly
+labeled offline replay supports credential-free rehearsal.
 
 ## Recording
 
@@ -14,6 +18,10 @@ The recording link will be added after the episode.
 
 ## Demos and resources
 
-Demo code, setup instructions, and related resources will be added after the episode.
+- [Decision Space Game: code, setup, controls, tests, and validation](demos/01-decision-space-game/README.md)
+  — .NET 10, ElBruno.AI.Decisions 0.6.2, manual/Ollama/Foundry/offline replay.
+- [Episode announcement and promotional image](promotion.md).
+- [ElBruno.AI.Decisions](https://github.com/elbruno/ElBruno.AI.Decisions)
+- [Microsoft SpaceAINet reference](https://github.com/microsoft/Generative-AI-for-beginners-dotnet/tree/main/samples/AppsWithGenAI/SpaceAINet)
 
 [Back to the series](../../README.md)
