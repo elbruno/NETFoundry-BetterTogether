@@ -69,7 +69,10 @@ if (-not (Get-Command dotnet -ErrorAction SilentlyContinue)) {
     throw 'Install the .NET 10 SDK before running this script.'
 }
 $projects = @(Get-ChildItem -LiteralPath (Join-Path $PSScriptRoot 'demos') -Filter '*.csproj' -Recurse |
-    Where-Object { $_.FullName -notmatch '[\\/](tests|bin|obj)[\\/]' } |
+    Where-Object {
+        $_.FullName -notmatch '[\\/](tests|bin|obj)[\\/]' -and
+        $_.Name -notmatch '\.(AppHost|ServiceDefaults)\.csproj$'
+    } |
     Sort-Object FullName)
 if ($projects.Count -eq 0) { throw 'No sample projects were found under this episode.' }
 $ids = @{}
@@ -92,6 +95,7 @@ if ($ValidateOnly) {
 Write-Host 'Run setup before recording or sharing your screen. No supplied values will be printed by this script.'
 $endpoint = Read-Endpoint 'Foundry resource root (https://<resource>.services.ai.azure.com)'
 $model = Read-RequiredValue 'Foundry deployment name (not the catalog model name)'
+$generativeModel = Read-RequiredValue 'Generative deployment name for comparison demos 03 and 06 (for example gpt-6.1-sol, on the same resource)'
 do {
     $auth = (Read-Host 'Authentication: Azure CLI identity [Enter] or API key [K]').Trim()
 } while ($auth -notin @('', 'K', 'k'))
@@ -111,7 +115,7 @@ try {
         $keyPointer = [Runtime.InteropServices.Marshal]::SecureStringToBSTR($secureKey)
         $values['Foundry:ApiKey'] = [Runtime.InteropServices.Marshal]::PtrToStringBSTR($keyPointer)
     }
-    $local = (Read-Host 'Also configure local Ollama for the game? [y/N]').Trim()
+    $local = (Read-Host 'Also configure local Ollama for demo 02? [y/N]').Trim()
     $ollama = $null
     if ($local -in @('y', 'yes')) {
         $ollama = @{
@@ -123,13 +127,21 @@ try {
     # C. Import merges supplied keys. Identity mode removes a stale key, which
     # would otherwise take precedence over Azure CLI authentication.
     foreach ($project in $projects) {
-        $projectValues = @{} + $values
-        if ($null -ne $ollama -and $project.Name -eq 'DecisionSpaceGame.csproj') {
+        $localOnly = $project.Name -eq 'HelloDecisionsOllama.csproj'
+        if ($localOnly -and $null -eq $ollama) {
+            Write-Host "Skipped $($project.Directory.Name): Ollama settings unchanged."
+            continue
+        }
+        $projectValues = if ($localOnly) { @{} } else { @{} + $values }
+        if ($project.Name -in @('DecisionComparison.csproj', 'DecisionLab.Web.csproj')) {
+            $projectValues['Foundry:GenerativeModel'] = $generativeModel
+        }
+        if ($null -ne $ollama -and $localOnly) {
             foreach ($entry in $ollama.GetEnumerator()) { $projectValues[$entry.Key] = $entry.Value }
         }
         $json = $projectValues | ConvertTo-Json -Compress
         Invoke-SecretsCommand -Arguments @('user-secrets', 'set', '--project', $project.FullName) -Json $json
-        if ($auth -eq '') {
+        if ($auth -eq '' -and -not $localOnly) {
             Invoke-SecretsCommand -Arguments @('user-secrets', 'remove', 'Foundry:ApiKey', '--project', $project.FullName)
         }
         Write-Host "Configured $($project.Directory.Name)."

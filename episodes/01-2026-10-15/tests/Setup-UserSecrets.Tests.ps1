@@ -45,8 +45,12 @@ $setup = Join-Path (Split-Path $PSScriptRoot) 'Setup-UserSecrets.ps1'
     }
 
     $projects = @(Get-ChildItem (Join-Path (Split-Path $SetupPath) 'demos') -Filter '*.csproj' -Recurse |
-        Where-Object { $_.FullName -notmatch '[\\/](tests|bin|obj)[\\/]' })
+        Where-Object {
+            $_.FullName -notmatch '[\\/](tests|bin|obj)[\\/]' -and
+            $_.Name -notmatch '\.(AppHost|ServiceDefaults)\.csproj$'
+        })
     $count = $projects.Count
+    $foundryCount = @($projects | Where-Object Name -ne 'HelloDecisionsOllama.csproj').Count
 
     # A/B. Validate-only must not prompt or invoke the secrets CLI.
     $transcript = & $SetupPath -ValidateOnly 6>&1 | Out-String
@@ -54,28 +58,37 @@ $setup = Join-Path (Split-Path $PSScriptRoot) 'Setup-UserSecrets.ps1'
 
     # Identity mode retries malformed URLs and clears stale key authentication.
     foreach ($value in @('http://bad.example/', 'https://example.invalid/',
-        'synthetic-deployment', '', 'y', '', 'nimble')) {
+        'synthetic-deployment', 'synthetic-generative', '', 'y', '', 'nimble')) {
         $global:EpisodeSetupTestState.Answers.Enqueue($value)
     }
     $transcript = & $SetupPath 3>&1 6>&1 | Out-String
     Assert ($global:EpisodeSetupTestState.Answers.Count -eq 0) 'Identity prompts changed unexpectedly.'
-    Assert ($global:EpisodeSetupTestState.Calls.Count -eq 2 * $count) 'Identity mode did not import and remove keys for every project.'
+    Assert ($global:EpisodeSetupTestState.Calls.Count -eq $count + $foundryCount) 'Identity mode did not configure the correct projects.'
     $imports = @($global:EpisodeSetupTestState.Calls | Where-Object { $_.Arguments[1] -eq 'set' })
     foreach ($call in $imports) {
         $json = $call.InputJson | ConvertFrom-Json -AsHashtable
-        Assert ($json['Foundry:Model'] -eq 'synthetic-deployment') 'Deployment was not imported.'
+        $isLocalOnly = ($call.Arguments -join ' ') -match 'HelloDecisionsOllama\.csproj'
+        if ($isLocalOnly) {
+            Assert (-not $json.ContainsKey('Foundry:Model')) 'Foundry settings leaked into the local-only sample.'
+        } else {
+            Assert ($json['Foundry:Model'] -eq 'synthetic-deployment') 'Deployment was not imported.'
+        }
         Assert (-not $json.ContainsKey('Foundry:ApiKey')) 'Identity import unexpectedly contains an API key.'
-        $isGame = ($call.Arguments -join ' ') -match 'DecisionSpaceGame\.csproj'
-        Assert ($json.ContainsKey('Ollama:Model') -eq $isGame) 'Ollama configuration was applied to the wrong sample.'
+        Assert ($json.ContainsKey('Ollama:Model') -eq $isLocalOnly) 'Ollama configuration was applied to the wrong sample.'
+        $isComparison = ($call.Arguments -join ' ') -match '(DecisionComparison|DecisionLab\.Web)\.csproj'
+        Assert ($json.ContainsKey('Foundry:GenerativeModel') -eq $isComparison) 'Generative configuration was applied to the wrong sample.'
+        if ($isComparison) {
+            Assert ($json['Foundry:GenerativeModel'] -eq 'synthetic-generative') 'Generative deployment was not imported.'
+        }
     }
     Assert (-not $transcript.Contains('SYNTHETIC_SECRET_CLI_OUTPUT')) 'CLI output leaked.'
 
     # A/B. Key mode sends the key through stdin, never process arguments.
     $global:EpisodeSetupTestState.Calls.Clear()
-    foreach ($value in @('https://example.invalid/', 'synthetic-deployment', 'K',
+    foreach ($value in @('https://example.invalid/', 'synthetic-deployment', 'synthetic-generative', 'K',
         'SYNTHETIC_API_KEY_FOR_TEST_ONLY', 'n')) { $global:EpisodeSetupTestState.Answers.Enqueue($value) }
     $transcript = & $SetupPath 6>&1 | Out-String
-    Assert ($global:EpisodeSetupTestState.Calls.Count -eq $count) 'Key mode invoked an unexpected command.'
+    Assert ($global:EpisodeSetupTestState.Calls.Count -eq $foundryCount) 'Key mode invoked an unexpected command.'
     foreach ($call in $global:EpisodeSetupTestState.Calls) {
         Assert (-not (($call.Arguments -join ' ').Contains('SYNTHETIC_API_KEY'))) 'Key appeared in process arguments.'
         $json = $call.InputJson | ConvertFrom-Json -AsHashtable
@@ -86,7 +99,7 @@ $setup = Join-Path (Split-Path $PSScriptRoot) 'Setup-UserSecrets.ps1'
     # C. CLI failures stop subsequent writes and surface an explicit error.
     $global:EpisodeSetupTestState.Calls.Clear()
     $global:EpisodeSetupTestState.FailImport = $true
-    foreach ($value in @('https://example.invalid/', 'synthetic-deployment', '', 'n')) {
+    foreach ($value in @('https://example.invalid/', 'synthetic-deployment', 'synthetic-generative', '', 'n')) {
         $global:EpisodeSetupTestState.Answers.Enqueue($value)
     }
     $failed = $false

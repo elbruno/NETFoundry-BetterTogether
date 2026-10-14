@@ -1,0 +1,5 @@
+{
+  "appHost": {
+    "path": "DecisionLab.AppHost/DecisionLab.AppHost.csproj"
+  }
+}

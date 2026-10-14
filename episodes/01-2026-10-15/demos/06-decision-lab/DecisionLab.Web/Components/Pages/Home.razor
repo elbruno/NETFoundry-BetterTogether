@@ -1,0 +1,135 @@
+@page "/"
+@rendermode InteractiveServer
+@implements IDisposable
+@using DecisionLab.Web
+@inject ComparisonRun Run
+@inject IConfiguration Configuration
+
+<PageTitle>Decision Lab</PageTitle>
+<main>
+    <header>
+        <p class="eyebrow">.NET + Foundry / Decision Lab</p>
+        <h1>Same question. Two approaches.</h1>
+        <p>@Configuration["Foundry:GenerativeModel"] via Microsoft.Extensions.AI versus Microsoft-Decision-1 via ElBruno.AI.Decisions.</p>
+    </header>
+
+    <section class="controls" aria-label="Comparison settings">
+        <h2>Build a run</h2>
+        <p>Each selected question is sent to both models in parallel, then repeated the chosen number of times.</p>
+        <fieldset disabled="@Run.IsRunning">
+            <legend>Predefined questions</legend>
+            @foreach (var question in DecisionQuestion.Examples)
+            {
+                <label class="question">
+                    <input type="checkbox" checked="@selected.Contains(question)" @onchange="e => Select(question, e)" />
+                    <span><strong>@question.Title</strong><small>@question.Message</small></span>
+                </label>
+            }
+            <label class="repetitions">Repetitions per selected question (1-20)
+                <input type="number" min="1" max="20" @bind="repeats" />
+            </label>
+        </fieldset>
+        <p><strong>@(selected.Count * repeats * 2) planned billable requests.</strong>
+            Sequential pairs limit concurrency to two requests per session. No automatic retries.</p>
+        <div class="actions">
+            <button @onclick="Start" disabled="@(Run.IsRunning || selected.Count == 0 || repeats is < 1 or > 20)">Start comparison</button>
+            <button class="secondary" @onclick="Run.Stop" disabled="@(!Run.IsRunning)">Stop run</button>
+            <span role="status" aria-live="polite">
+                @(Run.IsRunning ? "Running" : "Stopped") / @CompletedPairs of @Run.PlannedPairs pairs finished
+            </span>
+        </div>
+        @if (validationError is not null) { <p role="alert" class="error">@validationError</p> }
+    </section>
+
+    <section class="cards" aria-label="Cumulative metrics">
+        @Totals("Generative / Microsoft.Extensions.AI", ChatResults, false)
+        @Totals("Microsoft-Decision-1 / native SDK", DecisionResults, true)
+    </section>
+    <aside>
+        <strong>Read the numbers honestly.</strong> Decision SDK 0.6.2 does not expose token usage.
+        Its counters are unavailable, not zero. Totals below include only reported successful responses;
+        failures or cancelled requests may still be billed. No total-cost or savings estimate.
+        Different tokenizers, schemas, models, warm-up, and reasoning defaults make this an illustration, not a benchmark.
+        Aspire's Traces view contains correlated <code>comparison.pair</code> and GenAI spans.
+        Prompt/response content recording is disabled.
+    </aside>
+
+    <section aria-label="Live results">
+        <h2>Live results</h2>
+        <div class="table-scroll">
+            <table>
+                <thead><tr><th>Pair / question</th><th>Model</th><th>Status / choice</th><th>Input</th><th>Output</th><th>Total</th><th>ms</th><th>Trace</th></tr></thead>
+                <tbody>
+                    @foreach (var pair in Run.Results.AsEnumerable().Reverse())
+                    {
+                        @ResultRow(pair, "Generative", pair.Chat, false)
+                        @ResultRow(pair, "Decision", pair.Decision, true)
+                    }
+                </tbody>
+            </table>
+        </div>
+        @if (Run.Results.Count == 0) { <p class="empty">Select questions and start a bounded run. No model calls happen on page load.</p> }
+    </section>
+</main>
+
+@code {
+    private readonly HashSet<DecisionQuestion> selected = [DecisionQuestion.Examples[0]];
+    private int repeats = 1;
+    private string? validationError;
+    private IEnumerable<ModelResult> ChatResults => Run.Results.Select(p => p.Chat).OfType<ModelResult>();
+    private IEnumerable<ModelResult> DecisionResults => Run.Results.Select(p => p.Decision).OfType<ModelResult>();
+    private int CompletedPairs => Run.Results.Count(p => p.Chat is not null && p.Decision is not null);
+    protected override void OnInitialized() => Run.Changed += Refresh;
+    private void Refresh() => _ = InvokeAsync(StateHasChanged);
+    private void Select(DecisionQuestion question, ChangeEventArgs e)
+    {
+        if (e.Value is true) selected.Add(question); else selected.Remove(question);
+    }
+    private async Task Start()
+    {
+        validationError = null;
+        try { await Run.StartAsync(DecisionQuestion.Examples.Where(selected.Contains).ToArray(), repeats); }
+        catch (ArgumentException ex) { validationError = ex.Message; }
+    }
+    public void Dispose()
+    {
+        Run.Changed -= Refresh;
+        Run.Stop();
+    }
+    private static string Tokens(long? value, bool decision) =>
+        decision ? "not exposed" : value?.ToString("N0") ?? "not reported";
+
+    private RenderFragment Totals(string title, IEnumerable<ModelResult> source, bool decision) => @<article>
+        <h2>@title</h2>
+        <p class="big-number">@(decision ? "Unavailable" : Sum(source, r => r.TotalTokens)) <small>reported total tokens</small></p>
+        <dl>
+            <dt>Input / output</dt><dd>@(decision ? "not exposed / not exposed" : $"{Sum(source, r => r.InputTokens)} / {Sum(source, r => r.OutputTokens)}")</dd>
+            <dt>Completed / failed / cancelled</dt><dd>@source.Count(r => r.Succeeded) / @source.Count(r => r.Status == "failed") / @source.Count(r => r.Status == "cancelled")</dd>
+            <dt>Responses with total usage</dt><dd>@source.Count(r => r.TotalTokens.HasValue) / @source.Count(r => r.Succeeded)</dd>
+            <dt>Mean successful latency</dt><dd>@MeanLatency(source)</dd>
+        </dl>
+    </article>;
+
+    private static string Sum(IEnumerable<ModelResult> source, Func<ModelResult, long?> selector)
+    {
+        var values = source.Where(r => r.Succeeded).Select(selector).OfType<long>().ToArray();
+        return values.Length == 0 ? "not reported" : values.Sum().ToString("N0");
+    }
+    private static string MeanLatency(IEnumerable<ModelResult> source)
+    {
+        var values = source.Where(r => r.Succeeded).ToArray();
+        return values.Length == 0 ? "not available" : $"{values.Average(r => r.ElapsedMs):N0} ms";
+    }
+    private RenderFragment ResultRow(ComparisonPair pair, string model, ModelResult? result, bool decision) => @<tr>
+        <td>@pair.Number / @pair.Question.Title</td><td>@model</td>
+        <td>
+            <strong>@(result?.Status ?? "pending")</strong> @(result?.Label)
+            @if (result?.Error is not null) { <small class="error">@result.Error</small> }
+        </td>
+        <td>@(result is null ? "-" : Tokens(result.InputTokens, decision))</td>
+        <td>@(result is null ? "-" : Tokens(result.OutputTokens, decision))</td>
+        <td>@(result is null ? "-" : Tokens(result.TotalTokens, decision))</td>
+        <td>@(result?.ElapsedMs.ToString("N0") ?? "-")</td>
+        <td><code>@(result?.TraceId is { } id ? id[..8] : "-")</code></td>
+    </tr>;
+}

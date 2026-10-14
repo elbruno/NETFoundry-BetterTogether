@@ -6,9 +6,10 @@
     <Nullable>enable</Nullable>
     <UserSecretsId>netfoundry-episode01-hello-decisions</UserSecretsId>
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Remove="tests\**\*.cs" />
+    <Compile Include="Program.cs" />
     <PackageReference Include="ElBruno.AI.Decisions.Foundry" Version="0.6.2" />
     <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="10.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="10.0.0" />

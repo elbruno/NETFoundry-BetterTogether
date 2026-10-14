@@ -1,78 +1,44 @@
 /*
- * Goal: Walk through one native decision in either SDK or REST mode.
- * A. Select a synthetic example and load external configuration.
- * B. Measure one bounded request using the selected transport.
- * C. Display validated probabilities and confidence without exposing configuration.
- * Inputs: --mode sdk|rest, --example billing|technical|ambiguous, --inspect.
- * Output: A typed decision or a sanitized failure with a nonzero exit code.
- * Read next: HelloDecision.cs, then NativeDecision.cs.
- * Boundary: This is not an interactive console rehearsal or an automated router.
+ * Goal: Make one decision with Microsoft-Decision-1 in Foundry.
+ * A. Create the client using settings stored outside the source code.
+ * B. Define a support message and ask which team should handle it.
+ * C. Show the selected team and the model's probability for each option.
  */
-using System.Diagnostics;
-using System.Globalization;
-using ElBruno.AI.Decisions;
 using ElBruno.AI.Decisions.Foundry;
-using HelloDecisions;
+using Microsoft.Extensions.Configuration;
 
-CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
-try
+// A. Use the episode setup script to configure these values before the demo.
+var configuration = new ConfigurationBuilder()
+    .AddUserSecrets(typeof(Program).Assembly)
+    .AddEnvironmentVariables()
+    .Build();
+
+using var client = new FoundryDecisionClient(new FoundryDecisionOptions
 {
-    // A. Reject unknown arguments before loading any credentials.
-    string mode = "sdk", example = "billing";
-    bool inspect = false;
-    for (int i = 0; i < args.Length; i++)
-    {
-        switch (args[i])
-        {
-            case "--help":
-                Console.WriteLine("Hello Decisions: --mode sdk|rest --example billing|technical|ambiguous --inspect\nOne request, 30-second deadline. SDK means community SDK, not official Microsoft SDK.");
-                return 0;
-            case "--mode" when i + 1 < args.Length: mode = args[++i]; break;
-            case "--example" when i + 1 < args.Length: example = args[++i]; break;
-            case "--inspect": inspect = true; break;
-            default: throw new ArgumentException("Unknown or incomplete argument. Use --help.");
-        }
-    }
-    if (mode is not ("sdk" or "rest")) throw new ArgumentException("Mode must be sdk or rest.");
-    string input = HelloDecision.Input(example);
-    var options = DemoConfiguration.Load();
-    Console.WriteLine($"Mode: {mode} | Input: {input}");
-    if (inspect)
-    {
-        Console.WriteLine("Sanitized request (deployment replaced; no URL or headers):");
-        Console.WriteLine(NativeDecision.RequestBody("<deployment-name>", input));
-        Console.WriteLine("Response shape: answers.decision = { type: choice, choice: <label>, probabilities: { <label>: <0..1> }, confidence: <0..1> }");
-    }
+    Endpoint = new Uri(configuration["Foundry:Endpoint"]!),
+    Model = configuration["Foundry:Model"]!, // Foundry deployment name.
+    ApiKey = configuration["Foundry:ApiKey"] // Omit to use your Azure CLI identity.
+});
 
-    // B. Ctrl+C cancels token acquisition and the request. There is no retry or fallback.
-    using var cancellation = new CancellationTokenSource(TimeSpan.FromSeconds(35));
-    Console.CancelKeyPress += (_, e) => { e.Cancel = true; cancellation.Cancel(); };
-    var timer = Stopwatch.StartNew();
-    ChoiceDecision result;
-    if (mode == "sdk")
-    {
-        using var client = new FoundryDecisionClient(options);
-        result = await HelloDecision.AskAsync(client, input, cancellation.Token);
-    }
-    else
-    {
-        using var http = new HttpClient(new SocketsHttpHandler { AllowAutoRedirect = false })
-        { Timeout = Timeout.InfiniteTimeSpan };
-        result = await NativeDecision.AskAsync(http, options, input, cancellation.Token);
-    }
-    timer.Stop();
-
-    // C. Provider confidence is not the selected label's probability or calibrated correctness.
-    Console.WriteLine($"Choice: {result.Choice}");
-    foreach (var label in HelloDecision.Options.Keys)
-        Console.WriteLine($"  P({label}): {result.Probabilities[label]:F4}");
-    Console.WriteLine($"Provider confidence (separate signal): {result.Confidence:F4}");
-    Console.WriteLine($"Request duration: {timer.Elapsed.TotalMilliseconds:F0} ms | Calls: 1");
-    return 0;
-}
-catch (Exception error)
+// B. The model selects one of our labels instead of generating a chat response.
+// Try: "The application crashes every time I open the settings screen."
+// Try: "Which plan should I buy for a team of ten developers?"
+var prompt = "I was charged twice for my subscription.";
+var choices = new Dictionary<string, string?>
 {
-    // Exception messages can contain resolved URLs, response bodies or identity diagnostics.
-    Console.Error.WriteLine($"Failed ({DemoErrors.Describe(error)}). Check arguments, external configuration, Azure CLI permissions, native response shape, and the 30-second request deadline. No fallback was used.");
-    return 1;
-}
+    ["billing"] = "Invoices, duplicate charges, and subscription payments",
+    ["technical_support"] = "Software errors and account-access problems",
+    ["sales"] = "Product selection, pricing, and buying a plan"
+};
+
+var result = await client.ChooseAsync(
+    prompt,
+    "Which team should handle this support message?",
+    choices);
+
+// C. Provider confidence is a separate signal, not a guarantee of correctness.
+Console.WriteLine($"Message: {prompt}");
+Console.WriteLine($"Selected team: {result.Choice}");
+foreach (var choice in result.Probabilities)
+    Console.WriteLine($"  {choice.Key}: {choice.Value:P1}");
+Console.WriteLine($"Provider confidence: {result.Confidence:P1}");
