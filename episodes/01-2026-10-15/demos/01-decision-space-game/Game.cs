@@ -1,3 +1,12 @@
+/*
+ * Goal: Keep game rules deterministic and independent of the AI provider.
+ * A. Define the four legal actions and their exact effects.
+ * B. Advance movement, collisions, cooldowns, and score on fixed ticks.
+ * C. Serialize a compact state snapshot for a decision request.
+ * Inputs: Seeded randomness and validated game actions.
+ * Output: Updated game state and an explicit coordinate/time contract.
+ * Boundary: The model cannot change collisions, bounds, or scoring.
+ */
 using System.Text.Json;
 
 namespace DecisionSpaceGame;
@@ -7,6 +16,7 @@ public readonly record struct Position(int X, int Y);
 
 public static class Actions
 {
+    // A. Descriptions define action semantics, not a request for generated prose.
     public static readonly IReadOnlyDictionary<string, string?> Options = new Dictionary<string, string?>
     {
         ["move_left"] = "Move one column left each 50ms tick for the next four ticks; do not fire.",
@@ -95,6 +105,7 @@ public sealed class Game
 
     public void Step()
     {
+        // B. Fixed ticks make seeded runs reproducible independently of network time.
         if (Finished) return;
         Tick++;
         if (_lease > 0)
@@ -159,6 +170,7 @@ public sealed class Game
         if (_enemies.Any(e => e.Y >= PlayerY)) Lives = 0;
     }
 
+    // C. Text state exposes the rules the model needs without a screenshot.
     public string Snapshot() => JsonSerializer.Serialize(new
     {
         tick = Tick, tickDurationMs = StepMilliseconds, width = Width, height = Height,

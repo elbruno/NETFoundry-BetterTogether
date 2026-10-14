@@ -1,3 +1,13 @@
+/*
+ * Goal: Run the console game and make native decisions visible to the audience.
+ * A. Parse options, load external configuration, and create the game.
+ * B. Run a fixed-state probe or a responsive simulation with keyboard input.
+ * C. Display decisions and summarize the bounded run.
+ * Inputs: CLI options, external configuration, and optional keyboard actions.
+ * Output: A game board or headless log with real probabilities and latency.
+ * Read next: DecisionDriver.cs owns inference scheduling and result validation.
+ * Boundary: Rendering never waits synchronously for network inference.
+ */
 using System.Diagnostics;
 using System.Text;
 using DecisionSpaceGame;
@@ -16,6 +26,7 @@ static async Task<int> RunAsync(string[] args)
         Console.Error.WriteLine("Interactive mode needs a terminal. Use --headless or --probe.");
         return 2;
     }
+    // A. Environment variables override local secrets; neither belongs in source.
     var config = new ConfigurationBuilder().AddUserSecrets<Providers>(optional: true).AddEnvironmentVariables().Build();
     using var providers = new Providers(config, TimeSpan.FromSeconds(cli.TimeoutSeconds));
     await using var driver = new DecisionDriver(TimeSpan.FromSeconds(cli.TimeoutSeconds),
@@ -26,6 +37,7 @@ static async Task<int> RunAsync(string[] args)
     Console.CancelKeyPress += cancel;
     try
     {
+        // B. A probe makes one decision without moving the simulation.
         if (cli.Probe)
         {
             var provider = providers.Get(cli.Provider);
@@ -42,6 +54,7 @@ static async Task<int> RunAsync(string[] args)
             }
             return 0;
         }
+        // The game clock continues while the driver waits for the model.
         Select(cli.Provider);
         Console.WriteLine($"Decision Space Game | seed={cli.Seed} | {driver.Provider} / {driver.Model}");
         var watch = Stopwatch.StartNew();
@@ -89,6 +102,7 @@ static async Task<int> RunAsync(string[] args)
             }
             await Task.Delay(10, shutdown.Token).ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
         }
+        // C. A failed provider stays visible; we never substitute synthetic play.
         Console.WriteLine($"\nFINAL provider={driver.Provider} model={driver.Model} tick={game.Tick} " +
             $"score={game.Score} lives={game.Lives} accepted={driver.Accepted} rejected={driver.Rejected} " +
             $"outcome={(game.Finished ? game.Lives > 0 ? "victory" : "game-over" : "duration/quit")} status={driver.Status}");

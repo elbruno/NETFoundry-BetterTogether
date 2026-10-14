@@ -1,3 +1,13 @@
+/*
+ * Goal: Apply a model's suggestion only while it is timely and legal.
+ * A. Capture immutable state and start at most one request.
+ * B. Observe completion, timeout, or a provider switch.
+ * C. Reject stale/illegal suggestions or apply a validated action.
+ * Inputs: Game snapshots, a decision client, and cancellation limits.
+ * Output: Validated actions plus explicit status and latency.
+ * Read next: Game.cs defines the rules that no model can override.
+ * Boundary: Only the simulation thread changes game state.
+ */
 using System.Diagnostics;
 using Azure.Identity;
 using ElBruno.AI.Decisions;
@@ -85,6 +95,7 @@ public sealed class DecisionDriver : IAsyncDisposable
             Status = "Request timed out; waiting for cancellation.";
             game.Apply(GameAction.Stop);
         }
+        // B. Provider switches invalidate old work even if cancellation arrives late.
         if (_pending is { IsCompleted: true })
         {
             DecisionAttempt attempt = _pending.GetAwaiter().GetResult();
@@ -101,6 +112,7 @@ public sealed class DecisionDriver : IAsyncDisposable
                     Status = cancelled ? "Request timed out." : attempt.Error!;
                     game.Apply(GameAction.Stop);
                 }
+                // C. A valid label can still be unsafe for a newer game state.
                 else if (game.Tick - _snapshotTick > _maxAgeTicks || game.Finished)
                 {
                     Rejected++;
@@ -126,6 +138,7 @@ public sealed class DecisionDriver : IAsyncDisposable
         }
         if (_pending is not null || _client is null || Failed || game.Finished || game.Tick < _nextRequestTick)
             return;
+        // A. Capture before leaving the simulation thread, never share mutable state.
         _snapshotTick = game.Tick;
         _requestGeneration = _generation;
         _nextRequestTick = game.Tick + 6;

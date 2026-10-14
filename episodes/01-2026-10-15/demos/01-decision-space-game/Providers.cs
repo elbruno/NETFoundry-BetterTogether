@@ -1,3 +1,12 @@
+/*
+ * Goal: Select a native decision client without changing the game's rules.
+ * A. Read the selected provider's external configuration.
+ * B. Construct and cache its native SystemOne client.
+ * C. Dispose clients when the bounded run ends.
+ * Inputs: Configuration and a request timeout.
+ * Output: A model label and IDecisionClient, or explicit manual control.
+ * Boundary: Replay is synthetic, clearly labeled, and never a silent fallback.
+ */
 using ElBruno.AI.Decisions;
 using ElBruno.AI.Decisions.Foundry;
 using ElBruno.AI.Decisions.Ollama;
@@ -22,6 +31,7 @@ public sealed class Providers(IConfiguration config, TimeSpan timeout) : IDispos
                 client = new ReplayClient();
                 break;
             case "foundry":
+                // A/B. Model is the deployment name; this is not IChatClient.
                 model = Required("Foundry:Model");
                 client = new FoundryDecisionClient(new FoundryDecisionOptions
                 {
@@ -59,6 +69,7 @@ public sealed class Providers(IConfiguration config, TimeSpan timeout) : IDispos
 
     public void Dispose()
     {
+        // C. Owned clients are reused during play and released once.
         foreach (var entry in _clients.Values)
             (entry.Client as IDisposable)?.Dispose();
     }

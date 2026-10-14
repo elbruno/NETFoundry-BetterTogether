@@ -1,3 +1,12 @@
+/*
+ * Goal: Make runtime choices explicit and keep rehearsal runs bounded.
+ * A. Define readable help and safe defaults.
+ * B. Parse the requested provider, timing, and execution mode.
+ * C. Reject invalid options before configuration or model calls.
+ * Inputs: Command-line arguments.
+ * Output: Validated options or an actionable argument error.
+ * Boundary: Selecting replay is explicit, never an authentication fallback.
+ */
 using System.Globalization;
 
 namespace DecisionSpaceGame;

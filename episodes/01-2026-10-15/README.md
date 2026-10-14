@@ -6,7 +6,9 @@
 
 ## Overview
 
-Explore .NET 10 and Microsoft Foundry with an original console invader-defense game.
+Explore .NET 10 and Microsoft Foundry through progressively richer native decision examples.
+Start with a single bounded choice, use decisions in realistic review workflows,
+then watch an original console invader-defense game.
 Compare manual play, local Ollama, and Foundry native bounded decisions through the
 same `IDecisionClient` API: text snapshots, four legal actions, probability
 distributions, and confidence rather than generated chat JSON. An explicitly
@@ -18,8 +20,54 @@ The recording link will be added after the episode.
 
 ## Demos and resources
 
+Recommended learning order (folder numbers preserve existing published paths):
+
+1. [Hello Decisions](demos/02-hello-decisions/README.md): define allowed choices and compare the community SDK with native REST.
+2. [Support inbox triage](demos/03-support-triage/README.md): Choice, Score, Assess, and application-owned review policy using synthetic tickets.
+3. [Decision Space Game](demos/01-decision-space-game/README.md): apply validated decisions in a running simulation.
+4. [Answer-quality review](demos/04-answer-review/README.md): an optional model-assisted review example, not automatic approval.
+
+### Configure all samples
+
+Requires PowerShell 7 and the .NET 10 SDK. From this episode directory, before
+recording or screen sharing:
+
+```powershell
+pwsh -File .\Setup-UserSecrets.ps1 -ValidateOnly
+pwsh -File .\Setup-UserSecrets.ps1
+```
+
+[Setup-UserSecrets.ps1](Setup-UserSecrets.ps1) discovers runnable sample projects,
+prompts once for the Foundry resource root and deployment name, and imports
+configuration into each project's separate user-secrets store. Choose Azure CLI
+identity (the default) or enter a key through hidden input. Identity mode removes
+any stored `Foundry:ApiKey` so a stale key cannot override identity authentication.
+Run `az login` separately and ensure your identity has deployment access.
+
+Optional Ollama prompts configure only the game; they do not install Ollama or
+download a model. Skipping Ollama leaves existing local settings unchanged.
+Environment variables override user secrets, so remove conflicting `Foundry__*`
+variables when changing authentication mode.
+
+The script does not display supplied values, pass keys as process arguments,
+write configuration into this repository, or run chargeable inference. Prompts
+for non-key values are visible while you type, so do setup off-stream. .NET user
+secrets are unencrypted local development storage, not a production vault. Imports
+replace the named keys but preserve unrelated secrets. If setup fails midway,
+earlier projects may already be updated; fix the reported prerequisite and rerun.
+Use `dotnet user-secrets remove "<key>" --project "<project.csproj>"` for each
+configured key when cleaning up. Never display `user-secrets list` on stream.
+
+The setup script has non-writing tests:
+
+```powershell
+pwsh -File .\tests\Setup-UserSecrets.Tests.ps1
+```
+
+### Related resources
+
 - [Decision Space Game: code, setup, controls, tests, and validation](demos/01-decision-space-game/README.md)
-  — .NET 10, ElBruno.AI.Decisions 0.6.2, manual/Ollama/Foundry/offline replay.
+  (.NET 10, ElBruno.AI.Decisions 0.6.2, manual/Ollama/Foundry/offline replay).
 - [ElBruno.AI.Decisions](https://github.com/elbruno/ElBruno.AI.Decisions)
 - [Microsoft SpaceAINet reference](https://github.com/microsoft/Generative-AI-for-beginners-dotnet/tree/main/samples/AppsWithGenAI/SpaceAINet)
 

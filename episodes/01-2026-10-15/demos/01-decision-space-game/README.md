@@ -9,6 +9,17 @@ Unlike a chat agent that generates JSON prose and then parses it, this demo call
 and receives a typed `ChoiceDecision`: `Choice`, `Probabilities`, and `Confidence`.
 The JSON snapshot is **text**, not a screenshot: the shared SDK is text-only.
 
+## Read the code on stream
+
+Start with `Game.cs` for the allowed actions and compact snapshot, then
+`Providers.cs` for native client selection, `DecisionDriver.cs` for asynchronous
+requests and validation, and `Program.cs` for the visible game loop. `Cli.cs`
+defines bounded run options. The files include Goal/A-B-C headers and comments
+at the important conceptual boundaries; no token streaming is involved.
+
+To configure this and all other episode demos with one set of prompts, use
+the [episode setup script](../../Setup-UserSecrets.ps1) before screen sharing.
+
 ## Prerequisites and tested versions
 
 - .NET SDK **10.0.401**, runtime **10.0.12**, targeting `net10.0`. `global.json`
