@@ -20,12 +20,16 @@ The recording link will be added after the episode.
 
 ## Demos and resources
 
-Recommended learning order (folder numbers preserve existing published paths):
+Recommended learning order (folder numbers now match the walkthrough):
 
-1. [Hello Decisions](demos/02-hello-decisions/README.md): define allowed choices and compare the community SDK with native REST.
-2. [Support inbox triage](demos/03-support-triage/README.md): Choice, Score, Assess, and application-owned review policy using synthetic tickets.
-3. [Decision Space Game](demos/01-decision-space-game/README.md): apply validated decisions in a running simulation.
-4. [Answer-quality review](demos/04-answer-review/README.md): an optional model-assisted review example, not automatic approval.
+1. [Hello Decisions](demos/01-hello-decisions/README.md): define allowed choices and compare the community SDK with native REST.
+2. [Support inbox triage](demos/02-support-triage/README.md): Choice, Score, Assess, and application-owned review policy using synthetic tickets.
+3. [Answer-quality review](demos/03-answer-review/README.md): model-assisted review, not automatic approval.
+4. [Decision Space Game](demos/04-decision-space-game/README.md): apply validated decisions in a running simulation.
+
+The demo folders were renumbered before the broadcast so the game is last.
+Project names and user-secrets IDs are unchanged; existing configuration still
+works. Update any local working-directory shortcuts to the new paths.
 
 ### Configure all samples
 
@@ -66,7 +70,7 @@ pwsh -File .\tests\Setup-UserSecrets.Tests.ps1
 
 ### Related resources
 
-- [Decision Space Game: code, setup, controls, tests, and validation](demos/01-decision-space-game/README.md)
+- [Decision Space Game: code, setup, controls, tests, and validation](demos/04-decision-space-game/README.md)
   (.NET 10, ElBruno.AI.Decisions 0.6.2, manual/Ollama/Foundry/offline replay).
 - [ElBruno.AI.Decisions](https://github.com/elbruno/ElBruno.AI.Decisions)
 - [Microsoft SpaceAINet reference](https://github.com/microsoft/Generative-AI-for-beginners-dotnet/tree/main/samples/AppsWithGenAI/SpaceAINet)

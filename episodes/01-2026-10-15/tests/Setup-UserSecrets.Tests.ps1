@@ -65,7 +65,7 @@ $setup = Join-Path (Split-Path $PSScriptRoot) 'Setup-UserSecrets.ps1'
         $json = $call.InputJson | ConvertFrom-Json -AsHashtable
         Assert ($json['Foundry:Model'] -eq 'synthetic-deployment') 'Deployment was not imported.'
         Assert (-not $json.ContainsKey('Foundry:ApiKey')) 'Identity import unexpectedly contains an API key.'
-        $isGame = ($call.Arguments -join ' ') -match '01-decision-space-game'
+        $isGame = ($call.Arguments -join ' ') -match 'DecisionSpaceGame\.csproj'
         Assert ($json.ContainsKey('Ollama:Model') -eq $isGame) 'Ollama configuration was applied to the wrong sample.'
     }
     Assert (-not $transcript.Contains('SYNTHETIC_SECRET_CLI_OUTPUT')) 'CLI output leaked.'

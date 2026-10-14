@@ -45,7 +45,7 @@ the [episode setup script](../../Setup-UserSecrets.ps1) before screen sharing.
 From the repository root in PowerShell:
 
 ```powershell
-Set-Location .\episodes\01-2026-10-15\demos\01-decision-space-game
+Set-Location .\episodes\01-2026-10-15\demos\04-decision-space-game
 dotnet --version
 dotnet restore DecisionSpaceGame.slnx --locked-mode
 dotnet build DecisionSpaceGame.slnx -c Release --no-restore
@@ -109,7 +109,7 @@ dotnet user-secrets set "Foundry:ApiKey" "<your-api-key>"
 
 Do not paste a real key into source, screenshots, logs, or shared terminal history.
 User secrets are development storage outside this repository, **not encrypted**.
-The published UserSecretsId is `netfoundry-episode01-decision-space-game`.
+The published UserSecretsId is `netfoundry-episode04-decision-space-game`.
 No credentials, real resource IDs, or resource-specific defaults are in this demo.
 HTTP 401/403 indicates authentication/authorization trouble; the game displays the
 error and suspends AI. It does not switch providers or invent a successful result.

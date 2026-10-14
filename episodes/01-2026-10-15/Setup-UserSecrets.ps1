@@ -124,7 +124,7 @@ try {
     # would otherwise take precedence over Azure CLI authentication.
     foreach ($project in $projects) {
         $projectValues = @{} + $values
-        if ($null -ne $ollama -and $project.Directory.Name -eq '01-decision-space-game') {
+        if ($null -ne $ollama -and $project.Name -eq 'DecisionSpaceGame.csproj') {
             foreach ($entry in $ollama.GetEnumerator()) { $projectValues[$entry.Key] = $entry.Value }
         }
         $json = $projectValues | ConvertTo-Json -Compress
