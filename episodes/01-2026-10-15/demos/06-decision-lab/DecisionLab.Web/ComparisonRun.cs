@@ -14,6 +14,7 @@ public sealed class ComparisonRun(IModelComparison models) : IDisposable
     public bool IsRunning { get; private set; }
     public List<ComparisonPair> Results { get; } = [];
     public int PlannedPairs { get; private set; }
+    public int Repetitions { get; private set; }
     public event Action? Changed;
 
     public async Task StartAsync(IReadOnlyList<DecisionQuestion> questions, int repeats)
@@ -26,6 +27,7 @@ public sealed class ComparisonRun(IModelComparison models) : IDisposable
         var token = cancellation.Token;
         Results.Clear();
         PlannedPairs = questions.Count * repeats;
+        Repetitions = repeats;
         IsRunning = true;
         Changed?.Invoke();
         try

@@ -34,6 +34,8 @@ public sealed class ModelComparisonTests
         Assert.Equal(67, result.InputTokens);
         Assert.Equal(0, result.OutputTokens);
         Assert.Null(result.TotalTokens);
+        Assert.Equal(67, result.DisplayTokens);
+        Assert.True(result.HasCalculatedTotal);
         var span = Assert.Single(spans, span => span.OperationName == "decision synthetic-model");
         Assert.Equal(67L, span.GetTagItem("gen_ai.usage.input_tokens"));
         Assert.Equal(0L, span.GetTagItem("gen_ai.usage.output_tokens"));

@@ -180,12 +180,11 @@ DesktopGL test passed with actual welcome/gameplay rendering, manual movement,
 focus pause and restart/cancellation while a synthetic decision was pending.
 `dotnet run --no-build -c Release` also opened a responsive welcome window
 from the demo root, then was closed after the smoke check.
-The bounded Foundry smoke applied eight real decisions over 32 ticks:
-three hull remaining, score 10, four shots, no provider errors, about five
-wall seconds. Reported total-token usage was unavailable, not estimated.
-This was a short smoke, not a completed victory.
-
-The Ollama smoke stopped safely after one failed request and zero applied
-actions. The default local service at port 11434 was unreachable on this
-machine. Local-provider gameplay is therefore **not verified** by this run;
-start a compatible native-decision service and rerun its opt-in test.
+With the local Ollama service running, both real-provider smoke tests passed.
+Foundry and local `nimble:latest` each applied eight decisions over 32 ticks:
+three hull remaining, score 10, four shots and no provider errors.
+These runs took about 4.1 and 3.2 wall seconds respectively. Reported total-token
+usage was unavailable, not estimated. These are short integration checks,
+not completed victories, fixed expected outcomes or comparative benchmarks.
+An earlier Ollama run failed safely while its local service was stopped.
+Start that service before selecting O or running the live test.

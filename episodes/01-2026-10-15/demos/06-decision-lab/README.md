@@ -13,17 +13,23 @@ ElBruno.AI.Decisions is a community SDK, not an official Microsoft SDK.
 
 **Decision SDK 0.6.3 exposes token usage.** Native input/output/total counters now
 come from `ChoiceDecision.Usage`; GPT counters come from `ChatResponse.Usage`.
-Both cards and result rows aggregate only actual reported fields. Missing
-fields display **not reported**, never zero or an inferred total.
+Both cards and result rows preserve the original reported fields. If a response
+omits its total but reports both input and output, the UI shows their sum with
+the explicit label **calculated input + output**. A provider-reported total
+takes precedence, even if it differs from that sum. If either component is
+missing and no total is reported, the total remains **not reported**, never zero.
 The shipped SDK enhancement is recorded in
 [elbruno/ElBruno.AI.Decisions#4](https://github.com/elbruno/ElBruno.AI.Decisions/issues/4).
 Live Foundry responses expose native input/output tokens but omit total tokens.
-Compare input/output counters directly; the total card correctly remains
-not reported with zero total-usage coverage. This is a service omission, not
-an SDK limitation. Reasoning/cached fields, if present, become native trace tags.
+The headline now shows the available combined usage instead of implying that
+no usage was received. Coverage distinguishes **reported / calculated / unknown**
+totals. This service omission is not an SDK limitation; the raw SDK result and
+telemetry remain provider-reported, not overwritten with the UI calculation.
+Reasoning/cached fields, if present, become native trace tags.
 A live two-repeat duplicate-charge run accumulated native **134 input / 2 output**
 and GPT **220 input / 26 output / 246 total**. Native total coverage was **0/2**,
-not a zero-token result. These observations are not fixed expected output.
+not a zero-token result. The UI displays **136 calculated tokens** for those
+native counters. These observations are not fixed expected output.
 
 ## Prerequisites
 
@@ -41,8 +47,9 @@ Pinned app packages: **Microsoft.Extensions.AI 10.10.0**,
 **Microsoft.Extensions.AI.OpenAI 10.10.0**, **Azure.AI.OpenAI 2.9.0-beta.1**,
 **Azure.Identity 1.17.0**, **ElBruno.AI.Decisions.Foundry 0.6.3**.
 ServiceDefaults uses **OpenTelemetry 1.17.0**. Each project has a dependency lock.
-The web project's SDK-injected ASP.NET Core assets are locked to **10.0.13**,
-as restored by SDK **10.0.402**. If a different allowed SDK patch reports
+The web project's SDK-injected ASP.NET Core assets vary with the selected SDK:
+**10.0.12** for SDK **10.0.401**, or **10.0.13** for SDK **10.0.402**.
+The lock file reflects the SDK used for the most recent restore. If a different allowed SDK patch reports
 `NU1004` for `Microsoft.AspNetCore.App.Internal.Assets`, run
 `dotnet restore DecisionLab.sln --force-evaluate`, review the lock-file change,
 then repeat the locked restore.
@@ -91,6 +98,30 @@ authorization, per-user quotas, and operational controls.
 4. Watch both rows update as their responses arrive, not only at the end.
 5. Click **Stop run** to cancel in-flight requests and prevent the next pair.
 
+For **10 or more repetitions per selected question**, four live SVG charts
+appear at run start and update independently after either model responds:
+cumulative tokens, cumulative request time, estimated cumulative cost, and
+per-request latency. The X axis is the pair number across all selected questions.
+Solid and dashed lines distinguish the models; hover points for exact values.
+No external chart library, CDN, or additional network transfer is used.
+
+Expand **Optional pricing** before starting and enter each deployment's input
+and output rates in **USD per 1 million tokens**. There are no assumed prices:
+blank means unknown; an explicit zero means a zero rate. Negative rates are
+rejected. Rates are locked during a run; changing them while stopped recalculates
+estimates from the existing usage. They are page-local, not saved as secrets.
+An estimate is `(input tokens * input rate + output tokens * output rate) / 1,000,000`.
+Both rates and both token counters must be available for every successful
+response, otherwise that model's cost remains unavailable. Cache discounts,
+taxes, hosting and failed/cancelled request charges are excluded. Reasoning
+tokens are not added again. These estimates are not provider billing data.
+
+Token charts require complete displayed-total coverage across successful
+responses. Missing data is not plotted as zero. Cumulative request time includes
+all returned outcomes and sums each model's client-observed call durations;
+it is not run wall time, since models run in parallel. Each chart uses the same
+scale for both models. A new run resets chart history along with the table.
+
 Each pair starts chat and decision calls together with `Task.WhenAll`. The next
 pair waits for both outcomes, keeping at most **two model requests in flight per
 browser circuit**. Four questions times 20 repetitions means at most 80 pairs,
@@ -114,7 +145,8 @@ work inside the SDK call, not just service inference.
 
 **This is an illustration, not a benchmark or billing ledger.** Tokenizers,
 model defaults, schema serialization, cold starts, network routing and reasoning
-can differ. There is no dollar/savings estimate, calibrated accuracy claim,
+can differ. Configured dollar estimates are illustrative, not a savings guarantee,
+calibrated accuracy claim,
 production threshold, or claim that Microsoft-Decision-1 runs locally.
 
 ## Aspire GenAI walkthrough
@@ -158,6 +190,8 @@ aspire otel spans webfrontend --search "decision" --non-interactive
 - `DecisionLab.Web/ComparisonRun.cs`: bounded repeats, parallel pair scheduling,
   cancellation and disconnect handling.
 - `DecisionLab.Web/Components/Pages/Home.razor`: live results and cumulative UI.
+- `DecisionLab.Web/ComparisonMetrics.cs`: labeled combined totals, cost and chart series.
+- `DecisionLab.Web/Components/LiveComparisonCharts.razor`: accessible live SVG plots.
 - `DecisionLab.AppHost/AppHost.cs`: one web resource and privacy setting.
 - `DecisionLab.ServiceDefaults/Extensions.cs`: OTel subscription/export.
 
@@ -173,9 +207,15 @@ dotnet test .\tests\DecisionLab.Tests.csproj -c Release
 Tests use explicit fake SDK clients, no cloud calls. They cover parallel start,
 repeat counts, cancellation/disconnect, invalid bounds, overlapping runs, provider
 failure, invalid labels/JSON, incomplete chat responses, reported zero versus
-missing usage, and endpoint redaction. A live browser rehearsal verified two
+missing usage, calculated-total provenance, optional rates, cost formulas,
+SVG rendering, cumulative time and endpoint redaction. A live browser rehearsal verified two
 questions repeated twice, progressive totals, Stop cancellation, and Aspire
 GenAI details for both providers. Results are not expected fixed probabilities.
+The revised UI was also exercised with 10 duplicate-charge repetitions against
+both real models: each chart advanced during the run and ended with 10 points
+per model. Native usage was 670 input / 10 output, displayed as 680 calculated
+tokens. Chart costs used explicit demonstration rates, not verified deployment
+prices. No price or performance benchmark is claimed.
 
 Every started provider request can consume quota/incur charges, even if cancelled.
 Stop in the page first, then stop the app:

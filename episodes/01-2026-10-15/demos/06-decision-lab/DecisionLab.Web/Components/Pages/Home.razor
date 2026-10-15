@@ -29,6 +29,20 @@
                 <input type="number" min="1" max="20" @bind="repeats" />
             </label>
         </fieldset>
+        <details class="pricing">
+            <summary>Optional pricing for estimated cost charts (USD per 1 million tokens)</summary>
+            <p>Enter your deployment's actual input/output rates. Blank means unknown, not free.
+                Zero is allowed for an explicitly free rate. No prices are assumed or fetched.</p>
+            <fieldset disabled="@Run.IsRunning">
+                <legend>Rates applied to this page's successful responses</legend>
+                <label>Generative input <input aria-label="Generative input rate" type="number" min="0" step="any" @bind="chatInputRate" /></label>
+                <label>Generative output <input aria-label="Generative output rate" type="number" min="0" step="any" @bind="chatOutputRate" /></label>
+                <label>Decision input <input aria-label="Decision input rate" type="number" min="0" step="any" @bind="decisionInputRate" /></label>
+                <label>Decision output <input aria-label="Decision output rate" type="number" min="0" step="any" @bind="decisionOutputRate" /></label>
+            </fieldset>
+            <p>Base input/output estimates exclude cache discounts, taxes, hosting and charges for failed requests.
+                Changing rates while stopped recalculates estimates, not recorded usage.</p>
+        </details>
         <p><strong>@(selected.Count * repeats * 2) planned billable requests.</strong>
             Sequential pairs limit concurrency to two requests per session. No automatic retries.</p>
         <div class="actions">
@@ -42,13 +56,23 @@
     </section>
 
     <section class="cards" aria-label="Cumulative metrics">
-        @Totals("Generative / Microsoft.Extensions.AI", ChatResults)
-        @Totals("Microsoft-Decision-1 / native SDK", DecisionResults)
+        @Totals("Generative / Microsoft.Extensions.AI", ChatResults, ChatPricing)
+        @Totals("Microsoft-Decision-1 / native SDK", DecisionResults, DecisionPricing)
     </section>
+    @if (Run.Repetitions >= 10)
+    {
+        <LiveComparisonCharts Chat="@ComparisonMetrics.Series(Run.Results, true, ChatPricing)"
+            Decision="@ComparisonMetrics.Series(Run.Results, false, DecisionPricing)" PlannedPairs="@Run.PlannedPairs" />
+    }
+    else
+    {
+        <p>Choose 10 or more repetitions per question to show live token, time, cost and latency charts.</p>
+    }
     <aside>
         <strong>Read the numbers honestly.</strong> Decision SDK 0.6.3 exposes provider-reported token usage.
-        Missing fields remain not reported, not zero. Totals below include only reported successful responses;
-        failures or cancelled requests may still be billed. No total-cost or savings estimate.
+        If the provider omits total tokens but reports both input and output, the displayed total is their sum,
+        explicitly marked calculated. Missing components stay unknown, not zero. Usage includes only successful responses;
+        failures or cancelled requests may still be billed. Costs use only the rates you supply.
         Different tokenizers, schemas, models, warm-up, and reasoning defaults make this an illustration, not a benchmark.
         Aspire's Traces view contains correlated <code>comparison.pair</code> and GenAI spans.
         Prompt/response content recording is disabled.
@@ -58,7 +82,7 @@
         <h2>Live results</h2>
         <div class="table-scroll">
             <table>
-                <thead><tr><th>Pair / question</th><th>Model</th><th>Status / choice</th><th>Input</th><th>Output</th><th>Total</th><th>ms</th><th>Trace</th></tr></thead>
+                <thead><tr><th>Pair / question</th><th>Model</th><th>Status / choice</th><th>Input</th><th>Output</th><th>Total / source</th><th>ms</th><th>Trace</th></tr></thead>
                 <tbody>
                     @foreach (var pair in Run.Results.AsEnumerable().Reverse())
                     {
@@ -75,6 +99,9 @@
 @code {
     private readonly HashSet<DecisionQuestion> selected = [DecisionQuestion.Examples[0]];
     private int repeats = 1;
+    private decimal? chatInputRate, chatOutputRate, decisionInputRate, decisionOutputRate;
+    private ModelPricing ChatPricing => new(chatInputRate, chatOutputRate);
+    private ModelPricing DecisionPricing => new(decisionInputRate, decisionOutputRate);
     private string? validationError;
     private IEnumerable<ModelResult> ChatResults => Run.Results.Select(p => p.Chat).OfType<ModelResult>();
     private IEnumerable<ModelResult> DecisionResults => Run.Results.Select(p => p.Decision).OfType<ModelResult>();
@@ -88,6 +115,11 @@
     private async Task Start()
     {
         validationError = null;
+        if (new[] { chatInputRate, chatOutputRate, decisionInputRate, decisionOutputRate }.Any(rate => rate < 0))
+        {
+            validationError = "Pricing rates must be non-negative, or left blank for unknown.";
+            return;
+        }
         try { await Run.StartAsync(DecisionQuestion.Examples.Where(selected.Contains).ToArray(), repeats); }
         catch (ArgumentException ex) { validationError = ex.Message; }
     }
@@ -99,15 +131,19 @@
     private static string Tokens(long? value) =>
         value?.ToString("N0") ?? "not reported";
 
-    private RenderFragment Totals(string title, IEnumerable<ModelResult> source) => @<article>
+    private RenderFragment Totals(string title, IEnumerable<ModelResult> source, ModelPricing pricing) => @<article>
         <h2>@title</h2>
-        <p class="big-number">@Sum(source, r => r.TotalTokens) <small>reported total tokens</small></p>
+        <p class="big-number">@Sum(source, r => r.DisplayTokens)
+            <small>@(source.Any(r => r.Succeeded && r.HasCalculatedTotal) ? "total tokens (includes calculated input + output)" : "provider-reported total tokens")</small>
+        </p>
         <dl>
             <dt>Input / output</dt><dd>@Sum(source, r => r.InputTokens) / @Sum(source, r => r.OutputTokens)</dd>
             <dt>Responses with input / output usage</dt><dd>@source.Count(r => r.Succeeded && r.InputTokens.HasValue) / @source.Count(r => r.Succeeded && r.OutputTokens.HasValue) of @source.Count(r => r.Succeeded)</dd>
             <dt>Completed / failed / cancelled</dt><dd>@source.Count(r => r.Succeeded) / @source.Count(r => r.Status == "failed") / @source.Count(r => r.Status == "cancelled")</dd>
-            <dt>Responses with total usage</dt><dd>@source.Count(r => r.TotalTokens.HasValue) / @source.Count(r => r.Succeeded)</dd>
+            <dt>Total coverage: reported / calculated / unknown</dt><dd>@source.Count(r => r.Succeeded && r.TotalTokens.HasValue) / @source.Count(r => r.Succeeded && r.HasCalculatedTotal) / @source.Count(r => r.Succeeded && !r.DisplayTokens.HasValue)</dd>
             <dt>Mean successful latency</dt><dd>@MeanLatency(source)</dd>
+            <dt>Cumulative request time (all outcomes)</dt><dd>@source.Sum(r => r.ElapsedMs / 1000d).ToString("N2") s</dd>
+            <dt>Estimated successful cost (USD)</dt><dd>@Cost(source, pricing)</dd>
         </dl>
     </article>;
 
@@ -115,6 +151,13 @@
     {
         var values = source.Where(r => r.Succeeded).Select(selector).OfType<long>().ToArray();
         return values.Length == 0 ? "not reported" : values.Sum().ToString("N0");
+    }
+    private static string Cost(IEnumerable<ModelResult> source, ModelPricing pricing)
+    {
+        var results = source.Where(r => r.Succeeded).ToArray();
+        var values = results.Select(pricing.Estimate).ToArray();
+        return results.Length == 0 || values.Any(v => !v.HasValue) ? "not available" :
+            values.Sum(v => v!.Value).ToString("F6", System.Globalization.CultureInfo.InvariantCulture);
     }
     private static string MeanLatency(IEnumerable<ModelResult> source)
     {
@@ -129,7 +172,12 @@
         </td>
         <td>@(result is null ? "-" : Tokens(result.InputTokens))</td>
         <td>@(result is null ? "-" : Tokens(result.OutputTokens))</td>
-        <td>@(result is null ? "-" : Tokens(result.TotalTokens))</td>
+        <td>@(result is null ? "-" : Tokens(result.DisplayTokens))
+            @if (result?.DisplayTokens is not null)
+            {
+                <small>@(result.HasCalculatedTotal ? "calculated input + output" : "provider reported")</small>
+            }
+        </td>
         <td>@(result?.ElapsedMs.ToString("N0") ?? "-")</td>
         <td><code>@(result?.TraceId is { } id ? id[..8] : "-")</code></td>
     </tr>;

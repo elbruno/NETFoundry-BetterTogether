@@ -35,6 +35,7 @@ public sealed class ComparisonRunTests
         using var run = new ComparisonRun(new ImmediateModels());
         await run.StartAsync(DecisionQuestion.Examples.Take(2).ToArray(), 2);
         Assert.Equal(4, run.PlannedPairs);
+        Assert.Equal(2, run.Repetitions);
         Assert.Equal(4, run.Results.Count);
         Assert.Equal(48, run.Results.Sum(p => p.Chat!.TotalTokens));
         Assert.All(run.Results, p => Assert.Null(p.Decision!.InputTokens));

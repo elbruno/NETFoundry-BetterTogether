@@ -205,7 +205,8 @@ grant trademark rights.
 Locked restore and Release build passed. The graphical launch shows the player,
 enemies, gems and ground. A viewport mismatch was corrected: the logical
 1280-by-720 scene now matches the window, so the player at y=608 is visible.
-Nine offline/desktop checks passed, including gap/enemy approach geometry and
+Ten offline/desktop checks passed, including full-height background rendering,
+gap/enemy approach geometry and
 the actual jump latch. The initial provider check passed for both Foundry and
 Ollama with 20 accepted decisions each.
 The real level was completed by explicitly scripted manual controls in a test,
@@ -219,3 +220,10 @@ including jumps over the gap and enemies. No scripted action or safety override
 was used. This is observed completion of this teaching level, not guaranteed
 success or a benchmark. Ollama has not been reverified with the revised cues.
 Rehearse your physical keyboard/window focus and configuration before broadcasting.
+
+The original parallax artwork is 480 pixels tall. Layers now scale uniformly to
+the logical 720-pixel scene height and tile horizontally to cover its full width.
+This removes the black lower band without moving the player, tiles or collision
+geometry. Parallax uses world-camera coordinates independently of window scaling.
+The graphics-backed regression checks every pixel of a test layer at several
+scene sizes/camera offsets and checks the real level's lower background band.

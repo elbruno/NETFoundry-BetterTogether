@@ -9,6 +9,7 @@ using System.Text.Json;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Graphics;
 using Platformer2D.Core;
 using Platformer2D.Core.Inputs;
 using Platformer2D.Screens;
@@ -45,6 +46,49 @@ public sealed class DesktopCollection;
 [Collection("Desktop")]
 public sealed class DesktopGameplayTests(ITestOutputHelper output)
 {
+    [DesktopFact]
+    public void BackgroundCoversBottomAndWidthAtDifferentSceneSizesAndCameraPositions()
+    {
+        using var game = new Harness();
+        game.Boot();
+        using var batch = new SpriteBatch(game.GraphicsDevice);
+        using var texture = new Texture2D(game.GraphicsDevice, 800, 480);
+        var color = new Color(30, 120, 60);
+        texture.SetData(Enumerable.Repeat(color, 800 * 480).ToArray());
+        var layer = new Layer([texture], 0.2f);
+        foreach (var size in new[] { new Point(800, 480), new Point(1280, 720), new Point(1920, 720) })
+        {
+            using var target = new RenderTarget2D(game.GraphicsDevice, size.X, size.Y);
+            foreach (float camera in new[] { -80f, 0f, 500f, 1600f })
+            {
+                game.GraphicsDevice.SetRenderTarget(target);
+                game.GraphicsDevice.Clear(Color.Black);
+                batch.Begin();
+                layer.Draw(new GameTime(), batch, camera, size.ToVector2());
+                batch.End();
+                game.GraphicsDevice.SetRenderTarget(null);
+                var pixels = new Color[size.X * size.Y];
+                target.GetData(pixels);
+                Assert.All(pixels, pixel => Assert.Equal(color, pixel));
+            }
+        }
+        using var scene = new RenderTarget2D(game.GraphicsDevice, 1280, 720);
+        game.GraphicsDevice.SetRenderTarget(scene);
+        game.GraphicsDevice.Clear(Color.Black);
+        var manager = game.Components.OfType<ScreenManager>().Single();
+        game.Screen.DemoLevel.Draw(new GameTime(), manager.SpriteBatch);
+        game.GraphicsDevice.SetRenderTarget(null);
+        var scenePixels = new Color[1280 * 720];
+        scene.GetData(scenePixels);
+        int nonBlack = scenePixels.Skip(680 * 1280).Count(pixel => pixel != Color.Black);
+        Assert.True(nonBlack > 1280 * 40 * 0.95, "The actual level still has a black lower background band.");
+        if (Environment.GetEnvironmentVariable("PLATFORMER_RENDER_EVIDENCE") is { Length: > 0 } path)
+        {
+            using var stream = File.Create(path);
+            scene.SaveAsPng(stream, 1280, 720);
+        }
+    }
+
     [DesktopFact]
     public void RealLevelMovesJumpsPausesAndInvalidatesOldResponses()
     {
@@ -150,6 +194,10 @@ public sealed class DesktopGameplayTests(ITestOutputHelper output)
         game.Boot();
         var level = game.Screen.DemoLevel;
         level.Player.Position = new Vector2(834, 608);
+        var step = new GameTime(TimeSpan.Zero, ControlAction.StepDuration);
+        var controls = new InputState();
+        // Establish contact through physics instead of assuming the window's startup frames ran.
+        level.Player.Update(step, controls, DisplayOrientation.Default, movementOverride: 0, jumpOverride: false);
         level.Player.Velocity = new Vector2(180, 0);
         using (var state = JsonDocument.Parse(level.CaptureDecisionObservation()))
         {
@@ -172,8 +220,6 @@ public sealed class DesktopGameplayTests(ITestOutputHelper output)
             level.Player.Position = new Vector2(834, 608);
         }
 
-        var step = new GameTime(TimeSpan.Zero, ControlAction.StepDuration);
-        var controls = new InputState();
         level.Update(step, controls, DisplayOrientation.Default, movementOverride: 1, jumpOverride: true);
         using (var state = JsonDocument.Parse(level.CaptureDecisionObservation()))
         {

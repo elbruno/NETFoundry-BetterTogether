@@ -85,6 +85,24 @@ th { background: var(--cp-surface-soft); color: var(--cp-text-muted); }
 code { font-family: Consolas, "Courier New", Courier, monospace; }
 .error { color: var(--cp-danger); }
 .empty { padding: 24px; text-align: center; }
+.pricing { margin: 16px 0; padding: 16px; border: 1px solid var(--cp-border); border-radius: .625rem; }
+.pricing summary { cursor: pointer; font-weight: 600; }
+.pricing label { display: flex; align-items: center; justify-content: space-between; }
+.chart-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+.chart { margin: 0; padding: 16px; min-width: 0; }
+.chart h3 { margin: 0 0 12px; }
+.chart svg { width: 100%; height: auto; display: block; }
+.chart-axis { stroke: var(--cp-border-strong); stroke-width: 1; }
+.chart-label { fill: var(--cp-text-muted); font: 12px "Segoe UI", sans-serif; }
+.chart-line { fill: none; stroke-width: 3; }
+.chat-line { stroke: var(--cp-accent); }
+.decision-line { stroke: var(--cp-link); stroke-dasharray: 7 4; }
+.chat-dot { fill: var(--cp-accent); }
+.decision-dot { fill: var(--cp-link); }
+.chart-values { display: flex; flex-wrap: wrap; gap: 16px; font-variant-numeric: tabular-nums; }
+.chat-key { color: var(--cp-accent); }
+.decision-key { color: var(--cp-link); }
+.chart-note { font-size: .9rem; }
 a { color: var(--cp-link); }
 #blazor-error-ui { display: none; background: var(--cp-surface); color: var(--cp-danger); padding: 16px; position: fixed; bottom: 0; width: 100%; border-top: 1px solid var(--cp-border); }
-@media (max-width: 800px) { main { padding: 16px; } fieldset, .cards { grid-template-columns: 1fr; } }
+@media (max-width: 800px) { main { padding: 16px; } fieldset, .cards, .chart-grid { grid-template-columns: 1fr; } }

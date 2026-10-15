@@ -31,4 +31,7 @@ public sealed record ModelResult(
     string? Error = null, string? TraceId = null)
 {
     public bool Succeeded => Status == "completed";
+    public long? DisplayTokens => TotalTokens ??
+        (InputTokens.HasValue && OutputTokens.HasValue ? checked(InputTokens.Value + OutputTokens.Value) : null);
+    public bool HasCalculatedTotal => !TotalTokens.HasValue && InputTokens.HasValue && OutputTokens.HasValue;
 }

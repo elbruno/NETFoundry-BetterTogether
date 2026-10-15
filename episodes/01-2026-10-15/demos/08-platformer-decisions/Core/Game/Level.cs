@@ -849,14 +849,11 @@ namespace Platformer2D.Core
             // Create a camera transformation matrix to simulate parallax scrolling.
             Matrix cameraTransform = Matrix.CreateTranslation(-cameraPosition, 0.0f, 0.0f);
 
-            // Get the global transformation scale for consistent rendering across resolutions.
-            float transformScale = screenManager.GlobalTransformation.M11;
-
             // Draw background layers (layers behind entities).
             for (int i = 0; i <= EntityLayer; ++i)
             {
                 spriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, null, null, screenManager.GlobalTransformation);
-                layers[i].Draw(gameTime, spriteBatch, cameraPosition / transformScale);
+                layers[i].Draw(gameTime, spriteBatch, cameraPosition, screenManager.BaseScreenSize);
                 spriteBatch.End();
             }
 
@@ -894,7 +891,7 @@ namespace Platformer2D.Core
             for (int i = EntityLayer + 1; i < layers.Length; ++i)
             {
                 spriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, null, null, screenManager.GlobalTransformation);
-                layers[i].Draw(gameTime, spriteBatch, cameraPosition / transformScale);
+                layers[i].Draw(gameTime, spriteBatch, cameraPosition, screenManager.BaseScreenSize);
                 spriteBatch.End();
             }
 
