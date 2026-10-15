@@ -4,7 +4,7 @@
 
 What can you build with .NET and Microsoft Foundry? Join **[Bruno Capuano](https://aka.ms/elbruno) and guests** for practical explorations of new SDK capabilities, the latest Foundry features and services, and building AI applications with C#.
 
-Live on the [.NET YouTube channel](https://www.youtube.com/@dotnet) and [Microsoft Reactor](https://www.youtube.com/channel/UCkm6luGCS3hD25jcEhvRMIA).
+Live on the [.NET YouTube channel](https://www.youtube.com/@dotnet/streams) and [Microsoft Reactor](https://www.youtube.com/@MicrosoftReactor/streams).
 
 **Repository:** [aka.ms/netfoundry-bt](https://aka.ms/netfoundry-bt)
 
@@ -31,6 +31,7 @@ Materials are organized by episode number and date under `episodes/`. Each episo
 
 Episode 1 also includes a [graphical Decision Space Game finale](episodes/01-2026-10-15/demos/09-space-game-monogame/README.md):
 play manually without credentials, then explicitly hand control to Foundry or Ollama.
+[Version 02](episodes/01-2026-10-15/demos/10-space-game-monogame-v02/README.md) keeps those rules and uses a larger streaming layout with light and dark themes.
 
 ## Contributing
 

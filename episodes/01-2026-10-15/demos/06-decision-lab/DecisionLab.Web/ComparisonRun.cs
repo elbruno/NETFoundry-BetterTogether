@@ -10,6 +10,7 @@ namespace DecisionLab.Web;
 
 public sealed class ComparisonRun(IModelComparison models) : IDisposable
 {
+    public const int MaxRepetitions = 100;
     private CancellationTokenSource? cancellation;
     public bool IsRunning { get; private set; }
     public List<ComparisonPair> Results { get; } = [];
@@ -20,8 +21,8 @@ public sealed class ComparisonRun(IModelComparison models) : IDisposable
     public async Task StartAsync(IReadOnlyList<DecisionQuestion> questions, int repeats)
     {
         if (IsRunning) throw new InvalidOperationException("A run is already active.");
-        if (questions.Count == 0 || repeats is < 1 or > 20)
-            throw new ArgumentException("Choose at least one question and 1-20 repetitions.");
+        if (questions.Count == 0 || repeats is < 1 or > MaxRepetitions)
+            throw new ArgumentException($"Choose at least one question and 1-{MaxRepetitions} repetitions.");
         cancellation?.Dispose();
         cancellation = new CancellationTokenSource();
         var token = cancellation.Token;

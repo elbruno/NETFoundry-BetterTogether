@@ -93,7 +93,8 @@ authorization, per-user quotas, and operational controls.
 ## Run a comparison
 
 1. Select one or more predefined questions. Start with duplicate charge.
-2. Choose **1-20 repetitions per selected question**, default 1.
+2. Choose **1-100 repetitions per selected question**, default 1. Values outside
+   that range show a validation message; the server enforces the same limit.
 3. Review the displayed planned request count, then click **Start comparison**.
 4. Watch both rows update as their responses arrive, not only at the end.
 5. Click **Stop run** to cancel in-flight requests and prevent the next pair.
@@ -121,11 +122,15 @@ responses. Missing data is not plotted as zero. Cumulative request time includes
 all returned outcomes and sums each model's client-observed call durations;
 it is not run wall time, since models run in parallel. Each chart uses the same
 scale for both models. A new run resets chart history along with the table.
+The table renders at most 50 pairs per page. Use **Older results** and
+**Newer results** to inspect the rest; totals and charts always include all pairs.
 
 Each pair starts chat and decision calls together with `Task.WhenAll`. The next
 pair waits for both outcomes, keeping at most **two model requests in flight per
-browser circuit**. Four questions times 20 repetitions means at most 80 pairs,
-160 planned requests per run. There is a short cancellable inter-pair delay,
+browser circuit**. Four questions times 100 repetitions means at most 400 pairs,
+800 planned requests per run. Review the displayed request count before
+starting: larger runs take longer and can incur higher charges.
+There is a short cancellable inter-pair delay,
 90-second request deadline, and no automatic inference retries. Different tabs
 have independent state and can make additional calls.
 
@@ -216,6 +221,11 @@ both real models: each chart advanced during the run and ended with 10 points
 per model. Native usage was 670 input / 10 output, displayed as 680 calculated
 tokens. Chart costs used explicit demonstration rates, not verified deployment
 prices. No price or performance benchmark is claimed.
+The higher repetition limit was verified with 25 completed duplicate-charge
+pairs against both real models, with no failed calls and 25 points per model
+in the usage/time/latency charts. Separate offline checks complete the full
+400-pair limit, assert at most two concurrent calls, and render all 400 points
+per model. The cost chart stays unavailable when no pricing is supplied.
 
 Every started provider request can consume quota/incur charges, even if cancelled.
 Stop in the page first, then stop the app:

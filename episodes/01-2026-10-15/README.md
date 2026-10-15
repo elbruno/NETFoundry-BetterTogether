@@ -13,12 +13,21 @@ workflows, and finish by watching a model choose actions in games. The console
 space game is the main finale; a graphical platformer and MonoGame space game
 are optional extensions.
 
+![Decision flow illustration: a .NET application observes a game, support ticket, or answer; presents bounded choices; validates the selected action; and applies it.](assets/decision-flow.png)
+
 Decision models return bounded, typed results for the choices your application
 defines; they don't write a free-form answer or explanation. In these examples,
 application code remains in control: it validates results and applies game
 actions. Model scores and probabilities are useful signals, not guarantees of
 correctness. The .NET decision samples use the community
 `ElBruno.AI.Decisions` SDK, not an official Microsoft SDK.
+
+## Official Microsoft resources
+
+- [Microsoft-Decision-1: Our model for fast decision-making](https://commandline.microsoft.com/microsoft-decision-1-model-foundry/)
+- [Deploy and use Microsoft-Decision-1 in Microsoft Foundry - Microsoft Foundry | Microsoft Learn](https://learn.microsoft.com/en-us/azure/foundry/foundry-models/how-to/use-foundry-models-microsoft-decision)
+- [Microsoft models sold by Azure in the Foundry catalog](https://learn.microsoft.com/en-us/azure/foundry/foundry-models/concepts/models-sold-directly-by-azure#microsoft-models-sold-by-azure): model details and availability.
+- [Understand Microsoft Foundry model deployment types](https://learn.microsoft.com/en-us/azure/foundry/foundry-models/concepts/deployment-types): deployment options and where inference is processed.
 
 ## Recording
 
@@ -37,8 +46,9 @@ Recommended learning order (folder numbers now match the walkthrough):
 7. [Decision Space Game](demos/07-decision-space-game/README.md): apply decisions in a running simulation.
 8. [Platformer decisions](demos/08-platformer-decisions/README.md): optional graphical extension with live game-state observations, fixed-step movement/jump controls, and asynchronous Foundry or Ollama decisions.
 9. [Decision Space Game: graphical finale](demos/09-space-game-monogame/README.md): MonoGame welcome screen, generated spaceship art, manual play, and explicit Foundry/Ollama takeover using the console game's rules.
+10. [Decision Space Game v02](demos/10-space-game-monogame-v02/README.md): the same rules and decisions, with a light/dark streaming layout, larger smooth ships, and a larger font. Demo 09 stays unchanged.
 
-The original walkthrough remains demos 01 through 07. Demos 08 and 09 are optional
+The original walkthrough remains demos 01 through 07. Demos 08, 09 and 10 are optional
 extensions, not replacements or renumberings of the existing game.
 
 ## What we'll explore
@@ -54,13 +64,6 @@ extensions, not replacements or renumberings of the existing game.
   console space game, with optional graphical platformer and MonoGame extensions.
 - **Keep software in control:** the application owns game rules, movement,
   action validation, and whether a model suggestion is applied.
-
-## Official Microsoft resources
-
-- [Microsoft-Decision-1: our model for fast decision-making](https://commandline.microsoft.com/microsoft-decision-1-model-foundry/): Microsoft’s announcement of the model and decision models.
-- [Deploy and use Microsoft-Decision-1 in Microsoft Foundry](https://learn.microsoft.com/en-us/azure/foundry/foundry-models/how-to/use-foundry-models-microsoft-decision): deployment guide, native decision API, question types, and a classification example.
-- [Microsoft models sold by Azure in the Foundry catalog](https://learn.microsoft.com/en-us/azure/foundry/foundry-models/concepts/models-sold-directly-by-azure#microsoft-models-sold-by-azure): model details and availability.
-- [Understand Microsoft Foundry model deployment types](https://learn.microsoft.com/en-us/azure/foundry/foundry-models/concepts/deployment-types): deployment options and where inference is processed.
 
 Existing project names and user-secrets IDs are unchanged; the new Ollama sample
 has its own ID. Update local working-directory shortcuts to the new paths.
@@ -88,7 +91,7 @@ pwsh -File .\Setup-UserSecrets.ps1
 
 [Setup-UserSecrets.ps1](Setup-UserSecrets.ps1) discovers runnable sample projects,
 prompts once for the Foundry resource root and deployment name, and imports
-configuration into the eight Foundry apps' separate user-secrets stores. Nine
+configuration into the nine Foundry apps' separate user-secrets stores. Ten
 runnable apps are discovered in total, including local-only demo 02.
 The helper excludes Aspire AppHost/ServiceDefaults and test projects. It also
 asks for a generative deployment on that same resource for demos 03 and 06.
@@ -98,7 +101,7 @@ identity (the default) or enter a key through hidden input. Identity mode remove
 any stored `Foundry:ApiKey` so a stale key cannot override identity authentication.
 Run `az login` separately and ensure your identity has deployment access.
 
-Optional Ollama prompts configure demo 02 and the O modes in demos 07, 08 and 09.
+Optional Ollama prompts configure demo 02 and the O modes in demos 07, 08, 09 and 10.
 Press Enter at the model prompt to accept `nimble`, or type another compatible
 installed decision model name.
 Demo 02 remains local-only, without Foundry values or keys.

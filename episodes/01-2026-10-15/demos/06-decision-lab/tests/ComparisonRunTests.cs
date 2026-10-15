@@ -75,7 +75,7 @@ public sealed class ComparisonRunTests
     [Theory]
     [InlineData(0)]
     [InlineData(-1)]
-    [InlineData(21)]
+    [InlineData(ComparisonRun.MaxRepetitions + 1)]
     public async Task RejectsOutOfRangeRepeatsWithoutCallingModels(int repeats)
     {
         var fake = new ControlledModels();
@@ -107,6 +107,68 @@ public sealed class ComparisonRunTests
         Assert.False(pair.Chat.Succeeded);
         Assert.Null(pair.Chat.TotalTokens);
         Assert.True(pair.Decision!.Succeeded);
+    }
+
+    [Fact]
+    public async Task SupportsMaximumRepetitionsWithBoundedParallelismAndCompleteCharts()
+    {
+        var models = new CountingModels();
+        using var run = new ComparisonRun(models);
+        await run.StartAsync(DecisionQuestion.Examples, ComparisonRun.MaxRepetitions);
+
+        int expected = DecisionQuestion.Examples.Count * ComparisonRun.MaxRepetitions;
+        Assert.False(run.IsRunning);
+        Assert.Equal(expected, run.PlannedPairs);
+        Assert.Equal(expected, run.Results.Count);
+        Assert.Equal(expected * 2, models.Calls);
+        Assert.Equal(2, models.MaximumConcurrent);
+        Assert.All(run.Results, pair =>
+        {
+            Assert.True(pair.Chat!.Succeeded);
+            Assert.True(pair.Decision!.Succeeded);
+        });
+        var points = ComparisonMetrics.Series(run.Results, true, new ModelPricing(1, 2));
+        Assert.Equal(expected, points.Count);
+        Assert.Equal(expected * 12, points[^1].Tokens);
+        Assert.Equal(expected, points[^1].Pair);
+    }
+
+    private sealed class CountingModels : IModelComparison
+    {
+        public int Calls { get; private set; }
+        public int MaximumConcurrent { get; private set; }
+        private int active;
+        private readonly object gate = new();
+        private TaskCompletionSource bothStarted = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        public Task<ModelResult> ChatAsync(DecisionQuestion q, CancellationToken token) => Call(token);
+        public Task<ModelResult> DecideAsync(DecisionQuestion q, CancellationToken token) => Call(token);
+
+        private async Task<ModelResult> Call(CancellationToken token)
+        {
+            Task ready;
+            lock (gate)
+            {
+                Calls++;
+                active++;
+                MaximumConcurrent = Math.Max(MaximumConcurrent, active);
+                ready = bothStarted.Task;
+                if (active == 2) bothStarted.SetResult();
+            }
+            try
+            {
+                await ready.WaitAsync(token);
+                return new ModelResult("completed", "billing", 10, 10, 2, 12);
+            }
+            finally
+            {
+                lock (gate)
+                {
+                    if (--active == 0)
+                        bothStarted = new(TaskCreationOptions.RunContinuationsAsynchronously);
+                }
+            }
+        }
     }
 
     private sealed class ImmediateModels : IModelComparison

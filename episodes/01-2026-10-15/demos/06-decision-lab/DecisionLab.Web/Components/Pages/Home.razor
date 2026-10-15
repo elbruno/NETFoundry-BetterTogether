@@ -25,8 +25,8 @@
                     <span><strong>@question.Title</strong><small>@question.Message</small></span>
                 </label>
             }
-            <label class="repetitions">Repetitions per selected question (1-20)
-                <input type="number" min="1" max="20" @bind="repeats" />
+            <label class="repetitions">Repetitions per selected question (1-@ComparisonRun.MaxRepetitions)
+                <input type="number" min="1" max="@ComparisonRun.MaxRepetitions" @bind="repeats" @bind:event="oninput" />
             </label>
         </fieldset>
         <details class="pricing">
@@ -46,12 +46,16 @@
         <p><strong>@(selected.Count * repeats * 2) planned billable requests.</strong>
             Sequential pairs limit concurrency to two requests per session. No automatic retries.</p>
         <div class="actions">
-            <button @onclick="Start" disabled="@(Run.IsRunning || selected.Count == 0 || repeats is < 1 or > 20)">Start comparison</button>
+            <button @onclick="Start" disabled="@(Run.IsRunning || selected.Count == 0 || repeats is < 1 or > ComparisonRun.MaxRepetitions)">Start comparison</button>
             <button class="secondary" @onclick="Run.Stop" disabled="@(!Run.IsRunning)">Stop run</button>
             <span role="status" aria-live="polite">
                 @(Run.IsRunning ? "Running" : "Stopped") / @CompletedPairs of @Run.PlannedPairs pairs finished
             </span>
         </div>
+        @if (repeats is < 1 or > ComparisonRun.MaxRepetitions)
+        {
+            <p role="alert" class="error">Choose between 1 and @ComparisonRun.MaxRepetitions repetitions per question.</p>
+        }
         @if (validationError is not null) { <p role="alert" class="error">@validationError</p> }
     </section>
 
@@ -80,11 +84,19 @@
 
     <section aria-label="Live results">
         <h2>Live results</h2>
+        @if (Run.Results.Count > VisiblePairs)
+        {
+            <p>Showing pairs @FirstVisiblePair-@LastVisiblePair of @Run.Results.Count.
+                Totals and charts include the entire run.</p>
+            <button class="secondary" @onclick="() => resultsPage--" disabled="@(resultsPage == 0)">Newer results</button>
+            <button class="secondary" @onclick="() => resultsPage++"
+                disabled="@((resultsPage + 1) * VisiblePairs >= Run.Results.Count)">Older results</button>
+        }
         <div class="table-scroll">
             <table>
                 <thead><tr><th>Pair / question</th><th>Model</th><th>Status / choice</th><th>Input</th><th>Output</th><th>Total / source</th><th>ms</th><th>Trace</th></tr></thead>
                 <tbody>
-                    @foreach (var pair in Run.Results.AsEnumerable().Reverse())
+                    @foreach (var pair in Run.Results.AsEnumerable().Reverse().Skip(resultsPage * VisiblePairs).Take(VisiblePairs))
                     {
                         @ResultRow(pair, "Generative", pair.Chat)
                         @ResultRow(pair, "Decision", pair.Decision)
@@ -98,6 +110,10 @@
 
 @code {
     private readonly HashSet<DecisionQuestion> selected = [DecisionQuestion.Examples[0]];
+    private const int VisiblePairs = 50;
+    private int resultsPage;
+    private int FirstVisiblePair => Math.Max(1, LastVisiblePair - VisiblePairs + 1);
+    private int LastVisiblePair => Run.Results.Count - resultsPage * VisiblePairs;
     private int repeats = 1;
     private decimal? chatInputRate, chatOutputRate, decisionInputRate, decisionOutputRate;
     private ModelPricing ChatPricing => new(chatInputRate, chatOutputRate);
@@ -120,6 +136,7 @@
             validationError = "Pricing rates must be non-negative, or left blank for unknown.";
             return;
         }
+        resultsPage = 0;
         try { await Run.StartAsync(DecisionQuestion.Examples.Where(selected.Contains).ToArray(), repeats); }
         catch (ArgumentException ex) { validationError = ex.Message; }
     }

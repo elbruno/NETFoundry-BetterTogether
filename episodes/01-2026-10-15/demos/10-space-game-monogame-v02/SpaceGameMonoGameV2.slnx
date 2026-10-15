@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="SpaceGameMonoGameV2.csproj" />
+  <Project Path="tests\SpaceGameMonoGameV2.Tests.csproj" />
+</Solution>

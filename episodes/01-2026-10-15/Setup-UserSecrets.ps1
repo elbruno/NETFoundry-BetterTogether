@@ -123,7 +123,7 @@ try {
         $keyPointer = [Runtime.InteropServices.Marshal]::SecureStringToBSTR($secureKey)
         $values['Foundry:ApiKey'] = [Runtime.InteropServices.Marshal]::PtrToStringBSTR($keyPointer)
     }
-    $local = (Read-Host 'Also configure local Ollama for demos 02, 07, 08 and 09 (games)? [y/N]').Trim()
+    $local = (Read-Host 'Also configure local Ollama for demos 02, 07, 08, 09 and 10 (games)? [y/N]').Trim()
     $ollama = $null
     if ($local -in @('y', 'yes')) {
         $ollama = @{
@@ -145,7 +145,7 @@ try {
             $projectValues['Foundry:GenerativeModel'] = $generativeModel
         }
         if ($null -ne $ollama -and ($localOnly -or
-            $project.Name -in @('DecisionSpaceGame.csproj', 'Platformer2D.csproj', 'SpaceGameMonoGame.csproj'))) {
+            $project.Name -in @('DecisionSpaceGame.csproj', 'Platformer2D.csproj', 'SpaceGameMonoGame.csproj', 'SpaceGameMonoGameV2.csproj'))) {
             foreach ($entry in $ollama.GetEnumerator()) { $projectValues[$entry.Key] = $entry.Value }
         }
         $json = $projectValues | ConvertTo-Json -Compress
