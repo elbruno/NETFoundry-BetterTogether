@@ -7,10 +7,25 @@ import { statusFor } from '../src/scripts/site.mjs';
 test('all four public episode guides load, with ten existing demos in the first', () => {
   assert.equal(episodes.length, 4);
   assert.equal(episodes[0].demos.length, 10);
-  assert.equal(episodes[0].recording, null);
+  assert.equal(episodes[0].recording, 'https://www.youtube.com/watch?v=mHrs-JHdPaY');
+  assert.deepEqual(episodes[0].recordings, [
+    { title: 'Watch on the .NET Channel', url: 'https://www.youtube.com/watch?v=mHrs-JHdPaY' },
+    { title: 'Watch on Microsoft Reactor', url: 'https://www.youtube.com/watch?v=n2CL10iTjp0' },
+  ]);
   assert.match(episodes[0].html, /github.com\/elbruno\/NETFoundry-BetterTogether\/blob\/main\/episodes\/01-2026-10-15\/demos\/01-hello-decisions\/README.md/);
   assert.match(episodes[0].html, /github.com\/elbruno\/NETFoundry-BetterTogether\/blob\/main\/README.md/);
   assert.doesNotMatch(episodes[0].html, /href="demos\//);
+});
+
+test('Episode 1 credits both hosts and links guest labs without mixing them into local demos', () => {
+  assert.deepEqual(episodes[0].hosts, [
+    { title: 'Bruno Capuano', url: 'https://aka.ms/elbruno' },
+    { title: 'Pablo Piovano', url: 'https://www.linkedin.com/in/ppiova/' },
+  ]);
+  assert.equal(episodes[0].guestResources.length, 3);
+  assert.equal(episodes[0].guestResources[0].url, 'https://github.com/ppiova/foundry-field-notes-labs');
+  assert.deepEqual(episodes[1].hosts, []);
+  assert.deepEqual(episodes[1].recordings, []);
 });
 
 test('Episode 1 covers Microsoft-Decision-1, decision models, games, and official Microsoft links', () => {
@@ -41,10 +56,14 @@ test('recordings are derived only from the Recording section, not unrelated YouT
   assert.equal(parseEpisode(metadata, source.replace('[Watch](https://www.youtube.com/watch?v=confirmed-id)', 'Not available.')).recording, null);
   assert.throws(() => parseEpisode(metadata, source.replace('watch?v=confirmed-id', '@dotnet')), /confirmed YouTube/);
   assert.equal(parseEpisode(metadata, source.replace('https://www.youtube.com/watch?v=confirmed-id', 'https://youtu.be/confirmed-id')).recording, 'https://youtu.be/confirmed-id');
+  const both = source.replace('## Demos and resources', '[Watch on Reactor](https://youtu.be/reactor-id)\n\n## Demos and resources');
+  assert.equal(parseEpisode(metadata, both).recordings.length, 2);
+  assert.throws(() => parseEpisode(metadata, both.replace('https://youtu.be/reactor-id', 'https://www.youtube.com/@MicrosoftReactor')), /confirmed YouTube/);
+  assert.throws(() => parseEpisode(metadata, both.replace('https://youtu.be/reactor-id', 'not-a-url')), /invalid recording URL/);
 });
 
 test('browser and build status transitions agree at exact session boundaries', () => {
-  const episode = episodes[0];
+  const episode = { ...episodes[0], recording: null };
   for (const [now, expected] of [
     ['2026-10-15T15:59:59Z', 'upcoming'],
     [episode.start, 'live'],
@@ -54,6 +73,7 @@ test('browser and build status transitions agree at exact session boundaries', (
     assert.equal(statusFor(episode.start, episode.end, null, Date.parse(now)), expected);
   }
   assert.equal(statusFor(episode.start, episode.end, 'https://youtu.be/confirmed', 0), 'recorded');
+  assert.equal(episodeStatus(episodes[0]), 'recorded');
 });
 
 test('calendar downloads use UTC and handle November daylight saving changes', () => {

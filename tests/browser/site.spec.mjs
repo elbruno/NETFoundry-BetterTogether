@@ -5,7 +5,7 @@ test('homepage links, public resources, images, and no runtime errors', async ({
   page.on('pageerror', (error) => errors.push(error.message));
   await page.goto('./');
   await expect(page.locator('h1')).toContainText('Better Together');
-  await expect(page.getByRole('link', { name: 'Bruno Capuano', exact: true })).toHaveAttribute('href', 'https://aka.ms/elbruno');
+  await expect(page.locator('.hero-copy').getByRole('link', { name: 'Bruno Capuano', exact: true })).toHaveAttribute('href', 'https://aka.ms/elbruno');
   await expect(page.getByText(/and guests for live explorations/)).toBeVisible();
   await expect(page.getByRole('link', { name: /Register for the series/ })).toHaveAttribute('href', 'https://developer.microsoft.com/en-us/reactor/series/S-1718/');
   await expect(page.locator('[data-episode]')).toHaveCount(4);
@@ -32,31 +32,36 @@ test('system theme follows OS changes, explicit choices survive reload', async (
 });
 
 test('status filters and spotlight use the actual session window', async ({ page }) => {
-  await page.clock.install({ time: new Date('2026-10-15T15:00:00Z') });
+  await page.clock.install({ time: new Date('2026-10-29T15:00:00Z') });
   await page.goto('./');
   await expect(page.locator('#spotlight')).toBeVisible();
-  await expect(page.locator('#spotlight-title')).toContainText('Episode 1');
+  await expect(page.locator('#spotlight-title')).toContainText('Episode 2');
   await page.getByRole('button', { name: 'Recorded', exact: true }).click();
-  await expect(page.locator('[data-episode]:visible')).toHaveCount(0);
-  await expect(page.locator('#empty-state')).toBeVisible();
+  await expect(page.locator('[data-episode]:visible')).toHaveCount(1);
+  await expect(page.locator('#empty-state')).toBeHidden();
   await page.getByRole('button', { name: 'Upcoming', exact: true }).click();
-  await expect(page.locator('[data-episode]:visible')).toHaveCount(4);
-  await page.clock.setSystemTime(new Date('2026-10-15T16:30:00Z'));
+  await expect(page.locator('[data-episode]:visible')).toHaveCount(3);
+  await page.clock.setSystemTime(new Date('2026-10-29T16:30:00Z'));
   await page.clock.runFor(30_000);
   await expect(page.locator('#spotlight-label')).toHaveText('LIVE NOW');
-  await page.clock.setSystemTime(new Date('2026-10-15T17:01:00Z'));
+  await page.clock.setSystemTime(new Date('2026-10-29T17:01:00Z'));
   await page.clock.runFor(30_000);
-  await expect(page.locator('#spotlight-title')).toContainText('Episode 2');
+  await expect(page.locator('#spotlight-title')).toContainText('Episode 3');
   await page.getByRole('button', { name: 'All episodes' }).click();
-  await expect(page.locator('[data-episode]').first().locator('[data-status]')).toHaveText('Recording pending');
+  await expect(page.locator('[data-episode]').first().locator('[data-status]')).toHaveText('Recording available');
+  await expect(page.locator('[data-episode]').nth(1).locator('[data-status]')).toHaveText('Recording pending');
+  await page.clock.setSystemTime(new Date('2026-12-04T18:00:00Z'));
+  await page.getByRole('button', { name: 'Upcoming', exact: true }).click();
+  await expect(page.locator('[data-episode]:visible')).toHaveCount(0);
+  await expect(page.locator('#empty-state')).toBeVisible();
 });
 
 test('episode guides render demos and working internal navigation', async ({ page, request }) => {
   await page.goto('episodes/01-2026-10-15/');
-  await expect(page.locator('.episode-sidebar nav a')).toHaveCount(9);
+  await expect(page.getByRole('navigation', { name: 'Episode demos' }).locator('a')).toHaveCount(10);
   await expect(page.locator('.prose h2').filter({ hasText: 'Overview' })).toBeVisible();
   await expect(page.locator('.prose h2').filter({ hasText: "What we'll explore" })).toBeVisible();
-  await expect(page.getByRole('link', { name: /Microsoft-Decision-1: our model for fast decision-making/ })).toHaveAttribute('href', 'https://commandline.microsoft.com/microsoft-decision-1-model-foundry/');
+  await expect(page.getByRole('link', { name: /Microsoft-Decision-1: our model for fast decision-making/i })).toHaveAttribute('href', 'https://commandline.microsoft.com/microsoft-decision-1-model-foundry/');
   await expect(page.getByRole('link', { name: /Deploy and use Microsoft-Decision-1 in Microsoft Foundry/ })).toHaveAttribute('href', 'https://learn.microsoft.com/en-us/azure/foundry/foundry-models/how-to/use-foundry-models-microsoft-decision');
   await expect(page.locator('.episode-topic-list')).toContainText('Decision models');
   await expect(page.locator('.copy-button').first()).toBeVisible();
@@ -67,6 +72,23 @@ test('episode guides render demos and working internal navigation', async ({ pag
   await page.getByRole('link', { name: 'Episode 2', exact: false }).last().click();
   await expect(page).toHaveURL(/episodes\/02-2026-10-29\/$/);
   await expect(page.getByText('Demos will be added when available.')).toBeVisible();
+});
+
+test('completed episode shows both channel recordings, co-host, and guest resources', async ({ page }) => {
+  await page.goto('./');
+  const card = page.locator('[data-episode]').first();
+  await expect(card.getByRole('link', { name: 'Pablo Piovano' })).toHaveAttribute('href', 'https://www.linkedin.com/in/ppiova/');
+  await expect(card.getByRole('link', { name: /Watch on the .NET Channel/ })).toHaveAttribute('href', 'https://www.youtube.com/watch?v=mHrs-JHdPaY');
+  await expect(card.getByRole('link', { name: /Watch on Microsoft Reactor/ })).toHaveAttribute('href', 'https://www.youtube.com/watch?v=n2CL10iTjp0');
+  await page.goto('episodes/01-2026-10-15/');
+  const header = page.locator('.episode-heading');
+  await expect(header.getByRole('link', { name: 'Pablo Piovano' })).toHaveAttribute('href', 'https://www.linkedin.com/in/ppiova/');
+  await expect(header.getByRole('link', { name: /Watch on the .NET Channel/ })).toHaveAttribute('href', 'https://www.youtube.com/watch?v=mHrs-JHdPaY');
+  await expect(header.getByRole('link', { name: /Watch on Microsoft Reactor/ })).toHaveAttribute('href', 'https://www.youtube.com/watch?v=n2CL10iTjp0');
+  await expect(header.getByRole('link', { name: 'Add to calendar' })).toHaveCount(0);
+  await expect(page.getByRole('navigation', { name: 'Guest resources' }).getByRole('link', { name: /Foundry Field Notes labs/ })).toHaveAttribute('href', 'https://github.com/ppiova/foundry-field-notes-labs');
+  await expect(page.getByRole('navigation', { name: 'Guest resources' }).locator('a')).toHaveCount(3);
+  await expect(page.getByText('Recording not yet available.', { exact: false })).toHaveCount(0);
 });
 
 test('mobile layout has no horizontal overflow on homepage or guide', async ({ page }) => {

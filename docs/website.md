@@ -17,6 +17,15 @@ No private repository is needed to build it.
   replacing the example with the actual watch URL. Do not add the placeholder.
   A channel homepage is not a recording. Keep the unavailable message until
   a real recording is confirmed.
+- Add each confirmed replay under `## Recording` with its channel-specific label,
+  for example `Watch on the .NET Channel` and `Watch on Microsoft Reactor`.
+  Both appear on the homepage card and episode header. Put the .NET link first
+  as the primary replay. Only direct HTTPS YouTube watch links are accepted;
+  every link in this section is validated, not just the first.
+- Optional `## Hosts` and `## Guest demos and resources` sections supply linked
+  host bylines and the guest-resource sidebar. Keep guest repositories external,
+  with their own prerequisites and setup instructions. Do not imply every
+  available guest lab was demonstrated unless that is confirmed.
 - Add or update schedule entries in `src/lib/episodes.mjs`. Dates and event
   links must be checked against Reactor. Store timestamps in UTC, accounting
   for daylight saving time. Topics must not be invented for future episodes.

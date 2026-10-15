@@ -14,12 +14,12 @@ Live on the [.NET YouTube channel](https://www.youtube.com/@dotnet/streams) and 
 
 All sessions run **12:00-1:00 PM Eastern Time**. UTC times below account for the daylight saving time change in November.
 
-| Episode | Date | UTC | Event and registration | Materials |
-| --- | --- | --- | --- | --- |
-| 1 | October 15, 2026 | 16:00-17:00 | [Episode 1](https://developer.microsoft.com/en-us/reactor/events/27630/) | [Episode folder](episodes/01-2026-10-15/README.md) |
-| 2 | October 29, 2026 | 16:00-17:00 | [Episode 2](https://developer.microsoft.com/en-us/reactor/events/27631/) | [Episode folder](episodes/02-2026-10-29/README.md) |
-| 3 | November 12, 2026 | 17:00-18:00 | [Episode 3](https://developer.microsoft.com/en-us/reactor/events/27632/) | [Episode folder](episodes/03-2026-11-12/README.md) |
-| 4 | December 3, 2026 | 17:00-18:00 | [Episode 4](https://developer.microsoft.com/en-us/reactor/events/27634/) | [Episode folder](episodes/04-2026-12-03/README.md) |
+| Episode | Date | UTC | Event and registration | Materials | Recordings |
+| --- | --- | --- | --- | --- | --- |
+| 1 | October 15, 2026 | 16:00-17:00 | [Episode 1](https://developer.microsoft.com/en-us/reactor/events/27630/) | [Episode folder](episodes/01-2026-10-15/README.md) | [.NET](https://www.youtube.com/watch?v=mHrs-JHdPaY) / [Reactor](https://www.youtube.com/watch?v=n2CL10iTjp0) |
+| 2 | October 29, 2026 | 16:00-17:00 | [Episode 2](https://developer.microsoft.com/en-us/reactor/events/27631/) | [Episode folder](episodes/02-2026-10-29/README.md) | Not yet available |
+| 3 | November 12, 2026 | 17:00-18:00 | [Episode 3](https://developer.microsoft.com/en-us/reactor/events/27632/) | [Episode folder](episodes/03-2026-11-12/README.md) | Not yet available |
+| 4 | December 3, 2026 | 17:00-18:00 | [Episode 4](https://developer.microsoft.com/en-us/reactor/events/27634/) | [Episode folder](episodes/04-2026-12-03/README.md) | Not yet available |
 
 Each episode explores the latest .NET and Foundry updates, with live demos and code. Specific topics will be shared closer to each session.
 
@@ -32,6 +32,11 @@ Materials are organized by episode number and date under `episodes/`. Each episo
 Episode 1 also includes a [graphical Decision Space Game finale](episodes/01-2026-10-15/demos/09-space-game-monogame/README.md):
 play manually without credentials, then explicitly hand control to Foundry or Ollama.
 [Version 02](episodes/01-2026-10-15/demos/10-space-game-monogame-v02/README.md) keeps those rules and uses a larger streaming layout with light and dark themes.
+
+Episode 1 was co-hosted by [Pablo Piovano](https://www.linkedin.com/in/ppiova/),
+who shared demos from [Foundry Field Notes labs](https://github.com/ppiova/foundry-field-notes-labs).
+Find his lab links alongside the recordings and this repository's demos in the
+[Episode 1 guide](episodes/01-2026-10-15/README.md).
 
 ## Contributing
 

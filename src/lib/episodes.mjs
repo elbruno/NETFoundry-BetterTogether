@@ -8,7 +8,8 @@ export const registration = 'https://developer.microsoft.com/en-us/reactor/serie
 
 /** @typedef {{ id: string, start: string, end: string, event: string, tags: string[] }} ScheduleEntry */
 /** @typedef {{ title: string, path: string, description: string, url: string }} Demo */
-/** @typedef {ScheduleEntry & { number: number, title: string, summary: string, eventUrl: string, sourceUrl: string, recording: string | null, demos: Demo[], html: string }} Episode */
+/** @typedef {{ title: string, url: string }} EpisodeLink */
+/** @typedef {ScheduleEntry & { number: number, title: string, summary: string, eventUrl: string, sourceUrl: string, recording: string | null, recordings: EpisodeLink[], hosts: EpisodeLink[], guestResources: EpisodeLink[], demos: Demo[], html: string }} Episode */
 
 // Only scheduling and discovery metadata live here. Learning content stays in each public README.
 const schedule = [
@@ -37,6 +38,20 @@ export function resourceUrl(href, id, image = false) {
 }
 
 /**
+ * @param {string} markdown
+ * @param {string} heading
+ * @returns {EpisodeLink[]}
+ */
+function sectionLinks(markdown, heading) {
+  const parser = new Marked();
+  const links = [];
+  parser.walkTokens(parser.lexer(section(markdown, heading)), (token) => {
+    if (token.type === 'link') links.push({ title: token.text, url: token.href });
+  });
+  return links;
+}
+
+/**
  * @param {ScheduleEntry} metadata
  * @param {string} markdown
  * @returns {Episode}
@@ -45,23 +60,23 @@ export function parseEpisode(metadata, markdown) {
   const title = markdown.match(/^# (.+)$/m)?.[1]?.trim();
   const overview = section(markdown, 'Overview');
   if (!title || !overview) throw new Error(`Episode ${metadata.id} needs a title and Overview section.`);
-  const recordingTokens = new Marked().lexer(section(markdown, 'Recording'));
-  const recordingLinks = [];
-  new Marked().walkTokens(recordingTokens, (token) => {
-    if (token.type === 'link') recordingLinks.push(token.href);
-  });
-  const recording = recordingLinks.find((href) => {
+  const recordings = sectionLinks(markdown, 'Recording');
+  for (const { url: href } of recordings) {
+    let valid = false;
     try {
       const url = new URL(href);
-      return url.protocol === 'https:' && (
-        (['www.youtube.com', 'youtube.com'].includes(url.hostname) && url.pathname === '/watch' && url.searchParams.has('v')) ||
+      valid = url.protocol === 'https:' && (
+        (['www.youtube.com', 'youtube.com'].includes(url.hostname) && url.pathname === '/watch' && Boolean(url.searchParams.get('v')?.trim())) ||
         (url.hostname === 'youtu.be' && url.pathname.length > 1)
       );
     } catch {
-      return false;
+      throw new Error(`Episode ${metadata.id} has an invalid recording URL: ${href}`);
     }
-  }) ?? null;
-  if (recordingLinks.length && !recording) throw new Error(`Episode ${metadata.id} needs a confirmed YouTube watch URL in Recording.`);
+    if (!valid) throw new Error(`Episode ${metadata.id} needs a confirmed YouTube watch URL in Recording: ${href}`);
+  }
+  const recording = recordings[0]?.url ?? null;
+  const hosts = sectionLinks(markdown, 'Hosts').map((link) => ({ ...link, url: resourceUrl(link.url, metadata.id) }));
+  const guestResources = sectionLinks(markdown, 'Guest demos and resources').map((link) => ({ ...link, url: resourceUrl(link.url, metadata.id) }));
   const demos = [...section(markdown, 'Demos and resources').matchAll(/^\d+\.\s+\[([^\]]+)\]\((demos\/[^)]+\/README\.md)\):\s*(.+)$/gm)]
     .map(([, title, path, description]) => ({
       title,
@@ -89,6 +104,9 @@ export function parseEpisode(metadata, markdown) {
     eventUrl: `https://developer.microsoft.com/en-us/reactor/events/${metadata.event}/`,
     sourceUrl: `${repository}/blob/main/episodes/${metadata.id}/README.md`,
     recording,
+    recordings,
+    hosts,
+    guestResources,
     demos,
     html: renderer.parse(markdown.replace(/^# .+\r?\n/, '')),
   };

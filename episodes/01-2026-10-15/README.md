@@ -4,6 +4,11 @@
 
 **Event and registration:** [Microsoft Reactor](https://developer.microsoft.com/en-us/reactor/events/27630/)
 
+## Hosts
+
+- [Bruno Capuano](https://aka.ms/elbruno)
+- [Pablo Piovano](https://www.linkedin.com/in/ppiova/), co-host
+
 ## Overview
 
 Explore Microsoft-Decision-1 and the emerging category of decision models, then
@@ -31,7 +36,25 @@ correctness. The .NET decision samples use the community
 
 ## Recording
 
-The recording link will be added after the episode.
+- [Watch on the .NET Channel](https://www.youtube.com/watch?v=mHrs-JHdPaY)
+- [Watch on Microsoft Reactor](https://www.youtube.com/watch?v=n2CL10iTjp0)
+
+Both links are replays of the October 15, 2026 episode.
+
+## Guest demos and resources
+
+Co-host Pablo Piovano shared demos from
+[Foundry Field Notes labs](https://github.com/ppiova/foundry-field-notes-labs),
+his independent educational repository of hands-on Microsoft Foundry labs in .NET.
+Explore its available labs:
+
+- [Support Signal](https://github.com/ppiova/foundry-field-notes-labs/blob/main/samples/01-support-signal/README.md): turn a support request into a proposal, validate quoted evidence, and keep a person in control.
+- [Bid Review Queue](https://github.com/ppiova/foundry-field-notes-labs/blob/main/samples/02-bid-review-queue/README.md): ask bounded questions with Microsoft-Decision-1, interpret probabilities, and send uncertain answers for human review.
+
+These labs have their own pinned SDK versions, prerequisites, live configuration,
+costs, and cleanup instructions. Follow their READMEs rather than this repository's
+demo setup. Their offline paths use explicitly labeled simulation or saved-response
+replay, not new model inference.
 
 ## Demos and resources
 

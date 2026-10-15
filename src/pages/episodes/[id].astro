@@ -21,10 +21,11 @@ const next = episodes[index + 1];
       <p class="eyebrow">EPISODE {String(episode.number).padStart(2, '0')}</p>
       <h1>{episode.title.replace(/^Episode \d+: /, '')}</h1>
       <time datetime={episode.start} data-local-date>{new Date(episode.start).toLocaleString('en-US', { timeZone: 'UTC', dateStyle: 'full', timeStyle: 'short' })} UTC</time>
+      {episode.hosts.length > 0 && <p class="host-byline">With {episode.hosts.map((host, index) => <>{index > 0 && ' and '}<a href={host.url}>{host.title}</a></>)}</p>}
       <div class="actions">
-        {episode.recording && <a class="button primary" href={episode.recording}>Watch on the .NET Channel &#8599;</a>}
-        <a class={`button ${episode.recording ? '' : 'primary'}`} href={episode.eventUrl}>Event &amp; registration &#8599;</a>
-        <a class="button" href={`${base}/calendar/${episode.id}.ics`}>Add to calendar</a>
+        {episode.recordings.map((recording, index) => <a class={`button ${index === 0 ? 'primary' : ''}`} href={recording.url}>{recording.title} &#8599;</a>)}
+        <a class={`button ${episode.recording ? '' : 'primary'}`} href={episode.eventUrl}>{episode.recording ? 'Reactor event page' : 'Event & registration'} &#8599;</a>
+        {!episode.recording && <a class="button" href={`${base}/calendar/${episode.id}.ics`}>Add to calendar</a>}
         <a class="button" href={episode.sourceUrl}>View on GitHub &#8599;</a>
       </div>
       {episode.number === 1 && (
@@ -41,6 +42,13 @@ const next = episodes[index + 1];
           {episode.demos.length ? episode.demos.map((demo) => <a href={demo.url}>{demo.title} &#8599;</a>) : <p>Demos will be added when available.</p>}
         </nav>
         <p>Code stays in the repository. Each demo README includes its own run instructions.</p>
+        {episode.guestResources.length > 0 && <>
+          <h2>Guest demos &amp; resources</h2>
+          <nav aria-label="Guest resources">
+            {episode.guestResources.map((resource) => <a href={resource.url}>{resource.title} &#8599;</a>)}
+          </nav>
+          <p>Guest labs are maintained separately. Follow their own setup, cost, and cleanup guides.</p>
+        </>}
       </aside>
       <article class="prose" aria-label="Episode guide" set:html={episode.html} />
     </div>
