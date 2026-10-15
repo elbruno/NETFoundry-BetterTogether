@@ -5,7 +5,7 @@ One straight-line `Program.cs`: **A** creates the client, **B** asks Score and A
 ## Prerequisites and configuration
 
 - .NET SDK **10.0.401**, with latest-patch roll-forward in `global.json`.
-- `ElBruno.AI.Decisions.Foundry` **0.6.2**, a **community SDK, not an official Microsoft SDK**; configuration packages **10.0.0**. Versions are locked.
+- `ElBruno.AI.Decisions.Foundry` **0.6.3**, a **community SDK, not an official Microsoft SDK**; configuration packages **10.0.0**. Versions are locked.
 - An existing Microsoft-Decision-1 deployment and permission to invoke it. No resources are provisioned.
 - Azure CLI with `az login`, or an externally supplied API key.
 
@@ -40,7 +40,11 @@ Each run makes **two separate HTTP requests**. Edit `answer` to use a commented 
 
 ## Interpret the output
 
-Score prints a probability-weighted zero-based quality index **0..3** and each rubric-level probability. It can be fractional and is not a rounded grade. Assess estimates the probability **0..1** that the answer's claims and actions are supported by the supplied reference. SDK 0.6.2 does not expose provider confidence for these methods.
+SDK 0.6.3 exposes usage for both Score and Assess. Each call prints its reported
+input/output/total counters. Live Foundry populated input/output and omitted
+total; absent counters remain **not reported**, never zero or estimated.
+
+Score prints a probability-weighted zero-based quality index **0..3** and each rubric-level probability. It can be fractional and is not a rounded grade. Assess estimates the probability **0..1** that the answer's claims and actions are supported by the supplied reference. SDK 0.6.3 does not expose provider confidence for these methods.
 
 The status expression uses quality **>= 2.5** and support **>= 0.85**. These thresholds are **uncalibrated teaching policy**, not validated approval criteria or a safety guarantee. Even `Ready for human review` still requires a person. Model signals do not establish truth, policy compliance or injection immunity. No answer is approved or published; values vary between runs.
 

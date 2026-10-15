@@ -42,12 +42,12 @@
     </section>
 
     <section class="cards" aria-label="Cumulative metrics">
-        @Totals("Generative / Microsoft.Extensions.AI", ChatResults, false)
-        @Totals("Microsoft-Decision-1 / native SDK", DecisionResults, true)
+        @Totals("Generative / Microsoft.Extensions.AI", ChatResults)
+        @Totals("Microsoft-Decision-1 / native SDK", DecisionResults)
     </section>
     <aside>
-        <strong>Read the numbers honestly.</strong> Decision SDK 0.6.2 does not expose token usage.
-        Its counters are unavailable, not zero. Totals below include only reported successful responses;
+        <strong>Read the numbers honestly.</strong> Decision SDK 0.6.3 exposes provider-reported token usage.
+        Missing fields remain not reported, not zero. Totals below include only reported successful responses;
         failures or cancelled requests may still be billed. No total-cost or savings estimate.
         Different tokenizers, schemas, models, warm-up, and reasoning defaults make this an illustration, not a benchmark.
         Aspire's Traces view contains correlated <code>comparison.pair</code> and GenAI spans.
@@ -62,8 +62,8 @@
                 <tbody>
                     @foreach (var pair in Run.Results.AsEnumerable().Reverse())
                     {
-                        @ResultRow(pair, "Generative", pair.Chat, false)
-                        @ResultRow(pair, "Decision", pair.Decision, true)
+                        @ResultRow(pair, "Generative", pair.Chat)
+                        @ResultRow(pair, "Decision", pair.Decision)
                     }
                 </tbody>
             </table>
@@ -96,14 +96,15 @@
         Run.Changed -= Refresh;
         Run.Stop();
     }
-    private static string Tokens(long? value, bool decision) =>
-        decision ? "not exposed" : value?.ToString("N0") ?? "not reported";
+    private static string Tokens(long? value) =>
+        value?.ToString("N0") ?? "not reported";
 
-    private RenderFragment Totals(string title, IEnumerable<ModelResult> source, bool decision) => @<article>
+    private RenderFragment Totals(string title, IEnumerable<ModelResult> source) => @<article>
         <h2>@title</h2>
-        <p class="big-number">@(decision ? "Unavailable" : Sum(source, r => r.TotalTokens)) <small>reported total tokens</small></p>
+        <p class="big-number">@Sum(source, r => r.TotalTokens) <small>reported total tokens</small></p>
         <dl>
-            <dt>Input / output</dt><dd>@(decision ? "not exposed / not exposed" : $"{Sum(source, r => r.InputTokens)} / {Sum(source, r => r.OutputTokens)}")</dd>
+            <dt>Input / output</dt><dd>@Sum(source, r => r.InputTokens) / @Sum(source, r => r.OutputTokens)</dd>
+            <dt>Responses with input / output usage</dt><dd>@source.Count(r => r.Succeeded && r.InputTokens.HasValue) / @source.Count(r => r.Succeeded && r.OutputTokens.HasValue) of @source.Count(r => r.Succeeded)</dd>
             <dt>Completed / failed / cancelled</dt><dd>@source.Count(r => r.Succeeded) / @source.Count(r => r.Status == "failed") / @source.Count(r => r.Status == "cancelled")</dd>
             <dt>Responses with total usage</dt><dd>@source.Count(r => r.TotalTokens.HasValue) / @source.Count(r => r.Succeeded)</dd>
             <dt>Mean successful latency</dt><dd>@MeanLatency(source)</dd>
@@ -120,15 +121,15 @@
         var values = source.Where(r => r.Succeeded).ToArray();
         return values.Length == 0 ? "not available" : $"{values.Average(r => r.ElapsedMs):N0} ms";
     }
-    private RenderFragment ResultRow(ComparisonPair pair, string model, ModelResult? result, bool decision) => @<tr>
+    private RenderFragment ResultRow(ComparisonPair pair, string model, ModelResult? result) => @<tr>
         <td>@pair.Number / @pair.Question.Title</td><td>@model</td>
         <td>
             <strong>@(result?.Status ?? "pending")</strong> @(result?.Label)
             @if (result?.Error is not null) { <small class="error">@result.Error</small> }
         </td>
-        <td>@(result is null ? "-" : Tokens(result.InputTokens, decision))</td>
-        <td>@(result is null ? "-" : Tokens(result.OutputTokens, decision))</td>
-        <td>@(result is null ? "-" : Tokens(result.TotalTokens, decision))</td>
+        <td>@(result is null ? "-" : Tokens(result.InputTokens))</td>
+        <td>@(result is null ? "-" : Tokens(result.OutputTokens))</td>
+        <td>@(result is null ? "-" : Tokens(result.TotalTokens))</td>
         <td>@(result?.ElapsedMs.ToString("N0") ?? "-")</td>
         <td><code>@(result?.TraceId is { } id ? id[..8] : "-")</code></td>
     </tr>;

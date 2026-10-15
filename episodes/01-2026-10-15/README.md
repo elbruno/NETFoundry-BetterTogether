@@ -36,9 +36,13 @@ Each introductory console sample has one commented `Program.cs`, no command-line
 and runs with `dotnet run`. Change the prompt directly in source. The game has a
 similarly small entry point, with the simulation/rendering kept separately.
 The larger Blazor demo uses Aspire and has its own run instructions.
-Decision SDK 0.6.2 does not expose token usage: both comparison demos show that
-usage as unavailable rather than zero. The feature request is
+Decision SDK 0.6.3 exposes provider-reported token usage in both comparison demos.
+Live native Foundry input/output counters work; omitted totals stay not reported,
+not inferred. The shipped feature is
 [elbruno/ElBruno.AI.Decisions#4](https://github.com/elbruno/ElBruno.AI.Decisions/issues/4).
+All decision samples pin **0.6.3**, whose GitHub release remains marked tentative
+early access. Foundry Choice/Score/Assess and local nimble usage were live-tested;
+provider/version-specific availability can still differ.
 
 ### Configure all samples
 
@@ -60,7 +64,8 @@ identity (the default) or enter a key through hidden input. Identity mode remove
 any stored `Foundry:ApiKey` so a stale key cannot override identity authentication.
 Run `az login` separately and ensure your identity has deployment access.
 
-Optional Ollama prompts configure only demo 02, without Foundry values or keys.
+Optional Ollama prompts configure demo 02 and the game's O mode. Demo 02 remains
+local-only, without Foundry values or keys.
 They do not install Ollama or download a model. Skipping Ollama leaves that
 project's existing settings unchanged. To run only demo 02, its README also
 provides direct local configuration commands without requiring Foundry access.
@@ -85,7 +90,9 @@ pwsh -File .\tests\Setup-UserSecrets.Tests.ps1
 ### Related resources
 
 - [Decision Space Game: code, setup, controls, tests, and validation](demos/07-decision-space-game/README.md)
-  (.NET 10, ElBruno.AI.Decisions 0.6.2, manual/Foundry/explicit offline replay).
+  (.NET 10, ElBruno.AI.Decisions 0.6.3, M manual / F Foundry / O Ollama,
+  Spectre.Console battlefield, decision-paced AI turns, optional --foundry/--ollama
+  auto-start and outcome/latency/usage mission reports).
 - [ElBruno.AI.Decisions](https://github.com/elbruno/ElBruno.AI.Decisions)
 - [Microsoft SpaceAINet reference](https://github.com/microsoft/Generative-AI-for-beginners-dotnet/tree/main/samples/AppsWithGenAI/SpaceAINet)
 

@@ -4,11 +4,11 @@
     "net10.0": {
       "ElBruno.AI.Decisions.Ollama": {
         "type": "Direct",
-        "requested": "[0.6.2, )",
-        "resolved": "0.6.2",
-        "contentHash": "7TeCL2eZddY8PMdkqQvSs6nJlltndspb9yRSb/Slpa9Fvjwikc5QWteWHoIqm2GR7OHFwKpHvCQKY5WfGWcHdw==",
+        "requested": "[0.6.3, )",
+        "resolved": "0.6.3",
+        "contentHash": "VNMJjIDC3F59JYKdMRtLOp60sDlQyPrW8S1gPt6BXVm5kullku8QNQJGo+U8XVQV5gUNbPUcNNb5Nl61n7VwLA==",
         "dependencies": {
-          "ElBruno.AI.Decisions": "0.6.2",
+          "ElBruno.AI.Decisions": "0.6.3",
           "Microsoft.Extensions.Http": "10.0.12"
         }
       },
@@ -36,8 +36,8 @@
       },
       "ElBruno.AI.Decisions": {
         "type": "Transitive",
-        "resolved": "0.6.2",
-        "contentHash": "8EwGWq+fBWDHYu/YWGY+Ciiy64weuN9NozS9rIje0rw/u3yLNnBAbzuLwIpkgSbUj7YZEauhYaDiNNsnSXjGgQ==",
+        "resolved": "0.6.3",
+        "contentHash": "qYrA5gfy7a1UOL/ObgQlRS5VTVKV8evSVUlfwLlgffC/bnHWe04McIeABLVoap74akW0g9jCvOGHVe78Aaxmaw==",
         "dependencies": {
           "Microsoft.Extensions.AI.Abstractions": "10.10.0"
         }

@@ -58,6 +58,7 @@ public sealed class DriverTests
         client.Complete(new ChoiceDecision("warp", new Dictionary<string, double> { ["warp"] = 1 }));
         await Settle(driver, game);
         Assert.Equal("Illegal decision discarded", driver.Status);
+        Assert.True(driver.Failed);
         Assert.Equal(0, driver.Accepted);
     }
 

@@ -74,7 +74,8 @@ $setup = Join-Path (Split-Path $PSScriptRoot) 'Setup-UserSecrets.ps1'
             Assert ($json['Foundry:Model'] -eq 'synthetic-deployment') 'Deployment was not imported.'
         }
         Assert (-not $json.ContainsKey('Foundry:ApiKey')) 'Identity import unexpectedly contains an API key.'
-        Assert ($json.ContainsKey('Ollama:Model') -eq $isLocalOnly) 'Ollama configuration was applied to the wrong sample.'
+        $usesOllama = $isLocalOnly -or ($call.Arguments -join ' ') -match 'DecisionSpaceGame\.csproj'
+        Assert ($json.ContainsKey('Ollama:Model') -eq $usesOllama) 'Ollama configuration was applied to the wrong sample.'
         $isComparison = ($call.Arguments -join ' ') -match '(DecisionComparison|DecisionLab\.Web)\.csproj'
         Assert ($json.ContainsKey('Foundry:GenerativeModel') -eq $isComparison) 'Generative configuration was applied to the wrong sample.'
         if ($isComparison) {
@@ -93,6 +94,7 @@ $setup = Join-Path (Split-Path $PSScriptRoot) 'Setup-UserSecrets.ps1'
         Assert (-not (($call.Arguments -join ' ').Contains('SYNTHETIC_API_KEY'))) 'Key appeared in process arguments.'
         $json = $call.InputJson | ConvertFrom-Json -AsHashtable
         Assert ($json['Foundry:ApiKey'] -eq 'SYNTHETIC_API_KEY_FOR_TEST_ONLY') 'Key not imported through stdin.'
+        Assert (-not $json.ContainsKey('Ollama:Model')) 'Skipping Ollama must preserve existing local settings.'
     }
     Assert (-not $transcript.Contains('SYNTHETIC_API_KEY')) 'Key leaked into the transcript.'
 

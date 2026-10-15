@@ -100,7 +100,7 @@ public sealed class ModelComparison : IModelComparison, IDisposable
     public Task<ModelResult> DecideAsync(DecisionQuestion question, CancellationToken token) =>
         ExecuteAsync("decision.call", async ct =>
         {
-            // SDK 0.6.2 does not expose native token usage. Do not estimate or report zero.
+            // SDK 0.6.3 preserves only reported counters; do not derive a total.
             using var activity = Traces.StartActivity("decision " + decisionModel, ActivityKind.Client);
             activity?.SetTag("gen_ai.operation.name", "decision");
             activity?.SetTag("gen_ai.provider.name", "microsoft");
@@ -111,7 +111,16 @@ public sealed class ModelComparison : IModelComparison, IDisposable
                     DecisionQuestion.Instructions, DecisionQuestion.Choices, ct);
                 if (!DecisionQuestion.Choices.ContainsKey(result.Choice))
                     throw new InvalidOperationException("Decision model selected an unknown team.");
-                return new ModelResult("completed", result.Choice, 0);
+                if (result.Usage?.InputTokens is { } input)
+                    activity?.SetTag("gen_ai.usage.input_tokens", input);
+                if (result.Usage?.OutputTokens is { } output)
+                    activity?.SetTag("gen_ai.usage.output_tokens", output);
+                if (result.Usage?.ReasoningTokens is { } reasoning)
+                    activity?.SetTag("gen_ai.usage.reasoning.output_tokens", reasoning);
+                if (result.Usage?.CachedTokens is { } cached)
+                    activity?.SetTag("gen_ai.usage.cache_read.input_tokens", cached);
+                return new ModelResult("completed", result.Choice, 0,
+                    result.Usage?.InputTokens, result.Usage?.OutputTokens, result.Usage?.TotalTokens);
             }
             catch (Exception ex) when (IsExpectedFailure(ex) || ex is OperationCanceledException)
             {

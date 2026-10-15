@@ -9,16 +9,21 @@ adapter and a strict JSON label schema. The native decision path uses
 **ElBruno.AI.Decisions.Foundry**. It does not bypass either SDK with raw HTTP.
 ElBruno.AI.Decisions is a community SDK, not an official Microsoft SDK.
 
-## Important token-usage limitation
+## Provider-reported token usage
 
-**Decision SDK 0.6.2 does not expose token usage.** Its page counters display
-**not exposed**, not zero or estimated counts. GPT's input, output, and total
-counters come from `ChatResponse.Usage`. Missing GPT fields display not reported.
-The requested SDK enhancement is tracked in
+**Decision SDK 0.6.3 exposes token usage.** Native input/output/total counters now
+come from `ChoiceDecision.Usage`; GPT counters come from `ChatResponse.Usage`.
+Both cards and result rows aggregate only actual reported fields. Missing
+fields display **not reported**, never zero or an inferred total.
+The shipped SDK enhancement is recorded in
 [elbruno/ElBruno.AI.Decisions#4](https://github.com/elbruno/ElBruno.AI.Decisions/issues/4).
-Until the library exposes usage, a complete SDK-only token comparison is not
-available. The native service's ability to return usage is distinct from what
-this SDK result exposes.
+Live Foundry responses expose native input/output tokens but omit total tokens.
+Compare input/output counters directly; the total card correctly remains
+not reported with zero total-usage coverage. This is a service omission, not
+an SDK limitation. Reasoning/cached fields, if present, become native trace tags.
+A live two-repeat duplicate-charge run accumulated native **134 input / 2 output**
+and GPT **220 input / 26 output / 246 total**. Native total coverage was **0/2**,
+not a zero-token result. These observations are not fixed expected output.
 
 ## Prerequisites
 
@@ -34,7 +39,7 @@ this SDK result exposes.
 
 Pinned app packages: **Microsoft.Extensions.AI 10.10.0**,
 **Microsoft.Extensions.AI.OpenAI 10.10.0**, **Azure.AI.OpenAI 2.9.0-beta.1**,
-**Azure.Identity 1.17.0**, **ElBruno.AI.Decisions.Foundry 0.6.2**.
+**Azure.Identity 1.17.0**, **ElBruno.AI.Decisions.Foundry 0.6.3**.
 ServiceDefaults uses **OpenTelemetry 1.17.0**. Each project has a dependency lock.
 The console example's Responses adapter and this web example's chat-completions
 adapter both implement MEAI; timings between the two apps are not a controlled
@@ -112,7 +117,7 @@ production threshold, or claim that Microsoft-Decision-1 runs locally.
 4. Open **GenAI details** on `chat <deployment>`: inspect model, input/output
    token usage, finish status and duration.
 5. Open **GenAI details** on `decision <deployment>`: inspect its operation and
-   duration. There are no token tags because the SDK does not expose counters.
+   duration, and actual input/output usage tags. Missing fields have no fake tags.
    This is an explicit app-authored GenAI span around `ChooseAsync`, not built-in
    instrumentation claimed to come from the decision library.
 

@@ -66,3 +66,5 @@ for (var level = 0; level < quality.LevelProbabilities.Count; level++)
 Console.WriteLine($"Assess | Probability the answer is supported: {support.Probability:P1}");
 Console.WriteLine($"Uncalibrated status: {status}");
 Console.WriteLine("Model signals do not prove truth or policy compliance. No answer was approved or published.");
+Console.WriteLine($"Score tokens: input={quality.Usage?.InputTokens?.ToString() ?? "not reported"}, output={quality.Usage?.OutputTokens?.ToString() ?? "not reported"}, total={quality.Usage?.TotalTokens?.ToString() ?? "not reported"}");
+Console.WriteLine($"Assess tokens: input={support.Usage?.InputTokens?.ToString() ?? "not reported"}, output={support.Usage?.OutputTokens?.ToString() ?? "not reported"}, total={support.Usage?.TotalTokens?.ToString() ?? "not reported"}");

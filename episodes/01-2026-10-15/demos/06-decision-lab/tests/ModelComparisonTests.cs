@@ -17,6 +17,40 @@ namespace DecisionLab.Tests;
 public sealed class ModelComparisonTests
 {
     [Fact]
+    public async Task DecisionUsagePreservesPartialCountersZeroAndTelemetry()
+    {
+        var spans = new List<Activity>();
+        using var listener = new ActivityListener
+        {
+            ShouldListenTo = source => source.Name == "DecisionLab.Models",
+            Sample = (ref ActivityCreationOptions<ActivityContext> _) => ActivitySamplingResult.AllData,
+            ActivityStopped = spans.Add
+        };
+        ActivitySource.AddActivityListener(listener);
+        using var comparison = Create(decision: new FakeDecision(
+            usage: new DecisionUsage(inputTokens: 67, outputTokens: 0, cachedTokens: 0)));
+        var result = await comparison.DecideAsync(DecisionQuestion.Examples[0], default);
+        Assert.True(result.Succeeded);
+        Assert.Equal(67, result.InputTokens);
+        Assert.Equal(0, result.OutputTokens);
+        Assert.Null(result.TotalTokens);
+        var span = Assert.Single(spans, span => span.OperationName == "decision synthetic-model");
+        Assert.Equal(67L, span.GetTagItem("gen_ai.usage.input_tokens"));
+        Assert.Equal(0L, span.GetTagItem("gen_ai.usage.output_tokens"));
+        Assert.Equal(0L, span.GetTagItem("gen_ai.usage.cache_read.input_tokens"));
+        Assert.Null(span.GetTagItem("gen_ai.usage.reasoning.output_tokens"));
+    }
+
+    [Fact]
+    public async Task DecisionReportedTotalIsPreservedWithoutRecomputation()
+    {
+        using var comparison = Create(decision: new FakeDecision(
+            usage: new DecisionUsage(inputTokens: 10, outputTokens: 2, totalTokens: 15)));
+        var result = await comparison.DecideAsync(DecisionQuestion.Examples[0], default);
+        Assert.Equal(15, result.TotalTokens);
+    }
+
+    [Fact]
     public async Task PreservesChatUsageAndLeavesDecisionUsageUnknown()
     {
         using var comparison = Create();
@@ -118,12 +152,12 @@ public sealed class ModelComparisonTests
         public void Dispose() { }
     }
 
-    private sealed class FakeDecision(bool fail = false) : IDecisionClient
+    private sealed class FakeDecision(bool fail = false, DecisionUsage? usage = null) : IDecisionClient
     {
         public Task<ChoiceDecision> ChooseAsync(string input, string instructions,
             IReadOnlyDictionary<string, string?> options, CancellationToken cancellationToken = default) =>
             fail ? throw new HttpRequestException("https://private.invalid/secret")
-            : Task.FromResult(new ChoiceDecision("billing", new Dictionary<string, double> { ["billing"] = 1 }));
+            : Task.FromResult(new ChoiceDecision("billing", new Dictionary<string, double> { ["billing"] = 1 }, null, usage));
         public Task<ScoreDecision> ScoreAsync(string input, string instructions, IReadOnlyList<string> rubric,
             CancellationToken cancellationToken = default) => throw new NotSupportedException();
         public Task<AssessmentDecision> AssessAsync(string input, string proposition,

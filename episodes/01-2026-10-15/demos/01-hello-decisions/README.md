@@ -17,7 +17,7 @@ The model returns a bounded decision, not a generated answer or explanation.
 - An existing **Microsoft-Decision-1** deployment in Microsoft Foundry.
 - Azure CLI signed in with `az login` and permission to invoke the deployment,
   or an API key configured privately.
-- **ElBruno.AI.Decisions.Foundry 0.6.2**, a community SDK, not an official
+- **ElBruno.AI.Decisions.Foundry 0.6.3**, a community SDK, not an official
   Microsoft SDK. Configuration packages are pinned to **10.0.0**.
 
 ## Configure off stream
@@ -59,6 +59,10 @@ Results vary. Selected-label probability and provider confidence are distinct
 signals, neither a guarantee of correctness. This sample does not move a ticket.
 
 ## Errors, costs, and cleanup
+
+SDK 0.6.3 also prints provider-reported input/output/total usage.
+Missing counters say **not reported**, not zero; totals are never calculated.
+The Foundry rehearsal reported input/output and omitted total.
 
 This intentionally minimal teaching example lets configuration and SDK exceptions
 surface normally. If a request fails, stop screen sharing before investigating

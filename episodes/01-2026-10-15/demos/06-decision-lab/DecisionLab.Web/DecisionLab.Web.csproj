@@ -14,7 +14,7 @@
     <PackageReference Include="Microsoft.Extensions.AI" Version="10.10.0" />
     <PackageReference Include="Azure.Identity" Version="1.17.0" />
     <PackageReference Include="Azure.AI.OpenAI" Version="2.9.0-beta.1" />
-    <PackageReference Include="ElBruno.AI.Decisions.Foundry" Version="0.6.2" />
+    <PackageReference Include="ElBruno.AI.Decisions.Foundry" Version="0.6.3" />
     <ProjectReference Include="..\DecisionLab.ServiceDefaults\DecisionLab.ServiceDefaults.csproj" />
   </ItemGroup>
 

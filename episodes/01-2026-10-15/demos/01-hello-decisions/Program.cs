@@ -42,3 +42,5 @@ Console.WriteLine($"Selected team: {result.Choice}");
 foreach (var choice in result.Probabilities)
     Console.WriteLine($"  {choice.Key}: {choice.Value:P1}");
 Console.WriteLine($"Provider confidence: {result.Confidence:P1}");
+// Missing provider counters stay unknown; never infer a reported total.
+Console.WriteLine($"Tokens: input={result.Usage?.InputTokens?.ToString() ?? "not reported"}, output={result.Usage?.OutputTokens?.ToString() ?? "not reported"}, total={result.Usage?.TotalTokens?.ToString() ?? "not reported"}");

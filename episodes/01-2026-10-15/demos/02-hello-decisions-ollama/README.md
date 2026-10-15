@@ -11,7 +11,7 @@ alternative messages by editing `prompt`.
 - .NET SDK **10.0.401** (patch roll-forward in `global.json`).
 - **Ollama 0.35.0+**, running locally with a native System One decision model.
   An ordinary chat model is not a substitute.
-- **ElBruno.AI.Decisions.Ollama 0.6.2**, a community SDK, and configuration
+- **ElBruno.AI.Decisions.Ollama 0.6.3**, a community SDK, and configuration
   packages **10.0.0**. The lock file records the restored versions.
 
 A live run was verified with **Ollama 0.40.4** and **nimble:latest**
@@ -53,6 +53,10 @@ probability nor confidence guarantees correctness. There is no chat response,
 generated rationale, or real ticket routing.
 
 ## Errors, costs, and cleanup
+
+SDK 0.6.3 prints actual nullable usage counters. A live nimble rehearsal reported
+210 input tokens and **0 output tokens**, with total omitted. Zero is a reported
+value, not missing telemetry. Counts depend on the provider and are not costs.
 
 This minimal sample lets SDK/configuration exceptions surface normally.
 Check server availability, native API/model compatibility, and local settings

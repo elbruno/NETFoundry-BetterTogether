@@ -115,7 +115,7 @@ try {
         $keyPointer = [Runtime.InteropServices.Marshal]::SecureStringToBSTR($secureKey)
         $values['Foundry:ApiKey'] = [Runtime.InteropServices.Marshal]::PtrToStringBSTR($keyPointer)
     }
-    $local = (Read-Host 'Also configure local Ollama for demo 02? [y/N]').Trim()
+    $local = (Read-Host 'Also configure local Ollama for demos 02 and 07 (game)? [y/N]').Trim()
     $ollama = $null
     if ($local -in @('y', 'yes')) {
         $ollama = @{
@@ -136,7 +136,7 @@ try {
         if ($project.Name -in @('DecisionComparison.csproj', 'DecisionLab.Web.csproj')) {
             $projectValues['Foundry:GenerativeModel'] = $generativeModel
         }
-        if ($null -ne $ollama -and $localOnly) {
+        if ($null -ne $ollama -and ($localOnly -or $project.Name -eq 'DecisionSpaceGame.csproj')) {
             foreach ($entry in $ollama.GetEnumerator()) { $projectValues[$entry.Key] = $entry.Value }
         }
         $json = $projectValues | ConvertTo-Json -Compress

@@ -5,7 +5,7 @@ One straight-line `Program.cs`: **A** creates the client, **B** asks Choice, Sco
 ## Prerequisites and configuration
 
 - .NET SDK **10.0.401**, with latest-patch roll-forward in `global.json`.
-- `ElBruno.AI.Decisions.Foundry` **0.6.2**, a **community SDK, not an official Microsoft SDK**; configuration packages **10.0.0**. Versions are locked.
+- `ElBruno.AI.Decisions.Foundry` **0.6.3**, a **community SDK, not an official Microsoft SDK**; configuration packages **10.0.0**. Versions are locked.
 - An existing Microsoft-Decision-1 deployment and permission to invoke it. No resources are provisioned.
 - Azure CLI with `az login`, or an externally supplied API key.
 
@@ -40,7 +40,12 @@ Each run makes **three separate HTTP requests**, one per method. Edit `prompt` t
 
 ## Interpret the output
 
-Choice prints the suggested queue and probabilities for all labels. Provider confidence is a **separate signal**, not the selected-label probability or a correctness guarantee. Score is the probability-weighted zero-based urgency index **0..3**, potentially fractional, not a rounded severity label. Assess is the estimated probability **0..1** that the ticket concerns account access. SDK 0.6.2 does not expose Score/Assess provider confidence.
+SDK 0.6.3 exposes separate usage for each Choice, Score, and Assess response.
+Each call prints input/output/total, leaving absent fields **not reported**.
+Live Foundry checks populated input/output for all three; total was omitted.
+Do not infer a provider-reported total by summing the counters.
+
+Choice prints the suggested queue and probabilities for all labels. Provider confidence is a **separate signal**, not the selected-label probability or a correctness guarantee. Score is the probability-weighted zero-based urgency index **0..3**, potentially fractional, not a rounded severity label. Assess is the estimated probability **0..1** that the ticket concerns account access. SDK 0.6.3 does not expose Score/Assess provider confidence.
 
 The displayed human-review status uses the selected-label probability threshold **0.75** and the `other` label. This is explicitly **uncalibrated teaching policy**, not a production routing rule, safety guarantee or ambiguity detector. Both branches require human review. Nothing is routed or changed; values vary between runs.
 

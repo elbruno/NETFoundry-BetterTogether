@@ -85,17 +85,18 @@ var decisionTeam = decision.Choice;
 if (!choices.ContainsKey(decisionTeam))
     throw new InvalidOperationException("Decision response did not select an allowed team.");
 
-// C. The Foundry decision SDK returns choice probabilities, not raw response usage.
+// C. SDK 0.6.3 preserves provider counters; missing fields stay unknown, not zero.
 Console.WriteLine($"Message: {prompt}");
 Console.WriteLine($"Generative model: {configuration["Foundry:GenerativeModel"]}");
 Console.WriteLine($"Decision model: {configuration["Foundry:Model"]}");
 Console.WriteLine($"{"Metric",-24} {"Generative",20} {"Decision",20}");
 Console.WriteLine($"{"Selected team",-24} {generatedTeam,20} {decisionTeam,20}");
 Console.WriteLine($"{"Elapsed ms",-24} {generatedMs,20:F0} {decisionMs,20:F0}");
-Console.WriteLine($"{"Input tokens",-24} {Usage(generated.Usage?.InputTokenCount),20} {"not exposed by SDK",20}");
-Console.WriteLine($"{"Output tokens",-24} {Usage(generated.Usage?.OutputTokenCount),20} {"not exposed by SDK",20}");
-Console.WriteLine($"{"Total tokens",-24} {Usage(generated.Usage?.TotalTokenCount),20} {"not exposed by SDK",20}");
-Console.WriteLine($"{"Reasoning tokens",-24} {Usage(generated.Usage?.ReasoningTokenCount),20} {"not exposed by SDK",20}");
+Console.WriteLine($"{"Input tokens",-24} {Usage(generated.Usage?.InputTokenCount),20} {Usage(decision.Usage?.InputTokens),20}");
+Console.WriteLine($"{"Output tokens",-24} {Usage(generated.Usage?.OutputTokenCount),20} {Usage(decision.Usage?.OutputTokens),20}");
+Console.WriteLine($"{"Total tokens",-24} {Usage(generated.Usage?.TotalTokenCount),20} {Usage(decision.Usage?.TotalTokens),20}");
+Console.WriteLine($"{"Reasoning tokens",-24} {Usage(generated.Usage?.ReasoningTokenCount),20} {Usage(decision.Usage?.ReasoningTokens),20}");
+Console.WriteLine($"{"Cached input tokens",-24} {Usage(generated.Usage?.CachedInputTokenCount),20} {Usage(decision.Usage?.CachedTokens),20}");
 Console.WriteLine("Reasoning tokens, when reported, are included in output tokens, not extra.");
 Console.WriteLine("One sequential client call each, generative first; no warm-up or benchmark claim.");
 Console.WriteLine("Token counts are not cost estimates or equivalent units of work across models.");

@@ -60,3 +60,7 @@ Console.WriteLine($"Score | Urgency: {urgency.Score:F3} / 3 (weighted index, not
 Console.WriteLine($"Assess | Probability of account-access problem: {access.Probability:P1}");
 Console.WriteLine($"Uncalibrated status: {status}");
 Console.WriteLine("No ticket was routed or changed.");
+// Each question has its own provider-reported usage, not a combined response.
+Console.WriteLine($"Choice tokens: input={queue.Usage?.InputTokens?.ToString() ?? "not reported"}, output={queue.Usage?.OutputTokens?.ToString() ?? "not reported"}, total={queue.Usage?.TotalTokens?.ToString() ?? "not reported"}");
+Console.WriteLine($"Score tokens: input={urgency.Usage?.InputTokens?.ToString() ?? "not reported"}, output={urgency.Usage?.OutputTokens?.ToString() ?? "not reported"}, total={urgency.Usage?.TotalTokens?.ToString() ?? "not reported"}");
+Console.WriteLine($"Assess tokens: input={access.Usage?.InputTokens?.ToString() ?? "not reported"}, output={access.Usage?.OutputTokens?.ToString() ?? "not reported"}, total={access.Usage?.TotalTokens?.ToString() ?? "not reported"}");

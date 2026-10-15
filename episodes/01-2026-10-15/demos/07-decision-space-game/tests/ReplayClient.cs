@@ -2,7 +2,7 @@
  * Goal: Provide explicitly synthetic actions for offline engine tests.
  * A. Define a fixed action sequence.
  * B. Return the next scripted action after a small simulated delay.
- * C. Label replay as offline in GameConsole, never as a live model.
+ * C. Use only in tests, never as a selectable live provider.
  */
 using ElBruno.AI.Decisions;
 
@@ -18,6 +18,7 @@ public sealed class ReplayClient : IDecisionClient
     {
         await Task.Delay(80, cancellationToken);
         string label = Script[_index++ % Script.Length];
+        if (!options.ContainsKey(label)) label = "stop";
         return new ChoiceDecision(label, options.Keys.ToDictionary(k => k, k => k == label ? 1.0 : 0.0), 1);
     }
 

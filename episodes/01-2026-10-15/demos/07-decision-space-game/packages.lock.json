@@ -4,22 +4,22 @@
     "net10.0": {
       "ElBruno.AI.Decisions.Foundry": {
         "type": "Direct",
-        "requested": "[0.6.2, )",
-        "resolved": "0.6.2",
-        "contentHash": "vm75RMQKphz49rW4JIV7ny7el582OnY5fOypc8WNGOjgPNQ3dFfjLTW+mqBu2utJYTr2GjVyWC1p8pq9QTknrg==",
+        "requested": "[0.6.3, )",
+        "resolved": "0.6.3",
+        "contentHash": "LZmDk4DYtby2JLXJ6OFYA9MCXCkNaDw9Q3ztg6lXH2GkXbTqZ30IHKL92nqvjG3uhYGpxJYnDtX40kQ8pm+EiQ==",
         "dependencies": {
           "Azure.Identity": "1.17.0",
-          "ElBruno.AI.Decisions": "0.6.2",
+          "ElBruno.AI.Decisions": "0.6.3",
           "Microsoft.Extensions.Http": "10.0.12"
         }
       },
       "ElBruno.AI.Decisions.Ollama": {
         "type": "Direct",
-        "requested": "[0.6.2, )",
-        "resolved": "0.6.2",
-        "contentHash": "7TeCL2eZddY8PMdkqQvSs6nJlltndspb9yRSb/Slpa9Fvjwikc5QWteWHoIqm2GR7OHFwKpHvCQKY5WfGWcHdw==",
+        "requested": "[0.6.3, )",
+        "resolved": "0.6.3",
+        "contentHash": "VNMJjIDC3F59JYKdMRtLOp60sDlQyPrW8S1gPt6BXVm5kullku8QNQJGo+U8XVQV5gUNbPUcNNb5Nl61n7VwLA==",
         "dependencies": {
-          "ElBruno.AI.Decisions": "0.6.2",
+          "ElBruno.AI.Decisions": "0.6.3",
           "Microsoft.Extensions.Http": "10.0.12"
         }
       },
@@ -45,6 +45,15 @@
           "Microsoft.Extensions.FileProviders.Physical": "10.0.0"
         }
       },
+      "Spectre.Console": {
+        "type": "Direct",
+        "requested": "[0.57.2, )",
+        "resolved": "0.57.2",
+        "contentHash": "wzsB+P9i6F9G+cFOJxRotCiQWNSzZVAMxi8YMiHlGXXU1JLMXGp7zSSqBMmROZS2bzpK5jk+Saa7Evp8HwqhKg==",
+        "dependencies": {
+          "Spectre.Console.Ansi": "0.57.2"
+        }
+      },
       "Azure.Core": {
         "type": "Transitive",
         "resolved": "1.49.0",
@@ -67,8 +76,8 @@
       },
       "ElBruno.AI.Decisions": {
         "type": "Transitive",
-        "resolved": "0.6.2",
-        "contentHash": "8EwGWq+fBWDHYu/YWGY+Ciiy64weuN9NozS9rIje0rw/u3yLNnBAbzuLwIpkgSbUj7YZEauhYaDiNNsnSXjGgQ==",
+        "resolved": "0.6.3",
+        "contentHash": "qYrA5gfy7a1UOL/ObgQlRS5VTVKV8evSVUlfwLlgffC/bnHWe04McIeABLVoap74akW0g9jCvOGHVe78Aaxmaw==",
         "dependencies": {
           "Microsoft.Extensions.AI.Abstractions": "10.10.0"
         }
@@ -265,6 +274,11 @@
         "type": "Transitive",
         "resolved": "6.35.0",
         "contentHash": "xuR8E4Rd96M41CnUSCiOJ2DBh+z+zQSmyrYHdYhD6K4fXBcQGVnRCFQ0efROUYpP+p0zC1BLKr0JRpVuujTZSg=="
+      },
+      "Spectre.Console.Ansi": {
+        "type": "Transitive",
+        "resolved": "0.57.2",
+        "contentHash": "Y1+u73shwP+JYHmrkdN6bSt2kaGBEAafhi2nrecczbXdFRey+k7J/WF9YPfcB0rqivv2S8fmif6FSBq9m/AFvw=="
       },
       "System.ClientModel": {
         "type": "Transitive",

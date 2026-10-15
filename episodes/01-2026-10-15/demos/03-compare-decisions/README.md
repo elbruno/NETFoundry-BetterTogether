@@ -4,7 +4,7 @@ One support message, the same question and label descriptions, two Foundry
 models. The generative model returns schema-constrained JSON containing one team
 through `Microsoft.Extensions.AI.IChatClient`. Microsoft-Decision-1 returns a
 native bounded choice through `ElBruno.AI.Decisions.Foundry`. The console prints
-each actual choice, the generative response's exposed token usage, and measured
+each actual choice, both providers' exposed token usage, and measured
 client-call elapsed time.
 
 ## Read Program.cs
@@ -17,17 +17,18 @@ custom catch. Edit the commented alternative prompts directly in source.
 
 The generative response's `ChatResponse.Usage` is populated by the OpenAI MEAI
 adapter when the service provides usage. Null values display **not reported**.
-The decision SDK's `ChoiceDecision` exposes `Choice`, `Probabilities`, and
-`Confidence`, but its 0.6.2 API does not expose request token usage. The demo
-shows **not exposed by SDK** for those cells instead of bypassing the SDK with
-raw HTTP or fabricating counts. The missing-usage feature is tracked in
-[ElBruno.AI.Decisions issue #4](https://github.com/elbruno/ElBruno.AI.Decisions/issues/4).
+The decision SDK's `ChoiceDecision.Usage` now exposes nullable `InputTokens`,
+`OutputTokens`, `TotalTokens`, `ReasoningTokens`, and `CachedTokens` in **0.6.3**.
+The feature shipped in the closed
+[elbruno/ElBruno.AI.Decisions#4](https://github.com/elbruno/ElBruno.AI.Decisions/issues/4).
+Counts come through the SDK, not raw HTTP interception. Missing remains
+**not reported**, reported zero remains zero, and totals are never inferred.
 
 ## Prerequisites and run
 
 - .NET SDK **10.0.401**, targeting .NET 10, latest-patch roll-forward.
 - Direct package versions: `Azure.Identity` **1.17.0**,
-  `ElBruno.AI.Decisions.Foundry` **0.6.2**,
+  `ElBruno.AI.Decisions.Foundry` **0.6.3**,
   `Microsoft.Extensions.AI.OpenAI` **10.11.0**, and both
   `Microsoft.Extensions.Configuration.UserSecrets` and
   `Microsoft.Extensions.Configuration.EnvironmentVariables` **10.0.0**.
@@ -68,8 +69,10 @@ PowerShell process and leave `Foundry__ApiKey` unset to use Azure CLI identity.
   Its output budget is 2,048 tokens, not a target or preallocated charge.
   Default reasoning behavior is unchanged. Any reported reasoning tokens are
   already included in output tokens. This is not tuned for minimum latency.
-- Usage comes from the generative SDK response only. The decision package's
-  published `ChoiceDecision` API has no token-usage fields; see issue #4 above.
+- Usage comes from both SDK responses. A live billing run reported GPT
+  103 input / 14 output / 117 total, and Microsoft-Decision-1 67 input / 1 output
+  with total/reasoning/cached not reported. These are observations, not expected
+  counts. We do not relabel 67+1 as a service-reported total.
 - Elapsed time surrounds each SDK call and includes any authentication,
   transport, and response processing performed within it. Calls run
   sequentially, generative first. There is no warm-up, order balancing,
@@ -106,5 +109,5 @@ Remove any process/environment overrides you set.
 
 - [Native decision API and usage](https://learn.microsoft.com/en-us/azure/foundry/foundry-models/how-to/use-foundry-models-microsoft-decision)
 - [Responses API](https://learn.microsoft.com/en-us/azure/ai-foundry/openai/how-to/responses)
-- [Decision SDK's missing token-usage feature, issue #4](https://github.com/elbruno/ElBruno.AI.Decisions/issues/4)
+- [Decision SDK usage feature, shipped in 0.6.3](https://github.com/elbruno/ElBruno.AI.Decisions/issues/4)
 - [Episode](../../README.md)
