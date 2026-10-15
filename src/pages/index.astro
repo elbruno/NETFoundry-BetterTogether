@@ -1,0 +1,79 @@
+---
+import Layout from '../layouts/Layout.astro';
+import banner from '../../assets/banner.png';
+import { episodes, registration, repository } from '../lib/episodes.mjs';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const demoEpisode = episodes.find((episode) => episode.demos.length > 0);
+const learning = demoEpisode ? [0, 1, 5, 6].map((index) => demoEpisode.demos[index]).filter(Boolean) : [];
+const goals = ['Make your first decision', 'Keep it local', 'Build a web experience', 'Let AI play'];
+---
+<Layout>
+  <div class="container">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <p class="eyebrow">THE .NET DEVELOPER'S AI PLAYGROUND</p>
+        <h1 id="hero-title">.NET + Foundry.<br /><span>Better Together.</span></h1>
+        <p class="lead">Build with C#. Explore Microsoft Foundry.<br />Learn through practical demos.</p>
+        <p>Join <a href="https://aka.ms/elbruno">Bruno Capuano</a> and guests for live explorations of new AI capabilities, then keep learning with recordings, runnable code, and step-by-step resources from every episode.</p>
+        <div class="actions">
+          <a class="button primary" href={registration}>Register for the series <span aria-hidden="true">&#8599;</span></a>
+          <a class="button" href="#episodes">Explore episodes <span aria-hidden="true">&#8595;</span></a>
+        </div>
+        <p class="hero-note">Live on the .NET Channel and Microsoft Reactor. Built for curious .NET developers.</p>
+      </div>
+      <figure class="hero-art">
+        <img src={banner.src} width={banner.width} height={banner.height} alt="" fetchpriority="high" />
+        <figcaption><span aria-hidden="true">&lt;/&gt;</span> Watch it. Understand it. Build it.</figcaption>
+      </figure>
+    </section>
+
+    <section class="spotlight" aria-labelledby="spotlight-title" hidden id="spotlight">
+      <div><p class="eyebrow" id="spotlight-label">UP NEXT</p><h2 id="spotlight-title"></h2><p id="spotlight-date"></p></div>
+      <div class="actions"><a class="button primary" id="spotlight-event">Register on Reactor</a><a class="button" id="spotlight-calendar">Add to calendar</a></div>
+    </section>
+
+    <section class="section" id="episodes" aria-labelledby="episodes-title">
+      <div class="section-heading">
+        <div><p class="eyebrow">WATCH. REVISIT. EXPERIMENT.</p><h2 id="episodes-title">Every episode, everything you need.</h2></div>
+        <p>One home for the sessions, source code, and resources. Follow along live or learn at your own pace.</p>
+      </div>
+      <div class="filters" id="episode-filters" hidden role="group" aria-label="Filter episodes">
+        <button type="button" data-filter="all" aria-pressed="true">All episodes</button>
+        <button type="button" data-filter="upcoming" aria-pressed="false">Upcoming</button>
+        <button type="button" data-filter="recorded" aria-pressed="false">Recorded</button>
+      </div>
+      <p id="filter-result" class="sr-only" role="status" aria-live="polite"></p>
+      <div class="episode-grid">
+        {episodes.map((episode) => (
+          <article class="episode-card" data-episode data-start={episode.start} data-end={episode.end} data-recording={episode.recording ?? ''} data-title={episode.title} data-event={episode.eventUrl} data-calendar={`${base}/calendar/${episode.id}.ics`}>
+            <div class="card-top"><span class="episode-number">EPISODE {String(episode.number).padStart(2, '0')}</span><span class="status" data-status>{episode.recording ? 'Recording available' : 'Recording not yet available'}</span></div>
+            <time datetime={episode.start} data-local-date>{new Date(episode.start).toLocaleString('en-US', { timeZone: 'UTC', dateStyle: 'medium', timeStyle: 'short' })} UTC</time>
+            <h3><a href={`${base}/episodes/${episode.id}/`}>{episode.title.replace(/^Episode \d+: /, '')}</a></h3>
+            <p class="card-summary">{episode.summary}</p>
+            <div class="tags" aria-label="Technologies">{episode.tags.map((tag) => <span>{tag}</span>)}</div>
+            <p class="materials-note">{episode.demos.length ? `${episode.demos.length} runnable demos and their setup guides` : 'Topics and demos will be shared when confirmed.'}</p>
+            <div class="card-links">
+              <a class="text-link" href={`${base}/episodes/${episode.id}/`}>Demos &amp; resources <span aria-hidden="true">&#8594;</span></a>
+              {episode.recording ? <a href={episode.recording}>Watch recording &#8599;</a> : <a href={episode.eventUrl}>Event details &#8599;</a>}
+            </div>
+          </article>
+        ))}
+      </div>
+      <p id="empty-state" class="empty-state" hidden>No episodes match this filter yet. Recordings will appear here once their links are confirmed.</p>
+      <p class="section-note">Times adapt to your timezone. <span data-timezone>UTC shown without JavaScript.</span> Recordings are added after each session when available.</p>
+    </section>
+
+    <section class="section build-section" id="build" aria-labelledby="build-title">
+      <div class="section-heading"><div><p class="eyebrow">LESS SCROLLING. MORE BUILDING.</p><h2 id="build-title">Pick a starting point.</h2></div><p>Small examples first. Bigger experiments when you're ready. Every demo has its own setup and run instructions.</p></div>
+      <div class="learning-grid">
+        {learning.map((demo, index) => <a class="learning-card" href={demo.url}><span class="step-number">0{index + 1}</span><h3>{goals[index]}</h3><p>{demo.title}</p><span class="text-link">Open the demo <span aria-hidden="true">&#8599;</span></span></a>)}
+      </div>
+      <aside class="setup-note"><strong>Before you run a demo</strong><p>Check its README for tested SDK versions, prerequisites, safe configuration, expected results, cloud charges, and cleanup. The decision examples use the community ElBruno.AI.Decisions SDK, not an official Microsoft SDK.</p></aside>
+    </section>
+
+    <section class="community" aria-labelledby="community-title">
+      <div><p class="eyebrow">LEARNING IS BETTER TOGETHER</p><h2 id="community-title">Bring your curiosity.<br />Leave with something to build.</h2><p>Watch on the .NET Channel, register for the next session, or help make the examples better on GitHub.</p></div>
+      <div class="actions"><a class="button primary" href="https://www.youtube.com/@dotnet">Visit the .NET Channel &#8599;</a><a class="button" href={repository}>Get the code &#8599;</a></div>
+    </section>
+  </div>
+</Layout>

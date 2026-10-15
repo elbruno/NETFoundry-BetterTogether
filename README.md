@@ -2,7 +2,7 @@
 
 ![.NET + Foundry, Better together: live demos, real code, and the latest AI updates](assets/banner.png)
 
-What can you build with .NET and Microsoft Foundry? Join **Bruno Capuano** for practical explorations of new SDK capabilities, the latest Foundry features and services, and building AI applications with C#.
+What can you build with .NET and Microsoft Foundry? Join **[Bruno Capuano](https://aka.ms/elbruno) and guests** for practical explorations of new SDK capabilities, the latest Foundry features and services, and building AI applications with C#.
 
 Live on the [.NET YouTube channel](https://www.youtube.com/@dotnet) and [Microsoft Reactor](https://www.youtube.com/channel/UCkm6luGCS3hD25jcEhvRMIA).
 
@@ -35,3 +35,24 @@ play manually without credentials, then explicitly hand control to Foundry or Ol
 ## Contributing
 
 See [the contribution guide](CONTRIBUTING.md) for the folder layout and a short checklist for demos and documentation.
+
+## Series website
+
+The GitHub Pages site is configured for **https://elbruno.github.io/NETFoundry-BetterTogether/**.
+It becomes available after the first successful deployment. It includes episode guides,
+demo links, registration, calendar downloads, local session times, and System/Light/Dark themes.
+
+Requires Node.js 22.12 or newer (Node.js 24 is used for deployment):
+
+```powershell
+npm ci
+npm run dev
+```
+
+Open the local URL printed by Astro, including `/NETFoundry-BetterTogether/`.
+Use `npm test` for content checks, `npm run check` to type-check templates,
+`npm run build` to generate `dist/`, and
+`npm run preview` to preview that production output. No Azure credentials or
+billable model calls are needed for the website.
+
+The [website maintenance guide](docs/website.md) explains content updates and deployment.

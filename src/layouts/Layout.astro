@@ -1,0 +1,91 @@
+---
+import '../styles/global.css';
+import { repository, registration } from '../lib/episodes.mjs';
+interface Props {
+  title?: string;
+  description?: string;
+}
+const { title = '.NET + Foundry, Better Together', description = 'Build with C#. Explore Microsoft Foundry. Recordings, runnable demos, and practical resources with Bruno Capuano and guests.' } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const canonical = new URL(Astro.url.pathname, Astro.site);
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <script is:inline>
+      (() => {
+        const param = new URLSearchParams(window.location.search).get("scoutTheme");
+        const theme =
+          param || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+        document.documentElement.setAttribute("data-theme", theme);
+      })();
+    </script>
+    <script is:inline>
+      (() => {
+        const media = window.matchMedia('(prefers-color-scheme: dark)');
+        const valid = ['system', 'light', 'dark'];
+        const parameter = new URLSearchParams(location.search).get('scoutTheme');
+        let preference = valid.includes(parameter) ? parameter : 'system';
+        try {
+          const saved = localStorage.getItem('netfoundry-theme');
+          if (!valid.includes(parameter) && valid.includes(saved)) preference = saved;
+        } catch {
+          console.warn('Theme preferences cannot be read; using the system theme.');
+        }
+        document.documentElement.dataset.themePreference = preference;
+        document.documentElement.dataset.theme = preference === 'system' ? (media.matches ? 'dark' : 'light') : preference;
+      })();
+    </script>
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonical} />
+    <meta name="theme-color" content="#f7f4ef" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#292929" media="(prefers-color-scheme: dark)" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="brand" href={`${base}/`} aria-label=".NET + Foundry, Better Together home">
+          <span class="brand-mark" aria-hidden="true">+&nbsp;</span>
+          <span>.NET + Foundry<small>BETTER TOGETHER</small></span>
+        </a>
+        <nav aria-label="Main navigation">
+          <a href={`${base}/#episodes`}>Episodes</a>
+          <a href={`${base}/#build`}>Start building</a>
+          <a href={repository}>GitHub <span aria-hidden="true">&#8599;</span></a>
+        </nav>
+        <div class="theme-control" hidden>
+          <label for="theme">Theme</label>
+          <select id="theme">
+            <option value="system">System</option>
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+          </select>
+        </div>
+      </div>
+    </header>
+    <main id="main" tabindex="-1"><slot /></main>
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <div><strong>.NET + Foundry, Better Together</strong><p>Curiosity. Real code. Something new to build.</p></div>
+        <nav aria-label="Community links">
+          <a href="https://www.youtube.com/@dotnet">.NET Channel</a>
+          <a href={registration}>Microsoft Reactor</a>
+          <a href={`${repository}/blob/main/CONTRIBUTING.md`}>Contribute</a>
+          <a href={`${repository}/issues`}>Report an issue</a>
+        </nav>
+      </div>
+    </footer>
+    <script>
+      import { initializeSite } from '../scripts/site.mjs';
+      initializeSite();
+    </script>
+  </body>
+</html>
