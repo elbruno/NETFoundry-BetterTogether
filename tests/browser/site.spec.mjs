@@ -9,6 +9,8 @@ test('homepage links, public resources, images, and no runtime errors', async ({
   await expect(page.getByText(/and guests for live explorations/)).toBeVisible();
   await expect(page.getByRole('link', { name: /Register for the series/ })).toHaveAttribute('href', 'https://developer.microsoft.com/en-us/reactor/series/S-1718/');
   await expect(page.locator('[data-episode]')).toHaveCount(4);
+  await expect(page.locator('[data-episode]').first().locator('.tags')).toContainText('Microsoft-Decision-1');
+  await expect(page.locator('[data-episode]').first().locator('.tags')).toContainText('Decision models');
   await expect(page.locator('.learning-card')).toHaveCount(4);
   await expect.poll(() => page.locator('.hero-art img').evaluate((image) => image.complete && image.naturalWidth > 0)).toBe(true);
   expect(errors).toEqual([]);
@@ -53,6 +55,10 @@ test('episode guides render demos and working internal navigation', async ({ pag
   await page.goto('episodes/01-2026-10-15/');
   await expect(page.locator('.episode-sidebar nav a')).toHaveCount(9);
   await expect(page.locator('.prose h2').filter({ hasText: 'Overview' })).toBeVisible();
+  await expect(page.locator('.prose h2').filter({ hasText: "What we'll explore" })).toBeVisible();
+  await expect(page.getByRole('link', { name: /Microsoft-Decision-1: our model for fast decision-making/ })).toHaveAttribute('href', 'https://commandline.microsoft.com/microsoft-decision-1-model-foundry/');
+  await expect(page.getByRole('link', { name: /Deploy and use Microsoft-Decision-1 in Microsoft Foundry/ })).toHaveAttribute('href', 'https://learn.microsoft.com/en-us/azure/foundry/foundry-models/how-to/use-foundry-models-microsoft-decision');
+  await expect(page.locator('.episode-topic-list')).toContainText('Decision models');
   await expect(page.locator('.copy-button').first()).toBeVisible();
   await expect(page.locator('.prose a[href^="demos/"]')).toHaveCount(0);
   const calendar = await request.get('calendar/01-2026-10-15.ics');

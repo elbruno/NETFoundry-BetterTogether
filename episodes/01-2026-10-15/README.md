@@ -6,12 +6,19 @@
 
 ## Overview
 
-Explore .NET 10 and Microsoft Foundry through progressively richer native decision examples.
-Start with one bounded choice in Foundry, repeat the same example locally with
-Ollama, use decisions in realistic review workflows, then watch a console game, with optional graphical platformer and space-game extensions.
-The samples use the community `ElBruno.AI.Decisions` SDK, not an official Microsoft
-SDK. Typed labels, scores, probabilities, and confidence replace generated chat
-JSON; they are not guarantees of correctness.
+Explore Microsoft-Decision-1 and the emerging category of decision models, then
+put decisions to work in .NET 10 and C#. Start with a bounded choice in Foundry,
+compare decision and generative model approaches, try decisions in review
+workflows, and finish by watching a model choose actions in games. The console
+space game is the main finale; a graphical platformer and MonoGame space game
+are optional extensions.
+
+Decision models return bounded, typed results for the choices your application
+defines; they don't write a free-form answer or explanation. In these examples,
+application code remains in control: it validates results and applies game
+actions. Model scores and probabilities are useful signals, not guarantees of
+correctness. The .NET decision samples use the community
+`ElBruno.AI.Decisions` SDK, not an official Microsoft SDK.
 
 ## Recording
 
@@ -33,6 +40,28 @@ Recommended learning order (folder numbers now match the walkthrough):
 
 The original walkthrough remains demos 01 through 07. Demos 08 and 09 are optional
 extensions, not replacements or renumberings of the existing game.
+
+## What we'll explore
+
+- **Meet Microsoft-Decision-1:** where decision models fit beside generative
+  models, and when a C# application needs a bounded choice rather than generated
+  prose.
+- **Make native decisions:** use the Foundry decision API with choice, score,
+  and yes/no questions; compare its structured results with a generative model.
+- **Put decisions to work:** explore ticket triage, answer-quality review,
+  confidence and probability signals, and application-owned human review.
+- **Let decisions play:** map bounded model choices to legal actions in a
+  console space game, with optional graphical platformer and MonoGame extensions.
+- **Keep software in control:** the application owns game rules, movement,
+  action validation, and whether a model suggestion is applied.
+
+## Official Microsoft resources
+
+- [Microsoft-Decision-1: our model for fast decision-making](https://commandline.microsoft.com/microsoft-decision-1-model-foundry/): Microsoft’s announcement of the model and decision models.
+- [Deploy and use Microsoft-Decision-1 in Microsoft Foundry](https://learn.microsoft.com/en-us/azure/foundry/foundry-models/how-to/use-foundry-models-microsoft-decision): deployment guide, native decision API, question types, and a classification example.
+- [Microsoft models sold by Azure in the Foundry catalog](https://learn.microsoft.com/en-us/azure/foundry/foundry-models/concepts/models-sold-directly-by-azure#microsoft-models-sold-by-azure): model details and availability.
+- [Understand Microsoft Foundry model deployment types](https://learn.microsoft.com/en-us/azure/foundry/foundry-models/concepts/deployment-types): deployment options and where inference is processed.
+
 Existing project names and user-secrets IDs are unchanged; the new Ollama sample
 has its own ID. Update local working-directory shortcuts to the new paths.
 Each introductory console sample has one commented `Program.cs`, no command-line options,

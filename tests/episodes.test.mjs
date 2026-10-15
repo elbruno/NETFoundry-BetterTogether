@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { episodes, parseEpisode, resourceUrl, calendar, episodeStatus } from '../src/lib/episodes.mjs';
 import { statusFor } from '../src/scripts/site.mjs';
 
@@ -10,6 +11,19 @@ test('all four public episode guides load, with nine existing demos in the first
   assert.match(episodes[0].html, /github.com\/elbruno\/NETFoundry-BetterTogether\/blob\/main\/episodes\/01-2026-10-15\/demos\/01-hello-decisions\/README.md/);
   assert.match(episodes[0].html, /github.com\/elbruno\/NETFoundry-BetterTogether\/blob\/main\/README.md/);
   assert.doesNotMatch(episodes[0].html, /href="demos\//);
+});
+
+test('Episode 1 covers Microsoft-Decision-1, decision models, games, and official Microsoft links', () => {
+  const readme = readFileSync('episodes/01-2026-10-15/README.md', 'utf8');
+  assert.match(episodes[0].summary, /Microsoft-Decision-1 and the emerging category of decision models/);
+  assert.ok(episodes[0].tags.includes('Microsoft-Decision-1'));
+  assert.ok(episodes[0].tags.includes('Decision models'));
+  assert.match(readme, /Microsoft-Decision-1: our model for fast decision-making/);
+  assert.match(readme, /Deploy and use Microsoft-Decision-1 in Microsoft Foundry/);
+  assert.match(readme, /Microsoft models sold by Azure in the Foundry catalog/);
+  assert.match(readme, /decision models/);
+  assert.match(readme, /finish by watching a model choose actions in games/);
+  assert.match(readme, /Decision Space Game/);
 });
 
 test('relative resources preserve fragments, parent navigation, and raw image URLs', () => {
