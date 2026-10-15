@@ -8,7 +8,7 @@
 
 Explore .NET 10 and Microsoft Foundry through progressively richer native decision examples.
 Start with one bounded choice in Foundry, repeat the same example locally with
-Ollama, use decisions in realistic review workflows, then watch a console game, with an optional graphical platformer extension.
+Ollama, use decisions in realistic review workflows, then watch a console game, with optional graphical platformer and space-game extensions.
 The samples use the community `ElBruno.AI.Decisions` SDK, not an official Microsoft
 SDK. Typed labels, scores, probabilities, and confidence replace generated chat
 JSON; they are not guarantees of correctness.
@@ -29,9 +29,10 @@ Recommended learning order (folder numbers now match the walkthrough):
 6. [Decision Lab](demos/06-decision-lab/README.md): Blazor, parallel repeated questions, live usage totals, cancellation, and Aspire GenAI traces.
 7. [Decision Space Game](demos/07-decision-space-game/README.md): apply decisions in a running simulation.
 8. [Platformer decisions](demos/08-platformer-decisions/README.md): optional graphical extension with live game-state observations, fixed-step movement/jump controls, and asynchronous Foundry or Ollama decisions.
+9. [Decision Space Game: graphical finale](demos/09-space-game-monogame/README.md): MonoGame welcome screen, generated spaceship art, manual play, and explicit Foundry/Ollama takeover using the console game's rules.
 
-The original walkthrough remains demos 01 through 07. Demo 08 is an optional
-extension, not a replacement or renumbering of the existing game.
+The original walkthrough remains demos 01 through 07. Demos 08 and 09 are optional
+extensions, not replacements or renumberings of the existing game.
 Existing project names and user-secrets IDs are unchanged; the new Ollama sample
 has its own ID. Update local working-directory shortcuts to the new paths.
 Each introductory console sample has one commented `Program.cs`, no command-line options,
@@ -58,7 +59,7 @@ pwsh -File .\Setup-UserSecrets.ps1
 
 [Setup-UserSecrets.ps1](Setup-UserSecrets.ps1) discovers runnable sample projects,
 prompts once for the Foundry resource root and deployment name, and imports
-configuration into the seven Foundry apps' separate user-secrets stores. Eight
+configuration into the eight Foundry apps' separate user-secrets stores. Nine
 runnable apps are discovered in total, including local-only demo 02.
 The helper excludes Aspire AppHost/ServiceDefaults and test projects. It also
 asks for a generative deployment on that same resource for demos 03 and 06.
@@ -68,7 +69,7 @@ identity (the default) or enter a key through hidden input. Identity mode remove
 any stored `Foundry:ApiKey` so a stale key cannot override identity authentication.
 Run `az login` separately and ensure your identity has deployment access.
 
-Optional Ollama prompts configure demo 02 and the O modes in demos 07 and 08.
+Optional Ollama prompts configure demo 02 and the O modes in demos 07, 08 and 09.
 Press Enter at the model prompt to accept `nimble`, or type another compatible
 installed decision model name.
 Demo 02 remains local-only, without Foundry values or keys.

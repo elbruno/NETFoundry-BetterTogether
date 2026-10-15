@@ -29,6 +29,9 @@ After each episode, this repository will be updated with the recording link, dem
 
 Materials are organized by episode number and date under `episodes/`. Each episode README links to its recording, demos, and resources as they become available. Each demo will include its own setup and run instructions.
 
+Episode 1 also includes a [graphical Decision Space Game finale](episodes/01-2026-10-15/demos/09-space-game-monogame/README.md):
+play manually without credentials, then explicitly hand control to Foundry or Ollama.
+
 ## Contributing
 
 See [the contribution guide](CONTRIBUTING.md) for the folder layout and a short checklist for demos and documentation.
