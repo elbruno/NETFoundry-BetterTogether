@@ -48,6 +48,9 @@ dotnet restore --locked-mode
 dotnet run
 ```
 
+The local NuGet configuration clears inherited disabled sources as well as
+inherited feeds, keeping `nuget.org` available even when disabled in user settings.
+
 The user-secrets store is `netfoundry-episode01-decision-comparison` and
 contains `Foundry:Endpoint` (resource root), `Foundry:Model` (decision
 deployment), `Foundry:GenerativeModel` (generative deployment), and optional

@@ -62,6 +62,11 @@ This minimal sample lets SDK/configuration exceptions surface normally.
 Check server availability, native API/model compatibility, and local settings
 off stream if it fails. There is no fake fallback.
 
+If Ollama returns HTTP 400 saying the model was downloaded in a format that is
+no longer supported, refresh it with `ollama pull nimble:latest` (or your configured
+model name), then rerun the demo. This can download the model again and updates
+the local model shared by demos 02, 07, and 08.
+
 Local inference makes no Foundry request and incurs no Azure inference charge.
 It uses local compute, memory, and electricity. Stop your local server when no
 longer needed. Remove only models you intentionally downloaded, using

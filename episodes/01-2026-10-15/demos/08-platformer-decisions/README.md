@@ -16,6 +16,13 @@ Requires the .NET 10 SDK **10.0.401** (the included `global.json` allows only
 later patches in that feature band) and Windows desktop support for MonoGame
 DesktopGL. The content builder requires the pinned local `dotnet-mgcb` tool.
 
+DesktopGL also needs a working OpenGL graphics driver with
+`ARB_framebuffer_object` or `EXT_framebuffer_object` support. A successful build
+does not verify this prerequisite. A VM or remote session exposing only a basic
+display adapter can fail at launch with `NoSuitableGraphicsDeviceException`.
+Run on a graphics-enabled desktop/session with a compatible driver; rebuilding
+or changing model settings will not fix missing graphics capabilities.
+
 From this directory:
 
 ```powershell

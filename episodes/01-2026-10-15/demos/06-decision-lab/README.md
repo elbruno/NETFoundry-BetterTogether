@@ -41,6 +41,11 @@ Pinned app packages: **Microsoft.Extensions.AI 10.10.0**,
 **Microsoft.Extensions.AI.OpenAI 10.10.0**, **Azure.AI.OpenAI 2.9.0-beta.1**,
 **Azure.Identity 1.17.0**, **ElBruno.AI.Decisions.Foundry 0.6.3**.
 ServiceDefaults uses **OpenTelemetry 1.17.0**. Each project has a dependency lock.
+The web project's SDK-injected ASP.NET Core assets are locked to **10.0.13**,
+as restored by SDK **10.0.402**. If a different allowed SDK patch reports
+`NU1004` for `Microsoft.AspNetCore.App.Internal.Assets`, run
+`dotnet restore DecisionLab.sln --force-evaluate`, review the lock-file change,
+then repeat the locked restore.
 The console example's Responses adapter and this web example's chat-completions
 adapter both implement MEAI; timings between the two apps are not a controlled
 API/model benchmark.
@@ -58,6 +63,9 @@ aspire describe --non-interactive
 ```
 
 Use the application and dashboard URLs reported by Aspire. Ports can vary.
+The local NuGet configuration clears inherited disabled sources as well as
+inherited feeds, so a user-level disabled `nuget.org` cannot block package or
+AppHost SDK resolution.
 Never paste dashboard login tokens into documentation or source control.
 To isolate ports from other local Aspire apps, use `aspire start --isolated
 --non-interactive` instead. Use Aspire, not `dotnet run` on the AppHost.
