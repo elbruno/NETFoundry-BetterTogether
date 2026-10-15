@@ -73,6 +73,13 @@ $projects = @(Get-ChildItem -LiteralPath (Join-Path $PSScriptRoot 'demos') -Filt
         $_.FullName -notmatch '[\\/](tests|bin|obj)[\\/]' -and
         $_.Name -notmatch '\.(AppHost|ServiceDefaults)\.csproj$'
     } |
+    Where-Object {
+        [xml] $projectXml = Get-Content -LiteralPath $_.FullName -Raw
+        $outputType = $projectXml.SelectSingleNode('//OutputType')
+        $sdk = $projectXml.DocumentElement.GetAttribute('Sdk')
+        ($null -ne $outputType -and $outputType.InnerText -in @('Exe', 'WinExe')) -or
+        $sdk -match '(^|[; ])Microsoft\.NET\.Sdk\.Web([; ]|$)'
+    } |
     Sort-Object FullName)
 if ($projects.Count -eq 0) { throw 'No sample projects were found under this episode.' }
 $ids = @{}
@@ -115,7 +122,7 @@ try {
         $keyPointer = [Runtime.InteropServices.Marshal]::SecureStringToBSTR($secureKey)
         $values['Foundry:ApiKey'] = [Runtime.InteropServices.Marshal]::PtrToStringBSTR($keyPointer)
     }
-    $local = (Read-Host 'Also configure local Ollama for demos 02 and 07 (game)? [y/N]').Trim()
+    $local = (Read-Host 'Also configure local Ollama for demos 02, 07 and 08 (games)? [y/N]').Trim()
     $ollama = $null
     if ($local -in @('y', 'yes')) {
         $ollama = @{
@@ -136,7 +143,8 @@ try {
         if ($project.Name -in @('DecisionComparison.csproj', 'DecisionLab.Web.csproj')) {
             $projectValues['Foundry:GenerativeModel'] = $generativeModel
         }
-        if ($null -ne $ollama -and ($localOnly -or $project.Name -eq 'DecisionSpaceGame.csproj')) {
+        if ($null -ne $ollama -and ($localOnly -or
+            $project.Name -in @('DecisionSpaceGame.csproj', 'Platformer2D.csproj'))) {
             foreach ($entry in $ollama.GetEnumerator()) { $projectValues[$entry.Key] = $entry.Value }
         }
         $json = $projectValues | ConvertTo-Json -Compress

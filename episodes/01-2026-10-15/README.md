@@ -8,7 +8,7 @@
 
 Explore .NET 10 and Microsoft Foundry through progressively richer native decision examples.
 Start with one bounded choice in Foundry, repeat the same example locally with
-Ollama, use decisions in realistic review workflows, then watch a console game.
+Ollama, use decisions in realistic review workflows, then watch a console game, with an optional graphical platformer extension.
 The samples use the community `ElBruno.AI.Decisions` SDK, not an official Microsoft
 SDK. Typed labels, scores, probabilities, and confidence replace generated chat
 JSON; they are not guarantees of correctness.
@@ -28,8 +28,10 @@ Recommended learning order (folder numbers now match the walkthrough):
 5. [Answer-quality review](demos/05-answer-review/README.md): model-assisted review, not automatic approval.
 6. [Decision Lab](demos/06-decision-lab/README.md): Blazor, parallel repeated questions, live usage totals, cancellation, and Aspire GenAI traces.
 7. [Decision Space Game](demos/07-decision-space-game/README.md): apply decisions in a running simulation.
+8. [Platformer decisions](demos/08-platformer-decisions/README.md): optional graphical extension with live game-state observations, fixed-step movement/jump controls, and asynchronous Foundry or Ollama decisions.
 
-The demo folders were renumbered before the broadcast so the game is last.
+The original walkthrough remains demos 01 through 07. Demo 08 is an optional
+extension, not a replacement or renumbering of the existing game.
 Existing project names and user-secrets IDs are unchanged; the new Ollama sample
 has its own ID. Update local working-directory shortcuts to the new paths.
 Each introductory console sample has one commented `Program.cs`, no command-line options,
@@ -56,16 +58,16 @@ pwsh -File .\Setup-UserSecrets.ps1
 
 [Setup-UserSecrets.ps1](Setup-UserSecrets.ps1) discovers runnable sample projects,
 prompts once for the Foundry resource root and deployment name, and imports
-configuration into the six Foundry apps' separate user-secrets stores. Seven
-runnable apps are configured in total, including local-only demo 02.
+configuration into the seven Foundry apps' separate user-secrets stores. Eight
+runnable apps are discovered in total, including local-only demo 02.
 The helper excludes Aspire AppHost/ServiceDefaults and test projects. It also
 asks for a generative deployment on that same resource for demos 03 and 06. Choose Azure CLI
 identity (the default) or enter a key through hidden input. Identity mode removes
 any stored `Foundry:ApiKey` so a stale key cannot override identity authentication.
 Run `az login` separately and ensure your identity has deployment access.
 
-Optional Ollama prompts configure demo 02 and the game's O mode. Demo 02 remains
-local-only, without Foundry values or keys.
+Optional Ollama prompts configure demo 02 and the O modes in demos 07 and 08.
+Demo 02 remains local-only, without Foundry values or keys.
 They do not install Ollama or download a model. Skipping Ollama leaves that
 project's existing settings unchanged. To run only demo 02, its README also
 provides direct local configuration commands without requiring Foundry access.
@@ -93,6 +95,11 @@ pwsh -File .\tests\Setup-UserSecrets.Tests.ps1
   (.NET 10, ElBruno.AI.Decisions 0.6.3, M manual / F Foundry / O Ollama,
   Spectre.Console battlefield, decision-paced AI turns, optional --foundry/--ollama
   auto-start and outcome/latency/usage mission reports).
+- [Platformer decisions: graphical game, structured observations, fixed-step actions, tests, and attribution](demos/08-platformer-decisions/README.md)
+  (.NET 10, MonoGame, manual by default, asynchronous Foundry/Ollama choices).
+  Build, visible graphical launch, contract/desktop checks and 20 live
+  decisions per provider were verified. Scripted manual controls completed
+  the teaching level; autonomous model completion is not claimed.
 - [ElBruno.AI.Decisions](https://github.com/elbruno/ElBruno.AI.Decisions)
 - [Microsoft SpaceAINet reference](https://github.com/microsoft/Generative-AI-for-beginners-dotnet/tree/main/samples/AppsWithGenAI/SpaceAINet)
 

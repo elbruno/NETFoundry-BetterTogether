@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/Desktop/">
+    <Project Path="Desktop/Platformer2D.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/PlatformerDecisions.Tests.csproj" />
+  </Folder>
+  <Project Path="Core/Core.csproj" />
+</Solution>

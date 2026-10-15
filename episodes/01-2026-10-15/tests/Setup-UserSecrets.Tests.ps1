@@ -48,9 +48,18 @@ $setup = Join-Path (Split-Path $PSScriptRoot) 'Setup-UserSecrets.ps1'
         Where-Object {
             $_.FullName -notmatch '[\\/](tests|bin|obj)[\\/]' -and
             $_.Name -notmatch '\.(AppHost|ServiceDefaults)\.csproj$'
+        } |
+        Where-Object {
+            [xml] $projectXml = Get-Content -LiteralPath $_.FullName -Raw
+            $outputType = $projectXml.SelectSingleNode('//OutputType')
+            $sdk = $projectXml.DocumentElement.GetAttribute('Sdk')
+            ($null -ne $outputType -and $outputType.InnerText -in @('Exe', 'WinExe')) -or
+            $sdk -match '(^|[; ])Microsoft\.NET\.Sdk\.Web([; ]|$)'
         })
     $count = $projects.Count
     $foundryCount = @($projects | Where-Object Name -ne 'HelloDecisionsOllama.csproj').Count
+    Assert ($projects.Name -contains 'Platformer2D.csproj') 'The platformer app was not discovered.'
+    Assert ($projects.Name -notcontains 'Core.csproj') 'A non-runnable game library was discovered as an app.'
 
     # A/B. Validate-only must not prompt or invoke the secrets CLI.
     $transcript = & $SetupPath -ValidateOnly 6>&1 | Out-String
@@ -74,7 +83,7 @@ $setup = Join-Path (Split-Path $PSScriptRoot) 'Setup-UserSecrets.ps1'
             Assert ($json['Foundry:Model'] -eq 'synthetic-deployment') 'Deployment was not imported.'
         }
         Assert (-not $json.ContainsKey('Foundry:ApiKey')) 'Identity import unexpectedly contains an API key.'
-        $usesOllama = $isLocalOnly -or ($call.Arguments -join ' ') -match 'DecisionSpaceGame\.csproj'
+        $usesOllama = $isLocalOnly -or ($call.Arguments -join ' ') -match '(DecisionSpaceGame|Platformer2D)\.csproj'
         Assert ($json.ContainsKey('Ollama:Model') -eq $usesOllama) 'Ollama configuration was applied to the wrong sample.'
         $isComparison = ($call.Arguments -join ' ') -match '(DecisionComparison|DecisionLab\.Web)\.csproj'
         Assert ($json.ContainsKey('Foundry:GenerativeModel') -eq $isComparison) 'Generative configuration was applied to the wrong sample.'
