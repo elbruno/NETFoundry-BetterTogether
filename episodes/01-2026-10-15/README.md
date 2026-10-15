@@ -1,4 +1,4 @@
-# Episode 1: .NET + Foundry, Better together
+# Episode 1: .NET + Foundry, Better Together: Decision Models in Action
 
 **Date:** October 15, 2026, 12:00-1:00 PM EDT (16:00-17:00 UTC).
 

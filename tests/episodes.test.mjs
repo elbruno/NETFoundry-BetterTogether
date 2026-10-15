@@ -30,6 +30,7 @@ test('Episode 1 credits both hosts and links guest labs without mixing them into
 
 test('Episode 1 covers Microsoft-Decision-1, decision models, games, and official Microsoft links', () => {
   const readme = readFileSync('episodes/01-2026-10-15/README.md', 'utf8');
+  assert.equal(episodes[0].title, 'Episode 1: .NET + Foundry, Better Together: Decision Models in Action');
   assert.match(episodes[0].summary, /Microsoft-Decision-1 and the emerging category of decision models/);
   assert.ok(episodes[0].tags.includes('Microsoft-Decision-1'));
   assert.ok(episodes[0].tags.includes('Decision models'));
@@ -80,7 +81,7 @@ test('calendar downloads use UTC and handle November daylight saving changes', (
   assert.match(calendar(episodes[0]), /DTSTART:20261015T160000Z/);
   assert.match(calendar(episodes[2]), /DTSTART:20261112T170000Z/);
   assert.match(calendar(episodes[3]), /DTEND:20261203T180000Z/);
-  assert.match(calendar(episodes[0]), /SUMMARY:Episode 1: .NET \+ Foundry\\, Better together/);
+  assert.match(calendar(episodes[0]).replace(/\r\n /g, ''), /SUMMARY:Episode 1: \.NET \+ Foundry\\, Better Together: Decision Models in Action/);
   assert.ok(calendar(episodes[0]).endsWith('END:VCALENDAR\r\n'));
   assert.ok(calendar(episodes[0]).split('\r\n').every((line) => Buffer.byteLength(line) <= 75));
 });
