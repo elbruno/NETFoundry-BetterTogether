@@ -20,11 +20,16 @@ From this directory:
 
 ```powershell
 dotnet tool restore
-dotnet restore --locked-mode
-dotnet build -c Release --no-restore
-dotnet test -c Release --no-restore
-dotnet run --project .\Desktop\Platformer2D.csproj -c Release --no-build
+dotnet restore .\PlatformerDecisions.slnx --locked-mode
+dotnet build .\PlatformerDecisions.slnx -c Release --no-restore
+dotnet test .\PlatformerDecisions.slnx -c Release --no-restore
+dotnet run
 ```
+
+The runnable `Platformer2D.csproj` is in this directory, so plain `dotnet run`
+launches manual play. The solution groups the game, Core library and tests for
+IDE use and solution-wide checks; a solution alone is not a runnable project.
+For the prebuilt Release version, use `dotnet run -c Release --no-build`.
 
 The four credential-free contract tests run by default. The graphics-backed
 tests are opt-in and require a desktop and Release content already built:
@@ -119,11 +124,11 @@ calibrated confidence or correctness guarantee.
 To remove only this demo's configured keys:
 
 ```powershell
-dotnet user-secrets remove "Foundry:Endpoint" --project .\Desktop\Platformer2D.csproj
-dotnet user-secrets remove "Foundry:Model" --project .\Desktop\Platformer2D.csproj
-dotnet user-secrets remove "Foundry:ApiKey" --project .\Desktop\Platformer2D.csproj
-dotnet user-secrets remove "Ollama:Endpoint" --project .\Desktop\Platformer2D.csproj
-dotnet user-secrets remove "Ollama:Model" --project .\Desktop\Platformer2D.csproj
+dotnet user-secrets remove "Foundry:Endpoint" --project .\Platformer2D.csproj
+dotnet user-secrets remove "Foundry:Model" --project .\Platformer2D.csproj
+dotnet user-secrets remove "Foundry:ApiKey" --project .\Platformer2D.csproj
+dotnet user-secrets remove "Ollama:Endpoint" --project .\Platformer2D.csproj
+dotnet user-secrets remove "Ollama:Model" --project .\Platformer2D.csproj
 ```
 
 These commands affect only this project's user-secrets store. They do not delete

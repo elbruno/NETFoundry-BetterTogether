@@ -1,7 +1,5 @@
 <Solution>
-  <Folder Name="/Desktop/">
-    <Project Path="Desktop/Platformer2D.csproj" />
-  </Folder>
+  <Project Path="Platformer2D.csproj" />
   <Folder Name="/tests/">
     <Project Path="tests/PlatformerDecisions.Tests.csproj" />
   </Folder>

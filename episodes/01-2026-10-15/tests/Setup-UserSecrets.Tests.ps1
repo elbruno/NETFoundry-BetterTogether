@@ -59,6 +59,9 @@ $setup = Join-Path (Split-Path $PSScriptRoot) 'Setup-UserSecrets.ps1'
     $count = $projects.Count
     $foundryCount = @($projects | Where-Object Name -ne 'HelloDecisionsOllama.csproj').Count
     Assert ($projects.Name -contains 'Platformer2D.csproj') 'The platformer app was not discovered.'
+    $platformer = @($projects | Where-Object Name -eq 'Platformer2D.csproj')
+    Assert ($platformer.Count -eq 1) 'The platformer must be discovered exactly once.'
+    Assert ($platformer[0].Directory.Name -eq '08-platformer-decisions') 'The platformer runnable project must be at the demo root.'
     Assert ($projects.Name -notcontains 'Core.csproj') 'A non-runnable game library was discovered as an app.'
 
     # A/B. Validate-only must not prompt or invoke the secrets CLI.
