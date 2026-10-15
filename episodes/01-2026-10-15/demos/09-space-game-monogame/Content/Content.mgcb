@@ -1,0 +1,11 @@
+/outputDir:bin/$(Platform)
+/intermediateDir:obj/$(Platform)
+/platform:DesktopGL
+/profile:Reach
+/compress:False
+
+#begin Fonts/Hud.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=False
+/build:Fonts/Hud.spritefont

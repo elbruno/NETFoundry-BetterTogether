@@ -63,6 +63,11 @@ $setup = Join-Path (Split-Path $PSScriptRoot) 'Setup-UserSecrets.ps1'
     Assert ($platformer.Count -eq 1) 'The platformer must be discovered exactly once.'
     Assert ($platformer[0].Directory.Name -eq '08-platformer-decisions') 'The platformer runnable project must be at the demo root.'
     Assert ($projects.Name -notcontains 'Core.csproj') 'A non-runnable game library was discovered as an app.'
+    $spaceGame = @($projects | Where-Object Name -eq 'SpaceGameMonoGame.csproj')
+    Assert ($spaceGame.Count -eq 1) 'The graphical space game must be discovered exactly once.'
+    Assert ($spaceGame[0].Directory.Name -eq '09-space-game-monogame') 'The graphical space game must run from its demo root.'
+    [xml] $spaceXml = Get-Content $spaceGame[0].FullName -Raw
+    Assert ($spaceXml.Project.PropertyGroup.UserSecretsId -eq 'netfoundry-episode01-space-game-monogame') 'The graphical game needs an independent secrets store.'
 
     # A/B. Validate-only must not prompt or invoke the secrets CLI.
     $transcript = & $SetupPath -ValidateOnly 6>&1 | Out-String
@@ -86,7 +91,7 @@ $setup = Join-Path (Split-Path $PSScriptRoot) 'Setup-UserSecrets.ps1'
             Assert ($json['Foundry:Model'] -eq 'synthetic-deployment') 'Deployment was not imported.'
         }
         Assert (-not $json.ContainsKey('Foundry:ApiKey')) 'Identity import unexpectedly contains an API key.'
-        $usesOllama = $isLocalOnly -or ($call.Arguments -join ' ') -match '(DecisionSpaceGame|Platformer2D)\.csproj'
+        $usesOllama = $isLocalOnly -or ($call.Arguments -join ' ') -match '(DecisionSpaceGame|Platformer2D|SpaceGameMonoGame)\.csproj'
         Assert ($json.ContainsKey('Ollama:Model') -eq $usesOllama) 'Ollama configuration was applied to the wrong sample.'
         if ($usesOllama) {
             Assert ($json['Ollama:Model'] -eq 'custom-local-model') 'The explicit local model override was not trimmed and imported.'
