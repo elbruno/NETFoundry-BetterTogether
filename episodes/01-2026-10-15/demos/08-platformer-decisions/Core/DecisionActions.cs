@@ -51,6 +51,12 @@ public readonly record struct ControlAction(string Label, float Movement, bool J
         Coordinates and velocity use world pixels; x increases right and y increases down. The simulation runs at 60 Hz.
         Each action controls horizontal movement and the jump button for exactly six simulation steps (100 ms); wall-clock inference time does not advance physics, enemies, timers, or simulation animations.
         A jump_* label holds jump for all six steps, including while airborne, which can extend the upstream variable-height jump. A non-jump label releases jump; a new jump can start only when the original game physics permits it. No label overrides collision or physics.
+        Prioritize survival before forward progress. gapsAtFeetHeight explicitly lists missing support, not solid platforms.
+        When canStartJump=true and a gap ahead has withinJumpApproach=true, choose jump_right NOW to cross it. Do not wait or stop: there is no air jump after leaving the ground.
+        When canStartJump=true and an enemy aheadRight=true has withinJumpApproach=true, choose jump_right NOW to clear it before collision. Enemy distances use collision boxes, not centers.
+        While canExtendJump=true choose jump_right to keep horizontal momentum and hold jump long enough to clear the hazard. Do not choose jump_hold over a gap: it stops horizontal movement.
+        Once descending (velocityY>=0 and grounded=false), choose right to release jump and continue crossing. If grounded but jumpHeld=true, choose right to release before a new jump.
+        Otherwise choose right toward an exit to the right, or left toward an exit to the left. Do not choose hold on safe ground: standing still does not make progress. Gems are optional.
         Use nearby collision tiles, gap edges, platforms, enemies, gems, exit direction and player velocity to choose a safe action. Return one supplied label only.
         """;
 

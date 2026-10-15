@@ -70,7 +70,7 @@ $setup = Join-Path (Split-Path $PSScriptRoot) 'Setup-UserSecrets.ps1'
 
     # Identity mode retries malformed URLs and clears stale key authentication.
     foreach ($value in @('http://bad.example/', 'https://example.invalid/',
-        'synthetic-deployment', 'synthetic-generative', '', 'y', '', 'nimble')) {
+        'synthetic-deployment', 'synthetic-generative', '', 'y', '', ' custom-local-model ')) {
         $global:EpisodeSetupTestState.Answers.Enqueue($value)
     }
     $transcript = & $SetupPath 3>&1 6>&1 | Out-String
@@ -88,6 +88,9 @@ $setup = Join-Path (Split-Path $PSScriptRoot) 'Setup-UserSecrets.ps1'
         Assert (-not $json.ContainsKey('Foundry:ApiKey')) 'Identity import unexpectedly contains an API key.'
         $usesOllama = $isLocalOnly -or ($call.Arguments -join ' ') -match '(DecisionSpaceGame|Platformer2D)\.csproj'
         Assert ($json.ContainsKey('Ollama:Model') -eq $usesOllama) 'Ollama configuration was applied to the wrong sample.'
+        if ($usesOllama) {
+            Assert ($json['Ollama:Model'] -eq 'custom-local-model') 'The explicit local model override was not trimmed and imported.'
+        }
         $isComparison = ($call.Arguments -join ' ') -match '(DecisionComparison|DecisionLab\.Web)\.csproj'
         Assert ($json.ContainsKey('Foundry:GenerativeModel') -eq $isComparison) 'Generative configuration was applied to the wrong sample.'
         if ($isComparison) {
@@ -95,6 +98,29 @@ $setup = Join-Path (Split-Path $PSScriptRoot) 'Setup-UserSecrets.ps1'
         }
     }
     Assert (-not $transcript.Contains('SYNTHETIC_SECRET_CLI_OUTPUT')) 'CLI output leaked.'
+
+    # Blank/whitespace input accepts the suggested model names without retries.
+    $global:EpisodeSetupTestState.Calls.Clear()
+    foreach ($value in @('https://example.invalid/', '', 'synthetic-deployment',
+        '', '', 'y', '', '   ')) {
+        $global:EpisodeSetupTestState.Answers.Enqueue($value)
+    }
+    $transcript = & $SetupPath 3>&1 6>&1 | Out-String
+    Assert ($global:EpisodeSetupTestState.Answers.Count -eq 0) 'Default model prompts changed unexpectedly.'
+    Assert ($global:EpisodeSetupTestState.Calls.Count -eq $count + $foundryCount) 'Defaults did not configure the correct projects.'
+    $imports = @($global:EpisodeSetupTestState.Calls | Where-Object { $_.Arguments[1] -eq 'set' })
+    foreach ($call in $imports) {
+        $json = $call.InputJson | ConvertFrom-Json -AsHashtable
+        if ($json.ContainsKey('Foundry:GenerativeModel')) {
+            Assert ($json['Foundry:GenerativeModel'] -eq 'gpt-6.1-sol') 'The generative deployment default was not imported.'
+        }
+        if ($json.ContainsKey('Ollama:Model')) {
+            Assert ($json['Ollama:Model'] -eq 'nimble') 'The local model default was not imported.'
+        }
+        if ($json.ContainsKey('Foundry:Model')) {
+            Assert ($json['Foundry:Model'] -eq 'synthetic-deployment') 'The required decision deployment prompt did not retry blank input.'
+        }
+    }
 
     # A/B. Key mode sends the key through stdin, never process arguments.
     $global:EpisodeSetupTestState.Calls.Clear()

@@ -46,7 +46,11 @@ It does not use synthetic decisions in the playable game.
 The real-provider test also requires `PLATFORMER_TEST_PROVIDER=foundry` or
 `ollama` and configuration supplied through `Foundry__*` / `Ollama__*`
 environment variables. It makes up to 20 billable calls and stops after
-110 seconds; it is skipped unless explicitly enabled. Never display secret
+110 seconds; it is skipped unless explicitly enabled. It reads this demo's
+user secrets with environment overrides. Add `PLATFORMER_FULL_RUN=1` to instead
+require reaching the exit alive within 180 decisions and 290 seconds; this can
+make up to 180 billable calls. The game's existing limits still apply.
+Never display secret
 environment values while recording.
 
 The tested game packages are MonoGame Framework DesktopGL and Content Builder
@@ -152,6 +156,13 @@ player position, velocity, grounded/alive state, local collision tiles, nearby
 live enemies and their current patrol velocity, uncollected gems, exit delta,
 remaining simulation time, and gems remaining. Derived collision geometry is
 application observation processing, not model reasoning and not a hidden path.
+Grounded observations explicitly list gaps at foot height and distance from the
+player's collision edge. `withinJumpApproach` marks gaps within two tile widths
+and same-height enemies ahead within three tile widths. These are local geometry
+cues, not a route or an automatic jump override. Jump state comes from the actual
+physics latch: `jumpHeld`, `canStartJump`, and `canExtendJump`. Instructions tell
+the model to jump before losing ground, keep forward momentum/hold during ascent,
+and release on descent to rearm. The chosen action is still applied unchanged.
 
 ## Upstream attribution and license scope
 
@@ -187,12 +198,17 @@ grant trademark rights.
 Locked restore and Release build passed. The graphical launch shows the player,
 enemies, gems and ground. A viewport mismatch was corrected: the logical
 1280-by-720 scene now matches the window, so the player at y=608 is visible.
-Eight offline/desktop checks passed; the separately enabled provider check
-passed for both Foundry and Ollama with 20 accepted decisions each.
+Nine offline/desktop checks passed, including gap/enemy approach geometry and
+the actual jump latch. The initial provider check passed for both Foundry and
+Ollama with 20 accepted decisions each.
 The real level was completed by explicitly scripted manual controls in a test,
 not by a decision model or physical keyboard automation.
 
-Both models remained alive during the bounded runs; neither reached the exit.
-This verifies inference, state-to-controls and usage integration, not autonomous
-completion. Rehearse your physical keyboard/window focus and configuration
-before broadcasting. No benchmark or guaranteed game outcome is claimed.
+Those initial 20-decision checks stopped before the gap. A subsequent full
+Foundry run reproduced late jumping: the model walked off the edge before
+requesting a jump, then died. After the observation/instruction correction,
+two full Foundry runs each reached the exit alive with 41 accepted decisions,
+including jumps over the gap and enemies. No scripted action or safety override
+was used. This is observed completion of this teaching level, not guaranteed
+success or a benchmark. Ollama has not been reverified with the revised cues.
+Rehearse your physical keyboard/window focus and configuration before broadcasting.

@@ -61,12 +61,16 @@ prompts once for the Foundry resource root and deployment name, and imports
 configuration into the seven Foundry apps' separate user-secrets stores. Eight
 runnable apps are discovered in total, including local-only demo 02.
 The helper excludes Aspire AppHost/ServiceDefaults and test projects. It also
-asks for a generative deployment on that same resource for demos 03 and 06. Choose Azure CLI
+asks for a generative deployment on that same resource for demos 03 and 06.
+Press Enter to accept `gpt-6.1-sol`, or type your actual deployment name.
+Choose Azure CLI
 identity (the default) or enter a key through hidden input. Identity mode removes
 any stored `Foundry:ApiKey` so a stale key cannot override identity authentication.
 Run `az login` separately and ensure your identity has deployment access.
 
 Optional Ollama prompts configure demo 02 and the O modes in demos 07 and 08.
+Press Enter at the model prompt to accept `nimble`, or type another compatible
+installed decision model name.
 Demo 02 remains local-only, without Foundry values or keys.
 They do not install Ollama or download a model. Skipping Ollama leaves that
 project's existing settings unchanged. To run only demo 02, its README also
@@ -97,9 +101,11 @@ pwsh -File .\tests\Setup-UserSecrets.Tests.ps1
   auto-start and outcome/latency/usage mission reports).
 - [Platformer decisions: graphical game, structured observations, fixed-step actions, tests, and attribution](demos/08-platformer-decisions/README.md)
   (.NET 10, MonoGame, manual by default, asynchronous Foundry/Ollama choices).
-  Build, visible graphical launch, contract/desktop checks and 20 live
-  decisions per provider were verified. Scripted manual controls completed
-  the teaching level; autonomous model completion is not claimed.
+  Build, visible graphical launch and contract/desktop checks were verified.
+  With explicit gap/enemy approach observations and jump timing instructions,
+  Foundry completed the level alive in two full runs of 41 decisions each.
+  Ollama's earlier 20-decision smoke predates this correction. Model success
+  is not guaranteed.
 - [ElBruno.AI.Decisions](https://github.com/elbruno/ElBruno.AI.Decisions)
 - [Microsoft SpaceAINet reference](https://github.com/microsoft/Generative-AI-for-beginners-dotnet/tree/main/samples/AppsWithGenAI/SpaceAINet)
 

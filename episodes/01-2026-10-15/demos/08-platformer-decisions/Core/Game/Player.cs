@@ -142,6 +142,9 @@ namespace Platformer2D.Core
         }
 
         private bool wasJumping;
+        public bool JumpButtonHeld => wasJumping;
+        public bool CanStartJump => IsOnGround && !wasJumping;
+        public bool CanExtendJump => jumpTime > 0 && jumpTime < MaxJumpTime;
         private float initialFallYPosition;
         private bool isFalling;
         private float jumpTime;
@@ -239,6 +242,8 @@ namespace Platformer2D.Core
             Position = position;
             Velocity = Vector2.Zero;
             isAlive = true;
+            wasJumping = isJumping = isFalling = false;
+            jumpTime = 0;
             sprite.PlayAnimation(idleAnimation);
         }
 

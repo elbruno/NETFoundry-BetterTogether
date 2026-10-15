@@ -635,6 +635,26 @@ namespace Platformer2D.Core
             int playerTileX = Math.Clamp((int)(Player.Position.X / Tile.Width), 0, Width - 1);
             int playerTileY = Math.Clamp((int)(Player.Position.Y / Tile.Height), 0, Height - 1);
             var nearbyTiles = new List<object>();
+            var gaps = new List<object>();
+            Rectangle playerBounds = Player.BoundingRectangle;
+            int supportRow = Math.Clamp((int)Math.Ceiling(Player.Position.Y / Tile.Height), 0, Height - 1);
+            for (int x = Math.Max(0, playerTileX - 10); Player.IsOnGround && x <= Math.Min(Width - 1, playerTileX + 12); x++)
+            {
+                if (tiles[x, supportRow].Collision != TileCollision.Passable) continue;
+                int startX = x;
+                while (x + 1 < Width && tiles[x + 1, supportRow].Collision == TileCollision.Passable) x++;
+                float distance = startX * Tile.Width - playerBounds.Right;
+                gaps.Add(new
+                {
+                    startX = startX * Tile.Width,
+                    endX = (x + 1) * Tile.Width,
+                    supportY = supportRow * Tile.Height,
+                    distanceFromPlayerRight = distance,
+                    withinJumpApproach = distance is >= 0 and <= Tile.Width * 2,
+                    secondsUntilRightEdge = Player.Velocity.X > 0 && distance >= 0
+                        ? (float?)(distance / Player.Velocity.X) : null
+                });
+            }
             for (int y = Math.Max(0, playerTileY - 5); y <= Math.Min(Height - 1, playerTileY + 2); y++)
             {
                 for (int x = Math.Max(0, playerTileX - 10); x <= Math.Min(Width - 1, playerTileX + 12); x++)
@@ -648,6 +668,7 @@ namespace Platformer2D.Core
             return JsonSerializer.Serialize(new
             {
                 coordinates = "world pixels; x right, y down; player position is bottom-center; tile size 40x32",
+                gapsAtFeetHeight = gaps,
                 player = new
                 {
                     x = Player.Position.X,
@@ -657,12 +678,27 @@ namespace Platformer2D.Core
                     grounded = Player.IsOnGround,
                     alive = Player.IsAlive,
                     movement = Player.Movement,
-                    jumpHeld = Player.IsJumping
+                    jumpHeld = Player.JumpButtonHeld,
+                    canStartJump = Player.CanStartJump,
+                    canExtendJump = Player.CanExtendJump,
+                    bounds = new { left = playerBounds.Left, right = playerBounds.Right, top = playerBounds.Top, bottom = playerBounds.Bottom }
                 },
                 nearbyCollisionTiles = nearbyTiles,
                 nearbyEnemies = enemies.Where(enemy => enemy.IsAlive &&
                     Math.Abs(enemy.Position.X - Player.Position.X) <= Tile.Width * 12)
-                    .Select(enemy => new { x = enemy.Position.X, y = enemy.Position.Y, velocityX = enemy.VelocityX }),
+                    .Select(enemy => new
+                    {
+                        x = enemy.Position.X, y = enemy.Position.Y, velocityX = enemy.VelocityX,
+                        left = enemy.BoundingRectangle.Left, right = enemy.BoundingRectangle.Right,
+                        top = enemy.BoundingRectangle.Top, bottom = enemy.BoundingRectangle.Bottom,
+                        horizontalClearance = Math.Max(enemy.BoundingRectangle.Left - playerBounds.Right,
+                            playerBounds.Left - enemy.BoundingRectangle.Right),
+                        aheadRight = enemy.Position.X >= Player.Position.X,
+                        withinJumpApproach = enemy.BoundingRectangle.Left - playerBounds.Right is >= 0 and <= Tile.Width * 3 &&
+                            enemy.BoundingRectangle.Bottom > playerBounds.Top && enemy.BoundingRectangle.Top < playerBounds.Bottom,
+                        closingSpeed = enemy.Position.X >= Player.Position.X
+                            ? Player.Velocity.X - enemy.VelocityX : enemy.VelocityX - Player.Velocity.X
+                    }),
                 nearbyGems = gems.Where(gem => gem.State == GemState.Waiting &&
                     Math.Abs(gem.Position.X - Player.Position.X) <= Tile.Width * 12)
                     .Select(gem => new { x = gem.Position.X, y = gem.Position.Y }),

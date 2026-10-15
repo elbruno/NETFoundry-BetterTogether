@@ -5,6 +5,7 @@
  * C. Optionally exercise real configured providers without logging configuration.
  */
 using System.Diagnostics;
+using System.Text.Json;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
@@ -104,26 +105,89 @@ public sealed class DesktopGameplayTests(ITestOutputHelper output)
     public void ConfiguredProviderMakesRealDecisionsAgainstActualLevel()
     {
         string? provider = Environment.GetEnvironmentVariable("PLATFORMER_TEST_PROVIDER");
-        DecisionProviderFactory.Configure(new ConfigurationBuilder().AddEnvironmentVariables().Build());
+        DecisionProviderFactory.Configure(new ConfigurationBuilder()
+            .AddUserSecrets("netfoundry-episode01-platformer-decisions").AddEnvironmentVariables().Build());
         using var game = new Harness();
         game.Boot();
         var screen = game.Screen;
         screen.HandleDemoKeys(new KeyboardState(provider == "foundry" ? Keys.F : Keys.O));
         var watch = Stopwatch.StartNew();
+        int limit = Environment.GetEnvironmentVariable("PLATFORMER_FULL_RUN") == "1" ? 180 : 20;
+        int observed = 0;
         while (!screen.Failed && screen.DemoLevel.Player.IsAlive && !screen.DemoLevel.ReachedExit &&
-            screen.Accepted < 20 && watch.Elapsed < TimeSpan.FromSeconds(110))
+            screen.Accepted < limit && watch.Elapsed < TimeSpan.FromSeconds(limit == 20 ? 110 : 290))
+        {
             game.Frame();
-        Assert.False(screen.Failed, screen.Status);
-        Assert.True(screen.Accepted >= 3, screen.Status);
-        Assert.True(screen.Usage.Responses >= 3);
+            if (observed != screen.Accepted)
+            {
+                observed = screen.Accepted;
+                output.WriteLine($"{observed}: {screen.Status}, position={screen.DemoLevel.Player.Position}, grounded={screen.DemoLevel.Player.IsOnGround}");
+            }
+        }
         var input = screen.Usage.Sum(u => u.InputTokens);
         var tokens = screen.Usage.Sum(u => u.OutputTokens);
         output.WriteLine($"{provider}: {screen.Accepted} decisions, input={input.Total}, output={tokens.Total}, " +
             $"alive={screen.DemoLevel.Player.IsAlive}, exit={screen.DemoLevel.ReachedExit}, " +
             $"position={screen.DemoLevel.Player.Position}, simulated={screen.DemoLevel.TimeTaken.TotalSeconds:F2}s");
+        Assert.False(screen.Failed, screen.Status);
+        Assert.True(screen.Accepted >= 3, screen.Status);
+        Assert.True(screen.Usage.Responses >= 3);
+        if (limit != 20)
+        {
+            Assert.True(screen.DemoLevel.Player.IsAlive, "Full provider run died before reaching the exit.");
+            Assert.True(screen.DemoLevel.ReachedExit, "Full provider run did not reach the exit within its limits.");
+        }
         screen.HandleDemoKeys(new KeyboardState(Keys.M));
-        while (screen.Pending && watch.Elapsed < TimeSpan.FromSeconds(115)) game.Frame();
+        var drain = Stopwatch.StartNew();
+        while (screen.Pending && drain.Elapsed < TimeSpan.FromSeconds(5)) game.Frame();
         Assert.False(screen.Pending);
+    }
+
+    [DesktopFact]
+    public void ObservationExposesGapApproachAndActualJumpLatch()
+    {
+        using var game = new Harness();
+        game.Boot();
+        var level = game.Screen.DemoLevel;
+        level.Player.Position = new Vector2(834, 608);
+        level.Player.Velocity = new Vector2(180, 0);
+        using (var state = JsonDocument.Parse(level.CaptureDecisionObservation()))
+        {
+            var gap = Assert.Single(state.RootElement.GetProperty("gapsAtFeetHeight").EnumerateArray());
+            Assert.Equal(880, gap.GetProperty("startX").GetInt32());
+            Assert.Equal(960, gap.GetProperty("endX").GetInt32());
+            Assert.True(gap.GetProperty("withinJumpApproach").GetBoolean());
+            Assert.InRange(gap.GetProperty("distanceFromPlayerRight").GetSingle(), 1, 80);
+            Assert.True(state.RootElement.GetProperty("player").GetProperty("canStartJump").GetBoolean());
+        }
+        using (var state = JsonDocument.Parse(level.CaptureDecisionObservation()))
+        {
+            int enemyLeft = state.RootElement.GetProperty("nearbyEnemies")[0].GetProperty("left").GetInt32();
+            level.Player.Position = new Vector2(enemyLeft - 60, 608);
+            using var approach = JsonDocument.Parse(level.CaptureDecisionObservation());
+            var enemy = approach.RootElement.GetProperty("nearbyEnemies")[0];
+            Assert.True(enemy.GetProperty("aheadRight").GetBoolean());
+            Assert.True(enemy.GetProperty("withinJumpApproach").GetBoolean());
+            Assert.InRange(enemy.GetProperty("horizontalClearance").GetInt32(), 1, 120);
+            level.Player.Position = new Vector2(834, 608);
+        }
+
+        var step = new GameTime(TimeSpan.Zero, ControlAction.StepDuration);
+        var controls = new InputState();
+        level.Update(step, controls, DisplayOrientation.Default, movementOverride: 1, jumpOverride: true);
+        using (var state = JsonDocument.Parse(level.CaptureDecisionObservation()))
+        {
+            var player = state.RootElement.GetProperty("player");
+            Assert.True(player.GetProperty("jumpHeld").GetBoolean());
+            Assert.True(player.GetProperty("canExtendJump").GetBoolean());
+            Assert.False(player.GetProperty("canStartJump").GetBoolean());
+            Assert.Empty(state.RootElement.GetProperty("gapsAtFeetHeight").EnumerateArray());
+        }
+        level.Update(step, controls, DisplayOrientation.Default, movementOverride: 1, jumpOverride: false);
+        Assert.False(level.Player.JumpButtonHeld);
+        Assert.False(level.Player.CanExtendJump);
+        level.Player.Reset(new Vector2(834, 608));
+        Assert.False(level.Player.JumpButtonHeld);
     }
 
     [DesktopFact]

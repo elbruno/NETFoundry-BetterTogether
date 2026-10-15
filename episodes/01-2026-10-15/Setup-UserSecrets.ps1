@@ -23,9 +23,10 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
 function Read-RequiredValue {
-    param([string] $Prompt)
+    param([string] $Prompt, [string] $Default)
     do {
         $value = Read-Host $Prompt
+        if ([string]::IsNullOrWhiteSpace($value) -and $Default) { $value = $Default }
         if ([string]::IsNullOrWhiteSpace($value)) {
             Write-Warning 'A non-empty value is required.'
         }
@@ -102,7 +103,7 @@ if ($ValidateOnly) {
 Write-Host 'Run setup before recording or sharing your screen. No supplied values will be printed by this script.'
 $endpoint = Read-Endpoint 'Foundry resource root (https://<resource>.services.ai.azure.com)'
 $model = Read-RequiredValue 'Foundry deployment name (not the catalog model name)'
-$generativeModel = Read-RequiredValue 'Generative deployment name for comparison demos 03 and 06 (for example gpt-6.1-sol, on the same resource)'
+$generativeModel = Read-RequiredValue 'Generative deployment name for comparison demos 03 and 06 (on the same resource) [gpt-6.1-sol]' -Default 'gpt-6.1-sol'
 do {
     $auth = (Read-Host 'Authentication: Azure CLI identity [Enter] or API key [K]').Trim()
 } while ($auth -notin @('', 'K', 'k'))
@@ -127,7 +128,7 @@ try {
     if ($local -in @('y', 'yes')) {
         $ollama = @{
             'Ollama:Endpoint' = Read-Endpoint 'Ollama root URL [http://localhost:11434/]' -AllowHttp -Default 'http://localhost:11434/'
-            'Ollama:Model' = Read-RequiredValue 'Local native decision model name (for example nimble)'
+            'Ollama:Model' = Read-RequiredValue 'Local native decision model name [nimble]' -Default 'nimble'
         }
     }
 

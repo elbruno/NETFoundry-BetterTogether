@@ -89,7 +89,6 @@ partial class GameplayScreen : GameScreen
     private string model = "keyboard";
     private string status = "MANUAL CONTROLS";
     private string lastAction = "none";
-    private bool previousJumpHeld;
     private ControlAction activeAction;
     private int actionStepsRemaining;
     private int lastAppliedSteps;
@@ -421,7 +420,6 @@ partial class GameplayScreen : GameScreen
             model = "keyboard";
             activeAction = default;
             actionStepsRemaining = 0;
-            previousJumpHeld = false;
             userPaused = false;
             failed = false;
             aiWallClock.Stop();
@@ -460,7 +458,6 @@ partial class GameplayScreen : GameScreen
             else
                 aiWallClock.Restart();
             lastAction = "none";
-            previousJumpHeld = false;
             status = "RESTARTED";
             RestartDemoLevel();
         }
@@ -474,7 +471,6 @@ partial class GameplayScreen : GameScreen
         generation++;
         CancelPending();
         actionStepsRemaining = 0;
-        previousJumpHeld = activeAction.Jump;
         activeAction = default;
         userPaused = false;
         failed = false;
@@ -509,7 +505,7 @@ partial class GameplayScreen : GameScreen
             }
         }
         string snapshot = DecisionObservation.AddControlContext(level.CaptureDecisionObservation(), lastAction,
-            lastAppliedSteps, previousJumpHeld);
+            lastAppliedSteps, level.Player.JumpButtonHeld);
         requestGeneration = generation;
         requestRunId = runId;
         requestCancellation = new CancellationTokenSource();
@@ -572,7 +568,6 @@ partial class GameplayScreen : GameScreen
         }
         acceptedCount++;
         activeAction = action;
-        previousJumpHeld = action.Jump;
         actionStepsRemaining = ControlAction.SimulationSteps;
         lastAction = action.Label;
         lastAppliedSteps = 0;
