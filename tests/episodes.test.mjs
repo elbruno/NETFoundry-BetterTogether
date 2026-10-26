@@ -28,6 +28,24 @@ test('Episode 1 credits both hosts and links guest labs without mixing them into
   assert.deepEqual(episodes[1].recordings, []);
 });
 
+test('Episode 2 homepage card exposes its hosted decision-agent focus and demo', () => {
+  const episode = episodes[1];
+  assert.match(episode.summary, /C# support-routing agent with Microsoft Agent Framework/);
+  assert.deepEqual(episode.tags, [
+    'C#',
+    'Microsoft Agent Framework',
+    'Microsoft-Decision-1',
+    'Foundry Hosted Agents',
+    'Azure RBAC',
+  ]);
+  assert.equal(episode.demos.length, 1);
+  assert.equal(episode.demos[0].title, 'Hosted decision-agent demo');
+  assert.equal(
+    episode.demos[0].url,
+    'https://github.com/elbruno/NETFoundry-BetterTogether/blob/main/episodes/02-2026-10-29/demos/01-hosted-decision-agent/README.md',
+  );
+});
+
 test('Episode 1 covers Microsoft-Decision-1, decision models, games, and official Microsoft links', () => {
   const readme = readFileSync('episodes/01-2026-10-15/README.md', 'utf8');
   assert.equal(episodes[0].title, 'Episode 1: .NET + Foundry, Better Together: Decision Models in Action');

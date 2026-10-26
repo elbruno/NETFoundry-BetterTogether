@@ -6,7 +6,17 @@
 
 ## Overview
 
-Explore the latest .NET and Microsoft Foundry updates with live demos and C# code. Specific topics will be shared closer to the session.
+Build a C# support-routing agent with Microsoft Agent Framework. The agent
+uses ElBruno.AI.Decisions.Foundry to call Microsoft-Decision-1, then runs as a
+Microsoft Foundry Hosted Agent.
+
+The example uses a synthetic support ticket and returns a bounded team
+suggestion. It does not update a ticketing system. The session explains both
+identity hops: the caller to the hosted endpoint, and the hosted runtime's
+agent-instance identity to the decision-model resource. Authentication
+identifies the caller; Azure RBAC authorizes the identity to access Azure
+resources. This is distinct from assigning Microsoft Entra directory roles or
+Microsoft Graph permissions.
 
 ## Recording
 
@@ -14,6 +24,10 @@ The recording link will be added after the episode.
 
 ## Demos and resources
 
-Demo code, setup instructions, and related resources will be added after the episode.
+1. [Hosted decision-agent demo](demos/01-hosted-decision-agent/README.md): A
+   feasibility prototype with one successful keyless hosted request. Repeatable
+   deployment instructions, a remote C# caller, and live evaluation fixtures
+   remain incomplete; the current Foundry User Azure RBAC assignment is broad
+   and is not a least-privilege recommendation.
 
 [Back to the series](../../README.md)

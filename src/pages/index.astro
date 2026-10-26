@@ -52,7 +52,7 @@ const goals = ['Make your first decision', 'Keep it local', 'Build a web experie
             {episode.hosts.length > 0 && <p class="host-byline">With {episode.hosts.map((host, index) => <>{index > 0 && ' and '}<a href={host.url}>{host.title}</a></>)}</p>}
             <p class="card-summary">{episode.summary}</p>
             <div class="tags" aria-label="Technologies">{episode.tags.map((tag) => <span>{tag}</span>)}</div>
-            <p class="materials-note">{episode.demos.length ? `${episode.demos.length} runnable demos and their setup guides${episode.guestResources.length ? ', plus guest labs' : ''}` : 'Topics and demos will be shared when confirmed.'}</p>
+            <p class="materials-note">{episode.demos.length ? `${episode.demos.length} runnable ${episode.demos.length === 1 ? 'demo and its setup guide' : 'demos and their setup guides'}${episode.guestResources.length ? ', plus guest labs' : ''}` : 'Topics and demos will be shared when confirmed.'}</p>
             <div class="card-links">
               <a class="text-link" href={`${base}/episodes/${episode.id}/`}>Demos &amp; resources <span aria-hidden="true">&#8594;</span></a>
               {episode.recordings.length ? episode.recordings.map((recording) => <a href={recording.url}>{recording.title} &#8599;</a>) : <a href={episode.eventUrl}>Event details &#8599;</a>}

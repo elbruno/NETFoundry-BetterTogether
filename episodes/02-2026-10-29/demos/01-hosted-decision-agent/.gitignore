@@ -1,0 +1,7 @@
+bin/
+obj/
+.azure/
+.env
+TestResults/
+artifacts/
+.azure
