@@ -34,7 +34,12 @@ test('Episode 1 credits both hosts and links guest labs without mixing them into
 test('Episode 2 homepage card exposes hosted decision-agent and co-speaker scope', () => {
   const episode = episodes[1];
   assert.match(episode.summary, /C# support-routing agent with Microsoft Agent Framework/);
+  assert.match(episode.summary, /calls a decision model in Microsoft Foundry/);
+  assert.doesNotMatch(episode.summary, /ElBruno\.AI\.Decisions/);
   assert.match(episode.summary, /Jose Luis Latorre joins as co-speaker/);
+  const seriesReadme = readFileSync('README.md', 'utf8');
+  assert.match(seriesReadme, /calls a decision model in Microsoft Foundry/);
+  assert.doesNotMatch(seriesReadme, /ElBruno\.AI\.Decisions/);
   assert.deepEqual(episode.tags, [
     'C#',
     'Microsoft Agent Framework',

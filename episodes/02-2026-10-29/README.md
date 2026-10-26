@@ -11,9 +11,9 @@
 
 ## Overview
 
-Build a C# support-routing agent with Microsoft Agent Framework, using
-ElBruno.AI.Decisions.Foundry to call Microsoft-Decision-1 as a Microsoft
-Foundry Hosted Agent. Jose Luis Latorre joins as co-speaker for a
+Build a C# support-routing agent with Microsoft Agent Framework that calls a
+decision model in Microsoft Foundry, then deploy it as a Foundry Hosted Agent.
+Jose Luis Latorre joins as co-speaker for a
 Foundry-focused discussion of Foundry Memory Stores, custom AgentMemory,
 AgentEval, and hybrid evaluation.
 

@@ -16,6 +16,8 @@ test('homepage links, public resources, images, and no runtime errors', async ({
     .toHaveAttribute('href', 'https://www.linkedin.com/in/joslat/');
   await expect(episodeTwo.locator('.card-summary')).toContainText('Jose Luis Latorre joins as co-speaker');
   await expect(episodeTwo.locator('.card-summary')).toContainText('Foundry Memory Stores');
+  await expect(episodeTwo.locator('.card-summary')).toContainText('calls a decision model in Microsoft Foundry');
+  await expect(page.locator('body')).not.toContainText('ElBruno.AI.Decisions');
   await expect(page.locator('.learning-card')).toHaveCount(4);
   await expect.poll(() => page.locator('.hero-art img').evaluate((image) => image.complete && image.naturalWidth > 0)).toBe(true);
   expect(errors).toEqual([]);
