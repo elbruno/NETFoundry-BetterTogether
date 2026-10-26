@@ -21,7 +21,7 @@ All sessions run **12:00-1:00 PM Eastern Time**. UTC times below account for the
 | 3 | November 12, 2026 | 17:00-18:00 | [Episode 3](https://developer.microsoft.com/en-us/reactor/events/27632/) | [Episode folder](episodes/03-2026-11-12/README.md) | Not yet available |
 | 4 | December 3, 2026 | 17:00-18:00 | [Episode 4](https://developer.microsoft.com/en-us/reactor/events/27634/) | [Episode folder](episodes/04-2026-12-03/README.md) | Not yet available |
 
-Episode 2 focuses on building a C# support-routing agent with Microsoft Agent Framework and `ElBruno.AI.Decisions.Foundry`. The agent calls `Microsoft-Decision-1` and runs as a Foundry Hosted Agent. See the [episode guide](episodes/02-2026-10-29/README.md) and [hosted-agent demo prototype](episodes/02-2026-10-29/demos/01-hosted-decision-agent/README.md).
+Episode 2 features co-speaker [Jose Luis Latorre](https://www.linkedin.com/in/joslat/) and a C# support-routing agent built with Microsoft Agent Framework and `ElBruno.AI.Decisions.Foundry`. The agent calls `Microsoft-Decision-1` and runs as a Foundry Hosted Agent. The discussion also covers Foundry Memory Stores, custom AgentMemory, AgentEval, and hybrid evaluation; GraphBridge and GraphRAG are possible topics if ready. Any custom-memory integration remains exploratory. See the [episode guide](episodes/02-2026-10-29/README.md) and [hosted-agent demo prototype](episodes/02-2026-10-29/demos/01-hosted-decision-agent/README.md).
 
 Later episode topics will be shared closer to their sessions.
 

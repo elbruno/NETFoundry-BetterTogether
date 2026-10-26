@@ -24,20 +24,29 @@ test('Episode 1 credits both hosts and links guest labs without mixing them into
   ]);
   assert.equal(episodes[0].guestResources.length, 3);
   assert.equal(episodes[0].guestResources[0].url, 'https://github.com/ppiova/foundry-field-notes-labs');
-  assert.deepEqual(episodes[1].hosts, []);
+  assert.deepEqual(episodes[1].hosts, [
+    { title: 'Bruno Capuano', url: 'https://aka.ms/elbruno' },
+    { title: 'Jose Luis Latorre', url: 'https://www.linkedin.com/in/joslat/' },
+  ]);
   assert.deepEqual(episodes[1].recordings, []);
 });
 
-test('Episode 2 homepage card exposes its hosted decision-agent focus and demo', () => {
+test('Episode 2 homepage card exposes hosted decision-agent and co-speaker scope', () => {
   const episode = episodes[1];
   assert.match(episode.summary, /C# support-routing agent with Microsoft Agent Framework/);
+  assert.match(episode.summary, /Jose Luis Latorre joins as co-speaker/);
   assert.deepEqual(episode.tags, [
     'C#',
     'Microsoft Agent Framework',
     'Microsoft-Decision-1',
     'Foundry Hosted Agents',
     'Azure RBAC',
+    'Foundry Memory Stores',
+    'AgentMemory',
+    'AgentEval',
   ]);
+  assert.match(episode.html, /custom-memory integration is exploratory/);
+  assert.match(episode.html, /GraphBridge and GraphRAG may be included if ready/);
   assert.equal(episode.demos.length, 1);
   assert.equal(episode.demos[0].title, 'Hosted decision-agent demo');
   assert.equal(

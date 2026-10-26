@@ -11,6 +11,11 @@ test('homepage links, public resources, images, and no runtime errors', async ({
   await expect(page.locator('[data-episode]')).toHaveCount(4);
   await expect(page.locator('[data-episode]').first().locator('.tags')).toContainText('Microsoft-Decision-1');
   await expect(page.locator('[data-episode]').first().locator('.tags')).toContainText('Decision models');
+  const episodeTwo = page.locator('[data-episode]').nth(1);
+  await expect(episodeTwo.locator('.host-byline').getByRole('link', { name: 'Jose Luis Latorre' }))
+    .toHaveAttribute('href', 'https://www.linkedin.com/in/joslat/');
+  await expect(episodeTwo.locator('.card-summary')).toContainText('Jose Luis Latorre joins as co-speaker');
+  await expect(episodeTwo.locator('.card-summary')).toContainText('Foundry Memory Stores');
   await expect(page.locator('.learning-card')).toHaveCount(4);
   await expect.poll(() => page.locator('.hero-art img').evaluate((image) => image.complete && image.naturalWidth > 0)).toBe(true);
   expect(errors).toEqual([]);
@@ -75,6 +80,12 @@ test('episode guides render demos and working internal navigation', async ({ pag
   await expect(episodeTwoDemos.locator('a')).toHaveCount(1);
   await expect(episodeTwoDemos.getByRole('link', { name: 'Hosted decision-agent demo' }))
     .toHaveAttribute('href', 'https://github.com/elbruno/NETFoundry-BetterTogether/blob/main/episodes/02-2026-10-29/demos/01-hosted-decision-agent/README.md');
+  const episodeTwoHeader = page.locator('.episode-heading');
+  await expect(episodeTwoHeader.getByRole('link', { name: 'Jose Luis Latorre' }))
+    .toHaveAttribute('href', 'https://www.linkedin.com/in/joslat/');
+  await expect(page.locator('.prose')).toContainText('Foundry Memory Stores');
+  await expect(page.locator('.prose')).toContainText('AgentEval');
+  await expect(page.locator('.prose')).toContainText('GraphBridge and GraphRAG may be included if ready');
 });
 
 test('completed episode shows both channel recordings, co-host, and guest resources', async ({ page }) => {
