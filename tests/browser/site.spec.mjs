@@ -71,7 +71,10 @@ test('episode guides render demos and working internal navigation', async ({ pag
   expect(await calendar.text()).toContain('DTSTART:20261015T160000Z');
   await page.getByRole('link', { name: 'Episode 2', exact: false }).last().click();
   await expect(page).toHaveURL(/episodes\/02-2026-10-29\/$/);
-  await expect(page.getByText('Demos will be added when available.')).toBeVisible();
+  const episodeTwoDemos = page.getByRole('navigation', { name: 'Episode demos' });
+  await expect(episodeTwoDemos.locator('a')).toHaveCount(1);
+  await expect(episodeTwoDemos.getByRole('link', { name: 'Hosted decision-agent demo' }))
+    .toHaveAttribute('href', 'https://github.com/elbruno/NETFoundry-BetterTogether/blob/main/episodes/02-2026-10-29/demos/01-hosted-decision-agent/README.md');
 });
 
 test('completed episode shows both channel recordings, co-host, and guest resources', async ({ page }) => {
