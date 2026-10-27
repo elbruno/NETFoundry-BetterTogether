@@ -14,9 +14,8 @@ test('homepage links, public resources, images, and no runtime errors', async ({
   const episodeTwo = page.locator('[data-episode]').nth(1);
   await expect(episodeTwo.locator('.host-byline').getByRole('link', { name: 'Jose Luis Latorre' }))
     .toHaveAttribute('href', 'https://www.linkedin.com/in/joslat/');
-  await expect(episodeTwo.locator('.card-summary')).toContainText('Jose Luis Latorre joins as co-speaker');
-  await expect(episodeTwo.locator('.card-summary')).toContainText('Foundry Memory Stores');
-  await expect(episodeTwo.locator('.card-summary')).toContainText('calls a decision model in Microsoft Foundry');
+  await expect(episodeTwo.locator('.card-summary')).toContainText('two connected topics: building C# Hosted Agents that call decision models in Microsoft Foundry, and adding memory to agents');
+  await expect(episodeTwo.locator('.tags')).toContainText('Foundry Memory Stores');
   await expect(page.locator('body')).not.toContainText('ElBruno.AI.Decisions');
   await expect(page.locator('.learning-card')).toHaveCount(4);
   await expect.poll(() => page.locator('.hero-art img').evaluate((image) => image.complete && image.naturalWidth > 0)).toBe(true);
@@ -87,7 +86,8 @@ test('episode guides render demos and working internal navigation', async ({ pag
     .toHaveAttribute('href', 'https://www.linkedin.com/in/joslat/');
   await expect(page.locator('.prose')).toContainText('Foundry Memory Stores');
   await expect(page.locator('.prose')).toContainText('AgentEval');
-  await expect(page.locator('.prose')).toContainText('GraphBridge and GraphRAG may be included if ready');
+  await expect(page.locator('.prose')).toContainText('two connected topics');
+  await expect(page.locator('.prose')).toContainText('AgentEval and hybrid evaluation are possible related discussion if time allows');
 });
 
 test('completed episode shows both channel recordings, co-host, and guest resources', async ({ page }) => {

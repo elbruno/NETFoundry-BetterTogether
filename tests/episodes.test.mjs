@@ -33,25 +33,25 @@ test('Episode 1 credits both hosts and links guest labs without mixing them into
 
 test('Episode 2 homepage card exposes hosted decision-agent and co-speaker scope', () => {
   const episode = episodes[1];
-  assert.match(episode.summary, /C# support-routing agent with Microsoft Agent Framework/);
-  assert.match(episode.summary, /calls a decision model in Microsoft Foundry/);
+  assert.match(episode.summary, /two connected topics: building C# Hosted Agents/);
+  assert.match(episode.summary, /call decision models in Microsoft Foundry, and adding memory to agents/);
   assert.doesNotMatch(episode.summary, /ElBruno\.AI\.Decisions/);
-  assert.match(episode.summary, /Jose Luis Latorre joins as co-speaker/);
+  assert.match(episode.html, /Co-speaker Jose Luis Latorre joins to\s+compare Foundry Memory Stores with custom AgentMemory/);
   const seriesReadme = readFileSync('README.md', 'utf8');
-  assert.match(seriesReadme, /calls a decision model in Microsoft Foundry/);
+  assert.match(seriesReadme, /focuses on two topics: C# Hosted Agents that call decision models in Microsoft Foundry, and agent memory/);
   assert.doesNotMatch(seriesReadme, /ElBruno\.AI\.Decisions/);
   assert.deepEqual(episode.tags, [
     'C#',
     'Microsoft Agent Framework',
-    'Microsoft-Decision-1',
     'Foundry Hosted Agents',
-    'Azure RBAC',
+    'Microsoft-Decision-1',
     'Foundry Memory Stores',
     'AgentMemory',
-    'AgentEval',
+    'Azure RBAC',
   ]);
-  assert.match(episode.html, /custom-memory integration is exploratory/);
-  assert.match(episode.html, /GraphBridge and GraphRAG may be included if ready/);
+  assert.match(episode.html, /Using custom AgentMemory from a Foundry Hosted Agent is exploratory/);
+  assert.match(episode.html, /AgentEval and hybrid evaluation are possible related discussion if time allows/);
+  assert.match(episode.html, /GraphBridge and GraphRAG may be mentioned only if ready/);
   assert.equal(episode.demos.length, 1);
   assert.equal(episode.demos[0].title, 'Hosted decision-agent demo');
   assert.equal(

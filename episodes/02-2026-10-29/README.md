@@ -11,16 +11,17 @@
 
 ## Overview
 
-Build a C# support-routing agent with Microsoft Agent Framework that calls a
-decision model in Microsoft Foundry, then deploy it as a Foundry Hosted Agent.
-Jose Luis Latorre joins as co-speaker for a
-Foundry-focused discussion of Foundry Memory Stores, custom AgentMemory,
-AgentEval, and hybrid evaluation.
+This episode focuses on two connected topics: building C# Hosted Agents that
+call decision models in Microsoft Foundry, and adding memory to agents. The
+demo builds a support-routing agent with Microsoft Agent Framework, then
+deploys it as a Foundry Hosted Agent. Co-speaker Jose Luis Latorre joins to
+compare Foundry Memory Stores with custom AgentMemory.
 
-GraphBridge and GraphRAG may be included if ready and Foundry-aligned. Any
-custom-memory integration is exploratory and is not part of the current
-support-routing prototype; its integration path has not been verified. Jose's
-repositories and resources will be added when shared and reviewed.
+Using custom AgentMemory from a Foundry Hosted Agent is exploratory, is not
+part of the current support-routing prototype, and has not been verified.
+AgentEval and hybrid evaluation are possible related discussion if time allows.
+GraphBridge and GraphRAG may be mentioned only if ready and Foundry-aligned.
+Jose's repositories and resources will be added when shared and reviewed.
 
 The example uses a synthetic support ticket and returns a bounded team
 suggestion. It does not update a ticketing system. The session explains both
