@@ -1,4 +1,10 @@
-# Hosted decision agent: feasibility prototype
+# Demo 03 implementation: Foundry Hosted Agent feasibility prototype
+
+This implementation remains at its original published path so existing links
+continue to work. The episode's numbered progression starts at
+[Demo 01](../01-console-decision-model/README.md) and
+[Demo 02](../02-local-agent/README.md); see the
+[Demo 03 guide](../03-foundry-hosted-agent/README.md) for this stage's summary.
 
 **Status: feasibility confirmed, demo incomplete.** Local inference and the
 Responses adapter work, and a live synthetic request succeeded through the

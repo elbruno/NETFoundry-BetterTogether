@@ -14,7 +14,8 @@ test('homepage links, public resources, images, and no runtime errors', async ({
   const episodeTwo = page.locator('[data-episode]').nth(1);
   await expect(episodeTwo.locator('.host-byline').getByRole('link', { name: 'Jose Luis Latorre' }))
     .toHaveAttribute('href', 'https://www.linkedin.com/in/joslat/');
-  await expect(episodeTwo.locator('.card-summary')).toContainText('two connected topics: building C# Hosted Agents that call decision models in Microsoft Foundry, and adding memory to agents');
+  await expect(episodeTwo.locator('.card-summary')).toContainText('two topics: Hosted Agents using decision models and agent memory');
+  await expect(episodeTwo.locator('.card-summary')).toContainText('three stages: a C# console app calls a decision model in Microsoft Foundry');
   await expect(episodeTwo.locator('.tags')).toContainText('Foundry Memory Stores');
   await expect(page.locator('body')).not.toContainText('ElBruno.AI.Decisions');
   await expect(page.locator('.learning-card')).toHaveCount(4);
@@ -78,15 +79,19 @@ test('episode guides render demos and working internal navigation', async ({ pag
   await page.getByRole('link', { name: 'Episode 2', exact: false }).last().click();
   await expect(page).toHaveURL(/episodes\/02-2026-10-29\/$/);
   const episodeTwoDemos = page.getByRole('navigation', { name: 'Episode demos' });
-  await expect(episodeTwoDemos.locator('a')).toHaveCount(1);
-  await expect(episodeTwoDemos.getByRole('link', { name: 'Hosted decision-agent demo' }))
-    .toHaveAttribute('href', 'https://github.com/elbruno/NETFoundry-BetterTogether/blob/main/episodes/02-2026-10-29/demos/01-hosted-decision-agent/README.md');
+  await expect(episodeTwoDemos.locator('a')).toHaveCount(3);
+  await expect(episodeTwoDemos.getByRole('link', { name: 'Call a Foundry decision model from C#' }))
+    .toHaveAttribute('href', 'https://github.com/elbruno/NETFoundry-BetterTogether/blob/main/episodes/02-2026-10-29/demos/01-console-decision-model/README.md');
+  await expect(episodeTwoDemos.getByRole('link', { name: 'Run the decision inside a local agent' }))
+    .toHaveAttribute('href', 'https://github.com/elbruno/NETFoundry-BetterTogether/blob/main/episodes/02-2026-10-29/demos/02-local-agent/README.md');
+  await expect(episodeTwoDemos.getByRole('link', { name: 'Run the agent as a Foundry Hosted Agent' }))
+    .toHaveAttribute('href', 'https://github.com/elbruno/NETFoundry-BetterTogether/blob/main/episodes/02-2026-10-29/demos/03-foundry-hosted-agent/README.md');
   const episodeTwoHeader = page.locator('.episode-heading');
   await expect(episodeTwoHeader.getByRole('link', { name: 'Jose Luis Latorre' }))
     .toHaveAttribute('href', 'https://www.linkedin.com/in/joslat/');
   await expect(page.locator('.prose')).toContainText('Foundry Memory Stores');
   await expect(page.locator('.prose')).toContainText('AgentEval');
-  await expect(page.locator('.prose')).toContainText('two connected topics');
+  await expect(page.locator('.prose')).toContainText('two topics: Hosted Agents using decision models and agent memory');
   await expect(page.locator('.prose')).toContainText('AgentEval and hybrid evaluation are possible related discussion if time allows');
 });
 

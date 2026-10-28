@@ -31,14 +31,14 @@ test('Episode 1 credits both hosts and links guest labs without mixing them into
   assert.deepEqual(episodes[1].recordings, []);
 });
 
-test('Episode 2 homepage card exposes hosted decision-agent and co-speaker scope', () => {
+test('Episode 2 homepage card exposes the three-stage demo and co-speaker scope', () => {
   const episode = episodes[1];
-  assert.match(episode.summary, /two connected topics: building C# Hosted Agents/);
-  assert.match(episode.summary, /call decision models in Microsoft Foundry, and adding memory to agents/);
+  assert.match(episode.summary, /two topics: Hosted Agents using decision models and agent memory/);
+  assert.match(episode.summary, /three stages: a C# console app calls a decision model in Microsoft Foundry/);
   assert.doesNotMatch(episode.summary, /ElBruno\.AI\.Decisions/);
-  assert.match(episode.html, /Co-speaker Jose Luis Latorre joins to\s+compare Foundry Memory Stores with custom AgentMemory/);
+  assert.match(episode.html, /Co-speaker Jose Luis Latorre joins to\s+compare Foundry Memory Stores\s+with custom AgentMemory/);
   const seriesReadme = readFileSync('README.md', 'utf8');
-  assert.match(seriesReadme, /focuses on two topics: C# Hosted Agents that call decision models in Microsoft Foundry, and agent memory/);
+  assert.match(seriesReadme, /focuses on Hosted Agents using decision models and agent memory/);
   assert.doesNotMatch(seriesReadme, /ElBruno\.AI\.Decisions/);
   assert.deepEqual(episode.tags, [
     'C#',
@@ -52,12 +52,16 @@ test('Episode 2 homepage card exposes hosted decision-agent and co-speaker scope
   assert.match(episode.html, /Using custom AgentMemory from a Foundry Hosted Agent is exploratory/);
   assert.match(episode.html, /AgentEval and hybrid evaluation are possible related discussion if time allows/);
   assert.match(episode.html, /GraphBridge and GraphRAG may be mentioned only if ready/);
-  assert.equal(episode.demos.length, 1);
-  assert.equal(episode.demos[0].title, 'Hosted decision-agent demo');
-  assert.equal(
-    episode.demos[0].url,
-    'https://github.com/elbruno/NETFoundry-BetterTogether/blob/main/episodes/02-2026-10-29/demos/01-hosted-decision-agent/README.md',
-  );
+  assert.deepEqual(episode.demos.map(({ title }) => title), [
+    'Call a Foundry decision model from C#',
+    'Run the decision inside a local agent',
+    'Run the agent as a Foundry Hosted Agent',
+  ]);
+  assert.deepEqual(episode.demos.map(({ url }) => url), [
+    'https://github.com/elbruno/NETFoundry-BetterTogether/blob/main/episodes/02-2026-10-29/demos/01-console-decision-model/README.md',
+    'https://github.com/elbruno/NETFoundry-BetterTogether/blob/main/episodes/02-2026-10-29/demos/02-local-agent/README.md',
+    'https://github.com/elbruno/NETFoundry-BetterTogether/blob/main/episodes/02-2026-10-29/demos/03-foundry-hosted-agent/README.md',
+  ]);
 });
 
 test('Episode 1 covers Microsoft-Decision-1, decision models, games, and official Microsoft links', () => {

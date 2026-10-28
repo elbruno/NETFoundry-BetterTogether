@@ -1,4 +1,4 @@
-# Episode 2: .NET + Foundry, Better together
+# Episode 2: .NET + Foundry, Better Together: Decision Models in Action
 
 **Date:** October 29, 2026, 12:00-1:00 PM EDT (16:00-17:00 UTC).
 
@@ -11,11 +11,12 @@
 
 ## Overview
 
-This episode focuses on two connected topics: building C# Hosted Agents that
-call decision models in Microsoft Foundry, and adding memory to agents. The
-demo builds a support-routing agent with Microsoft Agent Framework, then
-deploys it as a Foundry Hosted Agent. Co-speaker Jose Luis Latorre joins to
-compare Foundry Memory Stores with custom AgentMemory.
+This episode focuses on two topics: Hosted Agents using decision models and
+agent memory. The support-routing demo progresses through three stages: a C#
+console app calls a decision model in Microsoft Foundry, a local Microsoft
+Agent Framework agent calls the same model, and a Foundry Hosted Agent runs
+that agent. Co-speaker Jose Luis Latorre joins to compare Foundry Memory Stores
+with custom AgentMemory.
 
 Using custom AgentMemory from a Foundry Hosted Agent is exploratory, is not
 part of the current support-routing prototype, and has not been verified.
@@ -37,11 +38,15 @@ The recording link will be added after the episode.
 
 ## Demos and resources
 
-1. [Hosted decision-agent demo](demos/01-hosted-decision-agent/README.md): A
-   feasibility prototype with one successful keyless hosted request. Repeatable
-   deployment instructions, a remote C# caller, and live evaluation fixtures
-   remain incomplete; the current Foundry User Azure RBAC assignment is broad
-   and is not a least-privilege recommendation.
+1. [Call a Foundry decision model from C#](demos/01-console-decision-model/README.md):
+   a console app makes a direct, structured decision-model call.
+2. [Run the decision inside a local agent](demos/02-local-agent/README.md):
+   a console app invokes a Microsoft Agent Framework agent in-process.
+3. [Run the agent as a Foundry Hosted Agent](demos/03-foundry-hosted-agent/README.md):
+   a feasibility prototype with one successful keyless hosted request.
+   Repeatable deployment instructions, a remote C# caller, and live evaluation
+   fixtures remain incomplete; the current Foundry User Azure RBAC assignment
+   is broad and is not a least-privilege recommendation.
 
 ## Guest demos and resources
 
