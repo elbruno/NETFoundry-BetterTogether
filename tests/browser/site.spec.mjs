@@ -11,12 +11,15 @@ test('homepage links, public resources, images, and no runtime errors', async ({
   await expect(page.locator('[data-episode]')).toHaveCount(4);
   await expect(page.locator('[data-episode]').first().locator('.tags')).toContainText('Microsoft-Decision-1');
   await expect(page.locator('[data-episode]').first().locator('.tags')).toContainText('Decision models');
+  await expect(page.locator('[data-episode]').first().locator('.materials-note'))
+    .toHaveText('10 demo guides, plus guest resources');
   const episodeTwo = page.locator('[data-episode]').nth(1);
   await expect(episodeTwo.locator('.host-byline').getByRole('link', { name: 'Jose Luis Latorre' }))
     .toHaveAttribute('href', 'https://www.linkedin.com/in/joslat/');
   await expect(episodeTwo.locator('.card-summary')).toContainText('two topics: Hosted Agents using decision models and agent memory');
   await expect(episodeTwo.locator('.card-summary')).toContainText('three stages: a C# console app calls a decision model in Microsoft Foundry');
   await expect(episodeTwo.locator('.tags')).toContainText('Foundry Memory Stores');
+  await expect(episodeTwo.locator('.materials-note')).toHaveText('3 demo guides');
   await expect(page.locator('body')).not.toContainText('ElBruno.AI.Decisions');
   await expect(page.locator('.learning-card')).toHaveCount(4);
   await expect.poll(() => page.locator('.hero-art img').evaluate((image) => image.complete && image.naturalWidth > 0)).toBe(true);

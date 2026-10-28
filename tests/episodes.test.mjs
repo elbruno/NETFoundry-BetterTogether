@@ -29,6 +29,15 @@ test('Episode 1 credits both hosts and links guest labs without mixing them into
     { title: 'Jose Luis Latorre', url: 'https://www.linkedin.com/in/joslat/' },
   ]);
   assert.deepEqual(episodes[1].recordings, []);
+  assert.deepEqual(episodes[1].guestResources, []);
+});
+
+test('series navigation is not a guest resource', () => {
+  const source = '# Episode 2: Test\n\n## Overview\nA demo.\n\n## Guest demos and resources\n'
+    + '[Guest lab](https://example.com/lab)\n\n[Back to the series](../../README.md)\n';
+  assert.deepEqual(parseEpisode(episodes[1], source).guestResources, [
+    { title: 'Guest lab', url: 'https://example.com/lab' },
+  ]);
 });
 
 test('Episode 2 homepage card exposes the three-stage demo and co-speaker scope', () => {

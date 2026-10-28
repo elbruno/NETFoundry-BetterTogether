@@ -76,7 +76,9 @@ export function parseEpisode(metadata, markdown) {
   }
   const recording = recordings[0]?.url ?? null;
   const hosts = sectionLinks(markdown, 'Hosts').map((link) => ({ ...link, url: resourceUrl(link.url, metadata.id) }));
-  const guestResources = sectionLinks(markdown, 'Guest demos and resources').map((link) => ({ ...link, url: resourceUrl(link.url, metadata.id) }));
+  const guestResources = sectionLinks(markdown, 'Guest demos and resources')
+    .map((link) => ({ ...link, url: resourceUrl(link.url, metadata.id) }))
+    .filter((link) => link.url !== `${repository}/blob/main/README.md`);
   const demos = [...section(markdown, 'Demos and resources').matchAll(/^\d+\.\s+\[([^\]]+)\]\((demos\/[^)]+\/README\.md)\):\s*(.+)$/gm)]
     .map(([, title, path, description]) => ({
       title,
