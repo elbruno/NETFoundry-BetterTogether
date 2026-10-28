@@ -10,6 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="MessagePack" Version="2.5.303" />
     <ProjectReference Include="..\DecisionLab.Web\DecisionLab.Web.csproj" />
   </ItemGroup>
 
