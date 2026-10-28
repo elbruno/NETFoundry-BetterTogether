@@ -1,17 +1,25 @@
-# Demo 03 implementation: Foundry Hosted Agent feasibility prototype
+# Demo 04: Decision agent hosted in Foundry
 
-This implementation remains at its original published path so existing links
-continue to work. The episode's numbered progression starts at
-[Demo 01](../01-console-decision-model/README.md) and
-[Demo 02](../02-local-agent/README.md); see the
-[Demo 03 guide](../03-foundry-hosted-agent/README.md) for this stage's summary.
+This is the actual hosted implementation: source, manifest, and tests, not a
+wrapper guide. The episode progresses through a
+[direct decision call](../01-console-decision-model/README.md),
+[local agent](../02-local-agent/README.md), and
+[local agent with Aspire traces](../03-local-agent-aspire/README.md) before this
+hosted stage.
 
 **Status: feasibility confirmed, demo incomplete.** Local inference and the
 Responses adapter work, and a live synthetic request succeeded through the
 deployed Foundry Hosted Agent using its agent-instance identity to call the
 native decision endpoint without an API key. Reproducible deployment
 instructions, a remote C# caller, and live evaluation fixtures remain
-incomplete, so do not present this prototype as a finished audience demo.
+incomplete, so do not present this prototype as a turnkey new-environment setup.
+
+The existing deployed version 2 was retested on October 28, 2026. A fresh
+synthetic duplicate-charge request ended with `response.completed`, selected
+`billing`, and reported 121 input tokens and 1 output token. Its test session
+was stopped. This reused the deployed agent and its identity without
+redeploying or changing permissions. These are observed values, not promises
+for subsequent calls.
 
 This sample uses a custom Microsoft Agent Framework `AIAgent` to ask
 Microsoft-Decision-1 which team should handle a synthetic support ticket.
@@ -121,6 +129,33 @@ errors, and the real Responses HTTP/SSE adapter.
 dotnet restore .\tests\SupportRoutingAgent.Tests --locked-mode
 dotnet test .\tests\SupportRoutingAgent.Tests -c Release --no-restore
 ```
+
+## Invoke an existing deployment
+
+If you already deployed this agent and retained its local `.azure` binding,
+run from this demo directory:
+
+```powershell
+azd ai agent show --output json
+azd ai agent invoke --new-session --new-conversation --protocol responses `
+    --timeout 180 'I was charged twice for my subscription.'
+```
+
+Confirm the final Responses status is `completed`, then inspect the returned
+typed JSON. An HTTP 200, active version, or successful CLI exit is not enough:
+an SSE stream can still end with `response.failed`.
+
+Record only the new session ID reported by this invocation, then stop its
+compute after use:
+
+```powershell
+azd ai agent sessions stop '<session-id-from-this-invocation>'
+```
+
+The local `.azure` binding is private and is never part of a clone. Renaming
+this folder does not deploy or rename the remote agent. Full fresh-deployment
+instructions are still pending; do not run provisioning against a shared
+project just to try this invocation.
 
 ## Hosted feasibility result and remaining work
 

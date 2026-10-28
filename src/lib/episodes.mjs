@@ -14,7 +14,7 @@ export const registration = 'https://developer.microsoft.com/en-us/reactor/serie
 // Only scheduling and discovery metadata live here. Learning content stays in each public README.
 const schedule = [
   { id: '01-2026-10-15', start: '2026-10-15T16:00:00Z', end: '2026-10-15T17:00:00Z', event: '27630', tags: ['Microsoft-Decision-1', 'Decision models', 'C#', 'Ollama', 'Decision games'] },
-  { id: '02-2026-10-29', start: '2026-10-29T16:00:00Z', end: '2026-10-29T17:00:00Z', event: '27631', tags: ['C#', 'Microsoft Agent Framework', 'Foundry Hosted Agents', 'Microsoft-Decision-1', 'Foundry Memory Stores', 'AgentMemory', 'Azure RBAC'] },
+  { id: '02-2026-10-29', start: '2026-10-29T16:00:00Z', end: '2026-10-29T17:00:00Z', event: '27631', tags: ['C#', 'Microsoft Agent Framework', 'Aspire', 'Foundry Hosted Agents', 'Microsoft-Decision-1', 'Foundry Memory Stores', 'AgentMemory', 'Azure RBAC'] },
   { id: '03-2026-11-12', start: '2026-11-12T17:00:00Z', end: '2026-11-12T18:00:00Z', event: '27632', tags: ['C#', 'Foundry'] },
   { id: '04-2026-12-03', start: '2026-12-03T17:00:00Z', end: '2026-12-03T18:00:00Z', event: '27634', tags: ['C#', 'Foundry'] },
 ];

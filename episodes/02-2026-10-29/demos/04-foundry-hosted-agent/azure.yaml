@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-dev/main/schemas/v1.0/azure.yaml.json
 
-name: 01-hosted-decision-agent
+name: episode02-support-routing
 services:
     existing-project:
         host: azure.ai.project

@@ -7,7 +7,7 @@ provider-reported usage. It does not create an agent or call a chat model.
 
 The sample uses `ElBruno.AI.Decisions.Foundry` 0.6.3 to make the native
 decision-model call. The same ticket, question, labels, endpoint, and deployment
-are used in the next two demos.
+are used in the next three demos.
 
 `FoundryDecisionClient` accepts its options directly and owns its HTTP transport.
 No separate `HttpClient` is needed. Use a resource-root endpoint; project URLs

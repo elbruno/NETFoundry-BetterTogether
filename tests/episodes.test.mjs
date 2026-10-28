@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { episodes, parseEpisode, resourceUrl, calendar, episodeStatus } from '../src/lib/episodes.mjs';
 import { statusFor } from '../src/scripts/site.mjs';
 
@@ -40,18 +40,20 @@ test('series navigation is not a guest resource', () => {
   ]);
 });
 
-test('Episode 2 homepage card exposes the three-stage demo and co-speaker scope', () => {
+test('Episode 2 homepage card exposes the four-stage demo and co-speaker scope', () => {
   const episode = episodes[1];
   assert.match(episode.summary, /two topics: Hosted Agents using decision models and agent memory/);
-  assert.match(episode.summary, /three stages: a C# console app calls a decision model in Microsoft Foundry/);
+  assert.match(episode.summary, /four stages: a C# console app calls a decision model in Microsoft Foundry/);
+  assert.match(episode.summary, /Aspire displays the local agent's GenAI traces/);
   assert.doesNotMatch(episode.summary, /ElBruno\.AI\.Decisions/);
-  assert.match(episode.html, /Co-speaker Jose Luis Latorre joins to\s+compare Foundry Memory Stores\s+with custom AgentMemory/);
+  assert.match(episode.html, /Co-speaker Jose Luis\s+Latorre joins to compare Foundry Memory Stores\s+with custom AgentMemory/);
   const seriesReadme = readFileSync('README.md', 'utf8');
   assert.match(seriesReadme, /focuses on Hosted Agents using decision models and agent memory/);
   assert.doesNotMatch(seriesReadme, /ElBruno\.AI\.Decisions/);
   assert.deepEqual(episode.tags, [
     'C#',
     'Microsoft Agent Framework',
+    'Aspire',
     'Foundry Hosted Agents',
     'Microsoft-Decision-1',
     'Foundry Memory Stores',
@@ -64,13 +66,39 @@ test('Episode 2 homepage card exposes the three-stage demo and co-speaker scope'
   assert.deepEqual(episode.demos.map(({ title }) => title), [
     'Call a Foundry decision model from C#',
     'Run the decision inside a local agent',
+    'Inspect local agent GenAI traces with Aspire',
     'Run the agent as a Foundry Hosted Agent',
   ]);
   assert.deepEqual(episode.demos.map(({ url }) => url), [
     'https://github.com/elbruno/NETFoundry-BetterTogether/blob/main/episodes/02-2026-10-29/demos/01-console-decision-model/README.md',
     'https://github.com/elbruno/NETFoundry-BetterTogether/blob/main/episodes/02-2026-10-29/demos/02-local-agent/README.md',
-    'https://github.com/elbruno/NETFoundry-BetterTogether/blob/main/episodes/02-2026-10-29/demos/03-foundry-hosted-agent/README.md',
+    'https://github.com/elbruno/NETFoundry-BetterTogether/blob/main/episodes/02-2026-10-29/demos/03-local-agent-aspire/README.md',
+    'https://github.com/elbruno/NETFoundry-BetterTogether/blob/main/episodes/02-2026-10-29/demos/04-foundry-hosted-agent/README.md',
   ]);
+});
+
+test('Episode 2 has four uniquely numbered source-backed demo directories', () => {
+  const root = 'episodes/02-2026-10-29/demos';
+  const directories = readdirSync(root, { withFileTypes: true })
+    .filter((entry) => entry.isDirectory() && /^\d{2}-/.test(entry.name))
+    .map((entry) => entry.name).sort();
+  assert.deepEqual(directories, [
+    '01-console-decision-model',
+    '02-local-agent',
+    '03-local-agent-aspire',
+    '04-foundry-hosted-agent',
+  ]);
+  for (const [directory, project] of [
+    [directories[0], 'src/DecisionConsole/DecisionConsole.csproj'],
+    [directories[1], 'src/LocalRoutingAgent/LocalRoutingAgent.csproj'],
+    [directories[2], 'src/LocalRoutingAgent/LocalRoutingAgent.csproj'],
+    [directories[3], 'src/SupportRoutingAgent/SupportRoutingAgent.csproj'],
+  ]) {
+    assert.ok(existsSync(`${root}/${directory}/README.md`));
+    assert.ok(existsSync(`${root}/${directory}/${project}`));
+  }
+  assert.ok(existsSync(`${root}/${directories[2]}/apphost.cs`));
+  assert.ok(existsSync(`${root}/${directories[3]}/azure.yaml`));
 });
 
 test('Episode 1 covers Microsoft-Decision-1, decision models, games, and official Microsoft links', () => {

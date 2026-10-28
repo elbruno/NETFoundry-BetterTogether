@@ -8,7 +8,8 @@ second chat model is involved.
 
 The model, endpoint, ticket, question, and labels match
 [Demo 01](../01-console-decision-model/README.md). The hosted version in Demo
-03 uses the same agent behavior behind Foundry's Responses host.
+04 uses the same agent behavior behind Foundry's Responses host. Demo 03 adds
+Aspire observability to this local agent without changing its routing behavior.
 
 ## Tested versions
 
@@ -67,7 +68,7 @@ history, system instructions, and non-text input are unsupported. The
 - The agent owns the input contract and the JSON response shape.
 - The selected route and provider values are preserved; the suggestion text is
   a fixed application template, not generated reasoning.
-- The same agent can be hosted remotely in Demo 03.
+- Demo 03 adds Aspire GenAI traces; Demo 04 hosts the agent remotely.
 
 This sample only prints a suggestion. It does not update a ticket or prove model
 accuracy. Local inference can incur Foundry charges. Use synthetic text only.
@@ -79,6 +80,6 @@ Remove-Item Env:Decision__Endpoint, Env:Decision__Deployment -ErrorAction Silent
 ```
 
 The custom agent pattern is adapted from the Microsoft Foundry sample cited in
-the [Demo 03 source attribution](../01-hosted-decision-agent/THIRD-PARTY-NOTICES.md).
+the [Demo 04 source attribution](../04-foundry-hosted-agent/THIRD-PARTY-NOTICES.md).
 
-Continue to [Demo 03: Run the agent as a Foundry Hosted Agent](../03-foundry-hosted-agent/README.md).
+Continue to [Demo 03: Inspect local agent GenAI traces with Aspire](../03-local-agent-aspire/README.md).
