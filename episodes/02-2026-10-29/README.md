@@ -107,7 +107,11 @@ guide were replaced by this corrected four-stage layout.
 
 ## Guest demos and resources
 
-Jose's repositories and related resources are pending and will be added after
-they are shared and reviewed.
+These repositories are shared as references. Their setup requirements and
+Foundry-hosted integration have not been verified as part of this episode's
+demos.
+
+- [agent-memory-dotnet](https://github.com/joslat/agent-memory-dotnet)
+- [MAF-Foundry-AgentMemory](https://github.com/joslat/MAF-Foundry-AgentMemory)
 
 [Back to the series](../../README.md)

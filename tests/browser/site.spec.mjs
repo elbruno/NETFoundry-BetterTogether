@@ -20,7 +20,7 @@ test('homepage links, public resources, images, and no runtime errors', async ({
   await expect(episodeTwo.locator('.card-summary')).toContainText('four stages: a C# console app calls a decision model in Microsoft Foundry');
   await expect(episodeTwo.locator('.card-summary')).toContainText("Aspire displays the local agent's GenAI traces");
   await expect(episodeTwo.locator('.tags')).toContainText('Foundry Memory Stores');
-  await expect(episodeTwo.locator('.materials-note')).toHaveText('4 demo guides');
+  await expect(episodeTwo.locator('.materials-note')).toHaveText('4 demo guides, plus guest resources');
   await expect(page.locator('body')).not.toContainText('ElBruno.AI.Decisions');
   await expect(page.locator('.learning-card')).toHaveCount(4);
   await expect.poll(() => page.locator('.hero-art img').evaluate((image) => image.complete && image.naturalWidth > 0)).toBe(true);
@@ -95,6 +95,11 @@ test('episode guides render demos and working internal navigation', async ({ pag
   const episodeTwoHeader = page.locator('.episode-heading');
   await expect(episodeTwoHeader.getByRole('link', { name: 'Jose Luis Latorre' }))
     .toHaveAttribute('href', 'https://www.linkedin.com/in/joslat/');
+  const episodeTwoGuestResources = page.getByRole('navigation', { name: 'Guest resources' });
+  await expect(episodeTwoGuestResources.getByRole('link', { name: 'agent-memory-dotnet' }))
+    .toHaveAttribute('href', 'https://github.com/joslat/agent-memory-dotnet');
+  await expect(episodeTwoGuestResources.getByRole('link', { name: 'MAF-Foundry-AgentMemory' }))
+    .toHaveAttribute('href', 'https://github.com/joslat/MAF-Foundry-AgentMemory');
   await expect(page.locator('.prose')).toContainText('Foundry Memory Stores');
   await expect(page.locator('.prose')).toContainText('AgentEval');
   await expect(page.locator('.prose')).toContainText('two topics: Hosted Agents using decision models and agent memory');

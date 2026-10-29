@@ -29,7 +29,10 @@ test('Episode 1 credits both hosts and links guest labs without mixing them into
     { title: 'Jose Luis Latorre', url: 'https://www.linkedin.com/in/joslat/' },
   ]);
   assert.deepEqual(episodes[1].recordings, []);
-  assert.deepEqual(episodes[1].guestResources, []);
+  assert.deepEqual(episodes[1].guestResources, [
+    { title: 'agent-memory-dotnet', url: 'https://github.com/joslat/agent-memory-dotnet' },
+    { title: 'MAF-Foundry-AgentMemory', url: 'https://github.com/joslat/MAF-Foundry-AgentMemory' },
+  ]);
 });
 
 test('series navigation is not a guest resource', () => {
