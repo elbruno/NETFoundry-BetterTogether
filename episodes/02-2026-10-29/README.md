@@ -99,6 +99,12 @@ Every numbered directory contains runnable source. The earlier duplicate
 `01-hosted-decision-agent` directory and README-only `03-foundry-hosted-agent`
 guide were replaced by this corrected four-stage layout.
 
+## Additional resources
+
+- [Everything announced at GitHub Universe 2026: opening keynote recap](https://www.youtube.com/watch?v=xbCa0aa4tRM)
+- [GitHub Universe 2026](https://githubuniverse.com/)
+- [New Year, New Bot](https://aka.ms/newyearnewbot)
+
 ## Guest demos and resources
 
 Jose's repositories and related resources are pending and will be added after
