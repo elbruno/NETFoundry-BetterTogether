@@ -39,6 +39,50 @@ The recording link will be added after the episode.
 
 ## Demos and resources
 
+### Configure all four local demos once
+
+From the repository root, run in the PowerShell terminal you will use for the demos:
+
+```powershell
+.\episodes\02-2026-10-29\Setup-UserSecrets.ps1
+```
+
+The script asks once for the Foundry resource-root HTTPS URL and once for the
+existing decision deployment name. It sets `Decision__Endpoint` and
+`Decision__Deployment` in the current process for demos 01-03 and Aspire,
+and saves `Decision:Endpoint` and `Decision:Deployment` to Demo 04's existing
+.NET user-secrets store. It also saves the environment values for your Windows
+user, replacing any previous values with those names. Other apps using these
+names will also see them. Restart existing VS Code windows and terminals to
+pick up the persisted environment. Use `-SessionOnly` to skip user-level
+environment persistence; the hosted user-secrets settings are still saved.
+
+Run the script directly as shown, not via a separate `pwsh -File` process,
+if you want the current terminal to receive the environment values. Run before
+recording, since prompt input is visible. User Secrets are unencrypted local
+development storage, not a production secret store. No API key is needed.
+Sign in separately with `az login` using an identity authorized for inference.
+Setup makes no Azure calls, changes no permissions, and does not configure or
+deploy the remote hosted agent. The existing per-demo environment setup can
+be skipped after running this script.
+
+To remove the persisted environment settings:
+
+```powershell
+[Environment]::SetEnvironmentVariable('Decision__Endpoint', $null, 'User')
+[Environment]::SetEnvironmentVariable('Decision__Deployment', $null, 'User')
+Remove-Item Env:Decision__Endpoint, Env:Decision__Deployment -ErrorAction SilentlyContinue
+dotnet user-secrets remove 'Decision:Endpoint' --project .\episodes\02-2026-10-29\demos\04-foundry-hosted-agent\src\SupportRoutingAgent
+dotnet user-secrets remove 'Decision:Deployment' --project .\episodes\02-2026-10-29\demos\04-foundry-hosted-agent\src\SupportRoutingAgent
+```
+
+Check setup without changing configuration:
+
+```powershell
+.\episodes\02-2026-10-29\Setup-UserSecrets.ps1 -ValidateOnly
+pwsh -File .\episodes\02-2026-10-29\tests\Setup-UserSecrets.Tests.ps1
+```
+
 1. [Call a Foundry decision model from C#](demos/01-console-decision-model/README.md):
    a console app makes a direct, structured decision-model call.
 2. [Run the decision inside a local agent](demos/02-local-agent/README.md):
