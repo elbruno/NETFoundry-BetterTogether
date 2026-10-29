@@ -24,6 +24,10 @@ Keep promotional drafts, social-media copy, promotional artwork, agendas, and re
 
 - Keep the demo independently runnable and document tested SDK/package versions and prerequisites.
 - Provide safe configuration instructions, exact setup/run commands, and the expected result in its README.
+- Include one episode-level PowerShell setup script that configures every
+  runnable demo's required settings, with a non-mutating validation mode,
+  offline tests, clear documentation of changes, and cleanup commands. Keep
+  secret values out of logs and command-line arguments.
 - Explain required cloud resources, possible charges, and cleanup. Do not delete shared or pre-existing resources.
 - Never commit credentials, real configuration secrets, private messages, or production access links. Use environment variables or .NET user secrets.
 - Run the documented steps and relevant tests before opening a pull request. For documentation changes, check links and accuracy.
