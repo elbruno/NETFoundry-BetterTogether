@@ -66,6 +66,8 @@ test('Episode 2 homepage card exposes the four-stage demo and co-speaker scope',
   assert.match(episode.html, /Using custom AgentMemory from a Foundry Hosted Agent is exploratory/);
   assert.match(episode.html, /AgentEval and hybrid evaluation are possible related discussion if time allows/);
   assert.match(episode.html, /GraphBridge and GraphRAG may be mentioned only if ready/);
+  assert.match(episode.html, /repositories are listed below as references/);
+  assert.doesNotMatch(episode.html, /repositories and resources will be added when shared/);
   assert.deepEqual(episode.demos.map(({ title }) => title), [
     'Call a Foundry decision model from C#',
     'Run the decision inside a local agent',

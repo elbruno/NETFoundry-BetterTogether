@@ -23,7 +23,9 @@ Using custom AgentMemory from a Foundry Hosted Agent is exploratory, is not
 part of the current support-routing prototype, and has not been verified.
 AgentEval and hybrid evaluation are possible related discussion if time allows.
 GraphBridge and GraphRAG may be mentioned only if ready and Foundry-aligned.
-Jose's repositories and resources will be added when shared and reviewed.
+Jose's repositories are listed below as references; their setup requirements
+and Foundry-hosted integration have not been verified as part of this episode's
+demos.
 
 The example uses a synthetic support ticket and returns a bounded team
 suggestion. It does not update a ticketing system. The session explains both
