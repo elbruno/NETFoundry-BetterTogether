@@ -18,12 +18,13 @@ All sessions run **12:00-1:00 PM Eastern Time**. UTC times below account for the
 | --- | --- | --- | --- | --- | --- |
 | 1 | October 15, 2026 | 16:00-17:00 | [Episode 1: Decision Models in Action](https://developer.microsoft.com/en-us/reactor/events/27630/) | [Episode folder](episodes/01-2026-10-15/README.md) | [.NET](https://www.youtube.com/watch?v=mHrs-JHdPaY) / [Reactor](https://www.youtube.com/watch?v=n2CL10iTjp0) |
 | 2 | October 29, 2026 | 16:00-17:00 | [.NET + Foundry, better together](https://developer.microsoft.com/en-us/reactor/events/27631/) | [Episode guide](episodes/02-2026-10-29/README.md) | Not yet available |
-| 3 | November 12, 2026 | 17:00-18:00 | [Episode 3](https://developer.microsoft.com/en-us/reactor/events/27632/) | [Episode folder](episodes/03-2026-11-12/README.md) | Not yet available |
+| 3 | November 12, 2026 | 17:00-18:00 | [Episode 3](https://developer.microsoft.com/en-us/reactor/events/27632/) | [Toolboxes and guardrails](episodes/03-2026-11-12/README.md) | Not yet available |
 | 4 | December 3, 2026 | 17:00-18:00 | [Episode 4](https://developer.microsoft.com/en-us/reactor/events/27634/) | [Episode folder](episodes/04-2026-12-03/README.md) | Not yet available |
 
 Episode 2 features co-speaker [Jose Luis Latorre](https://www.linkedin.com/in/joslat/) and focuses on Hosted Agents using decision models and agent memory. The support-routing demo progresses from a direct C# decision-model call, to a local Microsoft Agent Framework agent, to that local agent with Aspire GenAI traces, and finally to a Foundry Hosted Agent. The discussion compares Foundry Memory Stores with custom AgentMemory; custom-memory integration with a Hosted Agent remains exploratory. See the [episode guide](episodes/02-2026-10-29/README.md) and its [four-stage demo progression](episodes/02-2026-10-29/demos/01-console-decision-model/README.md).
 
-Later episode topics will be shared closer to their sessions.
+Episode 3 explores Toolbox discovery and hosted-agent network guardrails through
+two C# demos. Later episode topics will be shared closer to their sessions.
 
 ## Episode materials
 

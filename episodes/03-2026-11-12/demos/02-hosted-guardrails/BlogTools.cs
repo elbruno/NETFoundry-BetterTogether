@@ -1,0 +1,118 @@
+// Purpose: Read short excerpts from two fixed public RSS feeds for Demo 21.
+// Requires outbound HTTPS from the hosted runtime; callers cannot supply a URL.
+// Expected result: the agent can summarize recent posts while Foundry controls host egress.
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Net;
+using System.Net.Http.Headers;
+using System.Text.RegularExpressions;
+using System.Xml.Linq;
+using Microsoft.Extensions.AI;
+
+public static class BlogTools
+{
+    private const string PersonalBlogFeed = "https://brunocapuano.wordpress.com/feed/";
+    private const string DotNetBlogFeed = "https://devblogs.microsoft.com/dotnet/feed/";
+    private const int PostsToRead = 3;
+    private const int MaxExcerptCharacters = 1200;
+
+    public const string TelemetrySource = "BetterTogether.ApplicationGuardrails";
+    private static readonly ActivitySource Activities = new(TelemetrySource);
+    private static readonly HttpClient Client = new(new HttpClientHandler
+    {
+        AllowAutoRedirect = false
+    })
+    {
+        Timeout = TimeSpan.FromSeconds(15),
+        DefaultRequestHeaders = { UserAgent = { new ProductInfoHeaderValue("DotNetConfBlogDemo", "1.0") } }
+    };
+
+    public static IList<AITool> Create() =>
+    [
+        AIFunctionFactory.Create(GetLatestPersonalBlogPosts, name: nameof(GetLatestPersonalBlogPosts)),
+        AIFunctionFactory.Create(GetLatestDotNetBlogPosts, name: nameof(GetLatestDotNetBlogPosts))
+    ];
+
+    [Description("Read the three newest posts from Bruno Capuano's fixed personal blog feed.")]
+    public static Task<string> GetLatestPersonalBlogPosts() =>
+        ReadLatestPostsAsync("Bruno Capuano's personal blog", PersonalBlogFeed);
+
+    [Description("Read the three newest posts from the fixed .NET Blog feed.")]
+    public static Task<string> GetLatestDotNetBlogPosts() =>
+        ReadLatestPostsAsync("the .NET Blog", DotNetBlogFeed);
+
+    private static async Task<string> ReadLatestPostsAsync(string sourceName, string feedUrl)
+    {
+        using var activity = Activities.StartActivity("tool.ReadBlogFeed");
+        activity?.SetTag("tool.source", sourceName);
+
+        using var response = await Client.GetAsync(feedUrl);
+        if (!response.IsSuccessStatusCode)
+        {
+            return $"ERROR: The request to {sourceName} returned HTTP " +
+                $"{(int)response.StatusCode} ({response.ReasonPhrase}). No posts were retrieved.";
+        }
+
+        var xml = await response.Content.ReadAsStringAsync();
+        var feed = XDocument.Parse(xml);
+        var posts = feed.Descendants()
+            .Where(element => element.Name.LocalName == "item")
+            .Take(PostsToRead)
+            .Select(ParsePost)
+            .ToArray();
+
+        if (posts.Length == 0)
+        {
+            throw new InvalidDataException($"The RSS feed for {sourceName} contained no posts.");
+        }
+
+        var output = new List<string> { $"Latest posts from {sourceName}:" };
+        for (var index = 0; index < posts.Length; index++)
+        {
+            var post = posts[index];
+            output.Add(
+                $"{index + 1}. {post.Title}\nPublished: {post.Published}\n" +
+                $"Link: {post.Link}\nExcerpt: {post.Excerpt}");
+        }
+
+        return string.Join(Environment.NewLine + Environment.NewLine, output);
+    }
+
+    private static BlogPost ParsePost(XElement item)
+    {
+        var title = GetChildValue(item, "title");
+        var link = GetChildValue(item, "link");
+        if (string.IsNullOrWhiteSpace(title) || string.IsNullOrWhiteSpace(link))
+        {
+            throw new InvalidDataException("An RSS post was missing its title or link.");
+        }
+
+        var content = GetChildValue(item, "encoded");
+        if (string.IsNullOrWhiteSpace(content))
+        {
+            content = GetChildValue(item, "description");
+        }
+
+        var excerpt = ToPlainText(content);
+        if (excerpt.Length > MaxExcerptCharacters)
+        {
+            excerpt = excerpt[..MaxExcerptCharacters] + "...";
+        }
+
+        return new BlogPost(title, GetChildValue(item, "pubDate"), link, excerpt);
+    }
+
+    private static string GetChildValue(XElement parent, string localName) =>
+        parent.Elements()
+            .FirstOrDefault(element => element.Name.LocalName == localName)?
+            .Value.Trim() ?? string.Empty;
+
+    private static string ToPlainText(string html)
+    {
+        var withoutMarkup = Regex.Replace(html, "<[^>]*>", " ");
+        var decoded = WebUtility.HtmlDecode(withoutMarkup);
+        return Regex.Replace(decoded, @"\s+", " ").Trim();
+    }
+
+    private sealed record BlogPost(string Title, string Published, string Link, string Excerpt);
+}

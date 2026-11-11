@@ -106,6 +106,20 @@ test('Episode 2 has four uniquely numbered source-backed demo directories', () =
   assert.ok(existsSync(`${root}/${directories[3]}/azure.yaml`));
 });
 
+test('Episode 3 exposes both source-backed demos and no unconfirmed recording', () => {
+  const episode = episodes[2];
+  assert.match(episode.summary, /Toolbox/);
+  assert.match(episode.summary, /guardrails/);
+  assert.deepEqual(episode.demos.map(({ path }) => path), [
+    'demos/01-toolbox-discovery/README.md',
+    'demos/02-hosted-guardrails/README.md',
+  ]);
+  assert.deepEqual(episode.recordings, []);
+  for (const demo of episode.demos) {
+    assert.ok(existsSync(`episodes/${episode.id}/${demo.path}`));
+  }
+});
+
 test('Episode 1 covers Microsoft-Decision-1, decision models, games, and official Microsoft links', () => {
   const readme = readFileSync('episodes/01-2026-10-15/README.md', 'utf8');
   assert.equal(episodes[0].title, 'Episode 1: .NET + Foundry, Better Together: Decision Models in Action');
