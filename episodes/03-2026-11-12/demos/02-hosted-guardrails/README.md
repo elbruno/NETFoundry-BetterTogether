@@ -2,8 +2,7 @@
 
 Run the fixed-feed blog agent locally with `azd ai agent run`. The same
 executable starts a read-only MCP server as a child process, discovers its two
-tools, and exposes the agent through the Responses protocol. This MCP server is
-separate from the Toolbox in demo 1.
+tools, and exposes the agent through the Responses protocol.
 
 ## Prerequisites
 
@@ -48,6 +47,7 @@ In the local browser, ask:
 
 ```text
 Show me the latest blog post from Bruno Capuano from his personal blog and from the .NET Blog.
+Use only the .NET Blog tool to summarize one recent post and cite its URL.
 ```
 
 The terminal shows actual MCP tool calls and the response cites available

@@ -9,32 +9,23 @@ param(
 $ErrorActionPreference = 'Stop'
 if ($Validate -and $SelfTest) { throw 'Choose either -Validate or -SelfTest.' }
 
-function Test-Https([string] $Value, [switch] $Toolbox) {
+function Test-Https([string] $Value) {
     $uri = $null
     if (-not [Uri]::TryCreate($Value, [UriKind]::Absolute, [ref] $uri) -or
         $uri.Scheme -ne 'https' -or $uri.UserInfo -or $uri.Fragment) { return $false }
-    if ($Toolbox) {
-        return $uri.Host.EndsWith('.services.ai.azure.com', [StringComparison]::OrdinalIgnoreCase) -and
-            $uri.AbsolutePath.Contains('/toolboxes/', [StringComparison]::Ordinal) -and
-            $uri.AbsolutePath.EndsWith('/mcp', [StringComparison]::Ordinal) -and $uri.Query -ceq '?api-version=v1'
-    }
     return -not $uri.Query
 }
 
 function Test-Binding([string] $Name, [string] $Value) {
-    if ($Name -eq 'TOOLBOX_ENDPOINT') { return Test-Https $Value -Toolbox }
     if ($Name.EndsWith('ENDPOINT', [StringComparison]::Ordinal)) { return Test-Https $Value }
     return $Value -cmatch '^[A-Za-z0-9][A-Za-z0-9._-]*$'
 }
 
 if ($SelfTest) {
-    $toolbox = 'https://example.services.ai.azure.com/api/projects/example/toolboxes/example/mcp?api-version=v1'
-    if (-not (Test-Binding 'TOOLBOX_ENDPOINT' $toolbox)) { throw 'Valid Toolbox rejected.' }
     foreach ($invalid in @('http://example.com', 'https://user:password@example.com', 'https://example.com/#fragment', '')) {
         if (Test-Binding 'FOUNDRY_PROJECT_ENDPOINT' $invalid) { throw 'Unsafe endpoint accepted.' }
     }
-    if (Test-Binding 'TOOLBOX_ENDPOINT' ($toolbox.Replace('v1', 'v2'))) { throw 'Invalid API version accepted.' }
-    if (Test-Binding 'AZURE_OPENAI_DEPLOYMENT_NAME' 'not a deployment') { throw 'Invalid deployment accepted.' }
+    if (Test-Binding 'BLOCKLIST_AZURE_OPENAI_DEPLOYMENT_NAME' 'not a deployment') { throw 'Invalid deployment accepted.' }
     if (Test-Binding 'FOUNDRY_AGENT_NAME' 'not an agent') { throw 'Invalid agent name accepted.' }
     if (-not (Test-Binding 'FOUNDRY_AGENT_NAME' 'wikipedia-01')) { throw 'Valid agent name rejected.' }
     if (-not (Test-Binding 'WIKIPEDIA_MCP_ENDPOINT' 'https://wikipedia.caseyjhand.com/mcp')) { throw 'Valid MCP endpoint rejected.' }
@@ -43,11 +34,10 @@ if ($SelfTest) {
 }
 
 $projects = @(
-    @{ Path = '01-toolbox-discovery\ToolboxDiscovery.csproj'; Settings = @{ TOOLBOX_ENDPOINT = 'ToolboxEndpoint' } },
     @{ Path = '02-hosted-guardrails\ApplicationGuardrails.csproj'; Settings = @{ AZURE_AI_PROJECT_ENDPOINT = 'ProjectEndpoint'; AZURE_AI_MODEL_DEPLOYMENT_NAME = 'ModelDeployment' } },
     @{ Path = '03-wikipedia-mcp-console\WikipediaConsole.csproj'; Settings = @{ FOUNDRY_PROJECT_ENDPOINT = 'ProjectEndpoint'; AZURE_OPENAI_DEPLOYMENT_NAME = 'ModelDeployment'; WIKIPEDIA_MCP_ENDPOINT = 'WikipediaMcpEndpoint' } },
     @{ Path = '04-wikipedia-hosted\WikipediaHosted.csproj'; Settings = @{ AZURE_AI_PROJECT_ENDPOINT = 'ProjectEndpoint'; AZURE_AI_MODEL_DEPLOYMENT_NAME = 'ModelDeployment'; WIKIPEDIA_MCP_ENDPOINT = 'WikipediaMcpEndpoint' } },
-    @{ Path = '05-wikipedia-blocklist-console\WikipediaBlocklist.csproj'; Settings = @{ FOUNDRY_PROJECT_ENDPOINT = 'ProjectEndpoint'; AZURE_OPENAI_DEPLOYMENT_NAME = 'BlocklistDeployment' } },
+    @{ Path = '05-wikipedia-blocklist-console\WikipediaBlocklist.csproj'; Settings = @{ FOUNDRY_PROJECT_ENDPOINT = 'ProjectEndpoint'; BLOCKLIST_AZURE_OPENAI_DEPLOYMENT_NAME = 'BlocklistDeployment' } },
     @{ Path = '03-hosted-guardrails\ApplicationGuardrailsHosted.csproj'; Settings = @{ AZURE_AI_PROJECT_ENDPOINT = 'ProjectEndpoint'; AZURE_AI_MODEL_DEPLOYMENT_NAME = 'ModelDeployment' } },
     @{ Path = '06-wikipedia-local-host\WikipediaLocal.csproj'; Settings = @{ AZURE_AI_PROJECT_ENDPOINT = 'ProjectEndpoint'; AZURE_AI_MODEL_DEPLOYMENT_NAME = 'ModelDeployment'; WIKIPEDIA_MCP_ENDPOINT = 'WikipediaMcpEndpoint' } },
     @{ Path = '07-mslearn-local-host\LearnLocal.csproj'; Settings = @{ AZURE_AI_PROJECT_ENDPOINT = 'ProjectEndpoint'; AZURE_AI_MODEL_DEPLOYMENT_NAME = 'ModelDeployment' } },
@@ -90,7 +80,27 @@ foreach ($project in $projects) {
     }
 }
 if ($Validate) {
-    Write-Host 'All 14 demo projects have valid configuration format. No writes or cloud calls were made.'
+    $blocklistPath = '05-wikipedia-blocklist-console\WikipediaBlocklist.csproj'
+    $blocklistDeployment = [Environment]::GetEnvironmentVariable('BLOCKLIST_AZURE_OPENAI_DEPLOYMENT_NAME')
+    if ($null -eq $blocklistDeployment) { $blocklistDeployment = $existing[$blocklistPath]['BLOCKLIST_AZURE_OPENAI_DEPLOYMENT_NAME'] }
+    $sharedDeployments = @(
+        @{
+            Path = '02-hosted-guardrails\ApplicationGuardrails.csproj'
+            Key = 'AZURE_AI_MODEL_DEPLOYMENT_NAME'
+        },
+        @{
+            Path = '03-wikipedia-mcp-console\WikipediaConsole.csproj'
+            Key = 'AZURE_OPENAI_DEPLOYMENT_NAME'
+        }
+    ) | ForEach-Object {
+        $value = [Environment]::GetEnvironmentVariable($_.Key)
+        if ($null -eq $value) { $value = $existing[$_.Path][ $_.Key ] }
+        $value
+    }
+    if ($sharedDeployments | Where-Object { [string]::Equals($blocklistDeployment, $_, [StringComparison]::OrdinalIgnoreCase) }) {
+        throw 'BLOCKLIST_AZURE_OPENAI_DEPLOYMENT_NAME must identify a dedicated model deployment, not the general episode model. No settings were changed.'
+    }
+    Write-Host 'All 13 active demo projects have valid configuration format. No writes or cloud calls were made.'
     return
 }
 
@@ -111,7 +121,7 @@ foreach ($fallback in @{
 }
 if (Test-Path -LiteralPath $DefaultsPath) {
     $privateDefaults = Get-Content -LiteralPath $DefaultsPath -Raw | ConvertFrom-Json -AsHashtable
-    foreach ($name in @('ProjectEndpoint', 'ModelDeployment', 'BlocklistDeployment', 'ToolboxEndpoint', 'WikipediaMcpEndpoint', 'EBSearchAgentName', 'WikipediaAgentName', 'LearnAgentName')) {
+    foreach ($name in @('ProjectEndpoint', 'ModelDeployment', 'BlocklistDeployment', 'WikipediaMcpEndpoint', 'EBSearchAgentName', 'WikipediaAgentName', 'LearnAgentName')) {
         if ($privateDefaults.ContainsKey($name)) { $defaults[$name] = [string] $privateDefaults[$name] }
     }
 }
@@ -119,19 +129,22 @@ Write-Host 'Visible defaults are nonsecret bindings. Press Enter to accept. Neve
 $labels = [ordered]@{
     ProjectEndpoint = 'Foundry project endpoint'
     ModelDeployment = 'Existing Azure OpenAI model deployment'
-    BlocklistDeployment = 'Existing blocklist test deployment (policy is configured separately)'
-    ToolboxEndpoint = 'Existing Toolbox MCP endpoint'
+    BlocklistDeployment = 'Dedicated blocklist test deployment (must differ from the general model)'
     WikipediaMcpEndpoint = 'Public community Wikipedia MCP endpoint'
     EBSearchAgentName = 'EBSearch hosted agent name'
     WikipediaAgentName = 'Wikipedia hosted agent name'
     LearnAgentName = 'Microsoft Learn hosted agent name'
 }
 foreach ($name in $labels.Keys) {
-    if ($name -eq 'BlocklistDeployment' -and -not $defaults[$name]) { $defaults[$name] = $defaults.ModelDeployment }
     $answer = [string] (Read-Host "$($labels[$name]) [$($defaults[$name])]")
     if ($answer.Trim()) { $defaults[$name] = $answer.Trim() }
 }
 # Validate every value before writing any project's configuration.
+if ([string]::Equals($defaults.ModelDeployment, $defaults.BlocklistDeployment, [StringComparison]::OrdinalIgnoreCase) -or
+    [string]::Equals($env:AZURE_AI_MODEL_DEPLOYMENT_NAME, $defaults.BlocklistDeployment, [StringComparison]::OrdinalIgnoreCase) -or
+    [string]::Equals($env:AZURE_OPENAI_DEPLOYMENT_NAME, $defaults.BlocklistDeployment, [StringComparison]::OrdinalIgnoreCase)) {
+    throw 'BlocklistDeployment must identify a dedicated model deployment, not the general episode model. No settings were written.'
+}
 foreach ($project in $projects) {
     foreach ($setting in $project.Settings.GetEnumerator()) {
         if (-not (Test-Binding $setting.Key $defaults[$setting.Value])) { throw "Invalid $($setting.Value). No settings were written." }
@@ -146,4 +159,4 @@ foreach ($project in $projects) {
         }
     }
 }
-Write-Host 'Configured all 14 demo projects. User secrets are local only; configure hosted azd bindings separately before deployment.'
+Write-Host 'Configured all 13 active demo projects. User secrets are local only; configure hosted azd bindings separately before deployment.'

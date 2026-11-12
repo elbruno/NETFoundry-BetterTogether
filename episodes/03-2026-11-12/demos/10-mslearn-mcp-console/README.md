@@ -30,6 +30,14 @@ override them. The console logs actual MCP calls and returns documentation or
 sample links; results vary. Use only public questions and edit the examples in
 `Program.cs`.
 
+The console is not interactive. Its `questions` array runs these examples
+automatically; edit the array and rerun to change them:
+
+```text
+Find official Microsoft Learn documentation explaining Microsoft Foundry guardrail intervention points.
+Find a C# code sample that calls a Foundry model with Microsoft Agent Framework, and cite the source.
+```
+
 ## Cleanup
 
 Run `dotnet user-secrets clear --project .\LearnConsole.csproj` and unset any

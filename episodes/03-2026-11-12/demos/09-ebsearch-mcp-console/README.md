@@ -29,6 +29,14 @@ environment variables; they take precedence. Edit the questions in
 `Program.cs`. The console logs actual MCP calls and prints answers with source
 links. Feed content and answers vary; use only public questions.
 
+The console is not interactive. Its `questions` array runs these examples
+automatically; edit the array and rerun to change them:
+
+```text
+Use the .NET Blog tool to summarize one recent post and cite its URL.
+Use the personal blog tool to summarize one recent post and cite its URL.
+```
+
 ## Cleanup
 
 Run `dotnet user-secrets clear --project .\EBSearchConsole.csproj` and unset any

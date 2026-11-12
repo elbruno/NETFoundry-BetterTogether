@@ -81,10 +81,12 @@ use only names you are authorized to manage.
 
 ## Try it in Foundry
 
-Open each named agent in the Foundry portal and ask:
+Open each named agent in the Foundry portal, start a fresh session, and use the
+same prompts for comparisons:
 
 ```text
-Find official Microsoft Learn documentation explaining async programming in C#.
+Find official Microsoft Learn documentation explaining Microsoft Foundry guardrail intervention points.
+Find official Microsoft Learn documentation about network egress controls for Foundry hosted agents.
 ```
 
 Expect an official documentation link and MCP tool calls. Availability and

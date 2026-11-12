@@ -25,9 +25,10 @@ transitive packages. Model calls and additional deployments can incur charges.
    agent. Do not modify a shared deployment without authorization.
 3. Run the episode's `..\..\setup.ps1` and choose that deployment for the
    blocklist test. The script saves nonsecret `FOUNDRY_PROJECT_ENDPOINT` and
-   `AZURE_OPENAI_DEPLOYMENT_NAME` in local user secrets. Environment variables
-   override them. The default may be the general model deployment; replace it
-   with the dedicated test deployment.
+   `BLOCKLIST_AZURE_OPENAI_DEPLOYMENT_NAME` in local user secrets. This
+   blocklist-specific name is separate from the general model setting, and
+   setup rejects using the same deployment for both. Environment variables
+   override saved settings.
 
 The agent instructions themselves contain `Wikipedia`. A prompt-side
 blocklist may therefore reject even the normal control questions below.
@@ -47,8 +48,10 @@ dotnet run --project .\WikipediaBlocklist.csproj --no-restore
 The console shows the agent name and deployment. Enter a public prompt and
 inspect the response; `/exit` quits. Identifiable prompt or completion filter
 signals are labeled, including custom-blocklist evidence when present.
-Authentication and other service failures are reported separately. An error
-without a filtering signal is not described as a guardrail block.
+Authentication and other service failures are reported separately. A 404
+means the named deployment may not exist in this project; it is not evidence
+of a guardrail decision. An error without a filtering signal is not described
+as a guardrail block.
 
 ## Try the scenarios
 
@@ -100,7 +103,7 @@ short-lived token in memory and does not print it.
 ## Cleanup
 
 Run `dotnet user-secrets clear --project .\WikipediaBlocklist.csproj`, unset
-any environment variables you set, and remove only the dedicated test policy,
+`BLOCKLIST_AZURE_OPENAI_DEPLOYMENT_NAME` if you set it, and remove only the dedicated test policy,
 blocklist, and deployment if you created them and no longer need them. Do not
 delete or modify shared resources.
 

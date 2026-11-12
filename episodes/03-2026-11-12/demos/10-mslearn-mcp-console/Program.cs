@@ -43,8 +43,8 @@ AIAgent agent = new AIProjectClient(new Uri(endpoint), new AzureCliCredential())
 
 string[] questions =
 [
-    "Find official Microsoft Learn documentation explaining async programming in C#.",
-    "Find a Microsoft Learn C# code sample that uses HttpClient asynchronously."
+    "Find official Microsoft Learn documentation explaining Microsoft Foundry guardrail intervention points.",
+    "Find a C# code sample that calls a Foundry model with Microsoft Agent Framework, and cite the source."
 ];
 foreach (var question in questions)
 {

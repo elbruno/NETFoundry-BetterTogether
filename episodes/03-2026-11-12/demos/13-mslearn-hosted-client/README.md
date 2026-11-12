@@ -30,6 +30,17 @@ set `$env:FOUNDRY_AGENT_NAME = 'mslearn-02'`. Environment variables override
 saved values. Edit the public question in `Program.cs`; expect a cited Learn
 documentation link. Answers and policy decisions vary.
 
+The console runs one question and is not interactive. Choose one line for
+`Program.cs` and rerun:
+
+```csharp
+const string question = "Use Microsoft Learn to find official Microsoft Foundry guardrail intervention-point documentation and cite the link.";
+```
+
+```csharp
+const string question = "Use Microsoft Learn to find hosted-agent network egress documentation and cite the link.";
+```
+
 ## Cleanup
 
 Run `dotnet user-secrets clear --project .\LearnClient.csproj`, unset any

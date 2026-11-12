@@ -79,10 +79,12 @@ use only names you are authorized to manage.
 
 ## Try it in Foundry
 
-Open each named agent in the Foundry portal and ask:
+Open each named agent in the Foundry portal, start a fresh session, and use the
+same prompts for comparisons:
 
 ```text
-Use both blog tools to summarize one recent post from each feed and cite the URLs.
+Show me the latest blog post from Bruno Capuano from his personal blog and from the .NET Blog.
+Use only the .NET Blog tool to summarize one recent post and cite its URL.
 ```
 
 Expect tool calls and links for available feeds. A feed can fail independently

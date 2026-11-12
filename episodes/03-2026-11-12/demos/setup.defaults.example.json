@@ -2,7 +2,6 @@
   "ProjectEndpoint": "https://example.services.ai.azure.com/api/projects/example",
   "ModelDeployment": "your-deployment",
   "BlocklistDeployment": "your-blocklist-test-deployment",
-  "ToolboxEndpoint": "https://example.services.ai.azure.com/api/projects/example/toolboxes/example/mcp?api-version=v1",
   "WikipediaMcpEndpoint": "https://wikipedia.caseyjhand.com/mcp",
   "EBSearchAgentName": "ebsearch-01",
   "WikipediaAgentName": "wikipedia-01",

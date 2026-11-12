@@ -27,7 +27,13 @@ Setup stores nonsecret `AZURE_AI_PROJECT_ENDPOINT` and
 override them. The command opens the local Agent Inspector; use
 `azd ai agent run --no-client` for a headless run.
 
-Ask: `Find official Microsoft Learn documentation explaining async programming in C#.`
+Ask in the local Agent Inspector:
+
+```text
+Find official Microsoft Learn documentation explaining Microsoft Foundry guardrail intervention points.
+Find official Microsoft Learn documentation about network egress controls for Foundry hosted agents.
+```
+
 Expect an official link and MCP tool-call messages in the terminal. Responses
 vary. Use public questions only. This unauthenticated local host may bind all
 interfaces: keep it behind a local firewall and do not expose or tunnel it.

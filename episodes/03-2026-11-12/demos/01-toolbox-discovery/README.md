@@ -1,5 +1,9 @@
 # Discover Toolbox tools from C#
 
+> Archived: this previously published sample is not part of the current
+> guardrails episode. Its path remains available for existing links, but the
+> episode setup no longer configures it.
+
 Compare the names, descriptions and schemas exposed by two existing Microsoft
 Foundry Toolbox versions over MCP. This sample only calls `tools/list`: it does
 not invoke a tool, change a Toolbox, or promote a version.
@@ -20,16 +24,16 @@ discovery call can use billable cloud resources; check your pricing and quotas.
 
 ## Configuration
 
-From the episode directory, run `.\setup.ps1` and enter the Toolbox endpoint,
-Foundry project endpoint and model deployment name. The latter two configure
-the other demos. The script writes nonsecret values to .NET user secrets, which
-are unencrypted local development storage. Do not enter credentials.
-Alternatively set `TOOLBOX_ENDPOINT` as an environment variable. Environment
-variables override user secrets, including empty values.
+Set the endpoint separately in your terminal:
 
-Run `.\setup.ps1 -Validate` to check configuration format without a cloud call
-or changing configuration. `.\setup.ps1 -SelfTest` runs offline validation tests.
-Neither checks authorization or whether the chosen versions exist.
+```powershell
+$env:TOOLBOX_ENDPOINT = Read-Host 'Existing Toolbox MCP endpoint'
+```
+
+Alternatively store the nonsecret endpoint in this project's .NET user secrets,
+which are unencrypted local development storage. Do not enter credentials.
+Environment variables override user secrets, including empty values. The
+episode setup and its validation no longer cover this archived project.
 
 ## Run
 

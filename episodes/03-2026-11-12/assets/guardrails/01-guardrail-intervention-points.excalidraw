@@ -1,0 +1,928 @@
+{
+  "type": "excalidraw",
+  "version": 2,
+  "source": "local-diagram-renderer",
+  "elements": [
+    {
+      "id": "t0",
+      "type": "text",
+      "x": 80,
+      "y": 55,
+      "width": 1376.03125,
+      "height": 155.0,
+      "text": "Foundry guardrails: check before the next step",
+      "fontSize": 62,
+      "fontFamily": 2,
+      "strokeColor": "#000000",
+      "textAlign": "left",
+      "verticalAlign": "top",
+      "lineHeight": 1.4
+    },
+    {
+      "id": "t1",
+      "type": "text",
+      "x": 80,
+      "y": 145,
+      "width": 1097.0,
+      "height": 80.0,
+      "text": "Conceptual agent cycle | content safety controls | agent features are Preview",
+      "fontSize": 32,
+      "fontFamily": 2,
+      "strokeColor": "#000000",
+      "textAlign": "left",
+      "verticalAlign": "top",
+      "lineHeight": 1.4
+    },
+    {
+      "id": "t2",
+      "type": "text",
+      "x": 80,
+      "y": 210,
+      "width": 159.0,
+      "height": 70.0,
+      "text": "A. RECEIVE",
+      "fontSize": 28,
+      "fontFamily": 2,
+      "strokeColor": "#000000",
+      "textAlign": "left",
+      "verticalAlign": "top",
+      "lineHeight": 1.4
+    },
+    {
+      "id": "t3",
+      "type": "text",
+      "x": 80,
+      "y": 510,
+      "width": 207.984375,
+      "height": 70.0,
+      "text": "B. USE A TOOL",
+      "fontSize": 28,
+      "fontFamily": 2,
+      "strokeColor": "#000000",
+      "textAlign": "left",
+      "verticalAlign": "top",
+      "lineHeight": 1.4
+    },
+    {
+      "id": "t4",
+      "type": "text",
+      "x": 80,
+      "y": 810,
+      "width": 178.0,
+      "height": 70.0,
+      "text": "C. RESPOND",
+      "fontSize": 28,
+      "fontFamily": 2,
+      "strokeColor": "#000000",
+      "textAlign": "left",
+      "verticalAlign": "top",
+      "lineHeight": 1.4
+    },
+    {
+      "id": "b5",
+      "type": "rectangle",
+      "x": 80,
+      "y": 265,
+      "width": 300,
+      "height": 180,
+      "strokeColor": "#0078D4",
+      "backgroundColor": "#CFE4FA",
+      "fillStyle": "solid",
+      "strokeWidth": 2,
+      "roughness": 0,
+      "roundness": {
+        "type": 3
+      }
+    },
+    {
+      "id": "t6",
+      "type": "text",
+      "x": 104,
+      "y": 287,
+      "width": 82.0,
+      "height": 80.0,
+      "text": "User",
+      "fontSize": 32,
+      "fontFamily": 2,
+      "strokeColor": "#000000",
+      "textAlign": "left",
+      "verticalAlign": "top",
+      "lineHeight": 1.4
+    },
+    {
+      "id": "t7",
+      "type": "text",
+      "x": 104,
+      "y": 347,
+      "width": 202.0,
+      "height": 67.5,
+      "text": "Sends a prompt",
+      "fontSize": 27,
+      "fontFamily": 2,
+      "strokeColor": "#000000",
+      "textAlign": "left",
+      "verticalAlign": "top",
+      "lineHeight": 1.4
+    },
+    {
+      "id": "b8",
+      "type": "rectangle",
+      "x": 580,
+      "y": 265,
+      "width": 460,
+      "height": 180,
+      "strokeColor": "#C45B00",
+      "backgroundColor": "#FFF4CE",
+      "fillStyle": "solid",
+      "strokeWidth": 2,
+      "roughness": 0,
+      "roundness": {
+        "type": 3
+      }
+    },
+    {
+      "id": "t9",
+      "type": "text",
+      "x": 604,
+      "y": 287,
+      "width": 206.0,
+      "height": 80.0,
+      "text": "1  User input",
+      "fontSize": 32,
+      "fontFamily": 2,
+      "strokeColor": "#000000",
+      "textAlign": "left",
+      "verticalAlign": "top",
+      "lineHeight": 1.4
+    },
+    {
+      "id": "t10",
+      "type": "text",
+      "x": 604,
+      "y": 347,
+      "width": 317.0,
+      "height": 67.5,
+      "text": "Screen submitted content",
+      "fontSize": 27,
+      "fontFamily": 2,
+      "strokeColor": "#000000",
+      "textAlign": "left",
+      "verticalAlign": "top",
+      "lineHeight": 1.4
+    },
+    {
+      "id": "b11",
+      "type": "rectangle",
+      "x": 1240,
+      "y": 265,
+      "width": 430,
+      "height": 180,
+      "strokeColor": "#5C2D91",
+      "backgroundColor": "#E8DAEF",
+      "fillStyle": "solid",
+      "strokeWidth": 2,
+      "roughness": 0,
+      "roundness": {
+        "type": 3
+      }
+    },
+    {
+      "id": "t12",
+      "type": "text",
+      "x": 1264,
+      "y": 287,
+      "width": 233.0,
+      "height": 80.0,
+      "text": "Agent runtime",
+      "fontSize": 32,
+      "fontFamily": 2,
+      "strokeColor": "#000000",
+      "textAlign": "left",
+      "verticalAlign": "top",
+      "lineHeight": 1.4
+    },
+    {
+      "id": "t13",
+      "type": "text",
+      "x": 1264,
+      "y": 347,
+      "width": 247.0,
+      "height": 67.5,
+      "text": "Runs if input passes",
+      "fontSize": 27,
+      "fontFamily": 2,
+      "strokeColor": "#000000",
+      "textAlign": "left",
+      "verticalAlign": "top",
+      "lineHeight": 1.4
+    },
+    {
+      "id": "a14",
+      "type": "arrow",
+      "x": 390,
+      "y": 355,
+      "width": 175,
+      "height": 0,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          175,
+          0
+        ]
+      ],
+      "strokeColor": "#107C10",
+      "strokeWidth": 3,
+      "roughness": 0,
+      "endArrowhead": "arrow",
+      "strokeStyle": "solid"
+    },
+    {
+      "id": "a15",
+      "type": "arrow",
+      "x": 1050,
+      "y": 355,
+      "width": 175,
+      "height": 0,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          175,
+          0
+        ]
+      ],
+      "strokeColor": "#107C10",
+      "strokeWidth": 3,
+      "roughness": 0,
+      "endArrowhead": "arrow",
+      "strokeStyle": "solid"
+    },
+    {
+      "id": "b16",
+      "type": "rectangle",
+      "x": 80,
+      "y": 565,
+      "width": 230,
+      "height": 180,
+      "strokeColor": "#5C2D91",
+      "backgroundColor": "#E8DAEF",
+      "fillStyle": "solid",
+      "strokeWidth": 2,
+      "roughness": 0,
+      "roundness": {
+        "type": 3
+      }
+    },
+    {
+      "id": "t17",
+      "type": "text",
+      "x": 104,
+      "y": 587,
+      "width": 106.0,
+      "height": 80.0,
+      "text": "Agent",
+      "fontSize": 32,
+      "fontFamily": 2,
+      "strokeColor": "#000000",
+      "textAlign": "left",
+      "verticalAlign": "top",
+      "lineHeight": 1.4
+    },
+    {
+      "id": "t18",
+      "type": "text",
+      "x": 104,
+      "y": 647,
+      "width": 131.0,
+      "height": 135.0,
+      "text": "Proposes\na tool call",
+      "fontSize": 27,
+      "fontFamily": 2,
+      "strokeColor": "#000000",
+      "textAlign": "left",
+      "verticalAlign": "top",
+      "lineHeight": 1.4
+    },
+    {
+      "id": "b19",
+      "type": "rectangle",
+      "x": 390,
+      "y": 565,
+      "width": 310,
+      "height": 180,
+      "strokeColor": "#C45B00",
+      "backgroundColor": "#FFF4CE",
+      "fillStyle": "solid",
+      "strokeWidth": 2,
+      "roughness": 0,
+      "roundness": {
+        "type": 3
+      }
+    },
+    {
+      "id": "t20",
+      "type": "text",
+      "x": 414,
+      "y": 587,
+      "width": 177.953125,
+      "height": 80.0,
+      "text": "2  Tool call",
+      "fontSize": 32,
+      "fontFamily": 2,
+      "strokeColor": "#000000",
+      "textAlign": "left",
+      "verticalAlign": "top",
+      "lineHeight": 1.4
+    },
+    {
+      "id": "t21",
+      "type": "text",
+      "x": 414,
+      "y": 647,
+      "width": 221.0,
+      "height": 135.0,
+      "text": "Screen tool name\nand arguments",
+      "fontSize": 27,
+      "fontFamily": 2,
+      "strokeColor": "#000000",
+      "textAlign": "left",
+      "verticalAlign": "top",
+      "lineHeight": 1.4
+    },
+    {
+      "id": "b22",
+      "type": "rectangle",
+      "x": 780,
+      "y": 565,
+      "width": 230,
+      "height": 180,
+      "strokeColor": "#0078D4",
+      "backgroundColor": "#CFE4FA",
+      "fillStyle": "solid",
+      "strokeWidth": 2,
+      "roughness": 0,
+      "roundness": {
+        "type": 3
+      }
+    },
+    {
+      "id": "t23",
+      "type": "text",
+      "x": 804,
+      "y": 587,
+      "width": 82.953125,
+      "height": 80.0,
+      "text": "Tool",
+      "fontSize": 32,
+      "fontFamily": 2,
+      "strokeColor": "#000000",
+      "textAlign": "left",
+      "verticalAlign": "top",
+      "lineHeight": 1.4
+    },
+    {
+      "id": "t24",
+      "type": "text",
+      "x": 804,
+      "y": 647,
+      "width": 176.0,
+      "height": 135.0,
+      "text": "Executes\napproved call",
+      "fontSize": 27,
+      "fontFamily": 2,
+      "strokeColor": "#000000",
+      "textAlign": "left",
+      "verticalAlign": "top",
+      "lineHeight": 1.4
+    },
+    {
+      "id": "b25",
+      "type": "rectangle",
+      "x": 1090,
+      "y": 565,
+      "width": 310,
+      "height": 180,
+      "strokeColor": "#C45B00",
+      "backgroundColor": "#FFF4CE",
+      "fillStyle": "solid",
+      "strokeWidth": 2,
+      "roughness": 0,
+      "roundness": {
+        "type": 3
+      }
+    },
+    {
+      "id": "t26",
+      "type": "text",
+      "x": 1114,
+      "y": 587,
+      "width": 192.984375,
+      "height": 80.0,
+      "text": "3  Response",
+      "fontSize": 32,
+      "fontFamily": 2,
+      "strokeColor": "#000000",
+      "textAlign": "left",
+      "verticalAlign": "top",
+      "lineHeight": 1.4
+    },
+    {
+      "id": "t27",
+      "type": "text",
+      "x": 1114,
+      "y": 647,
+      "width": 201.0,
+      "height": 135.0,
+      "text": "Screen returned\ntool content",
+      "fontSize": 27,
+      "fontFamily": 2,
+      "strokeColor": "#000000",
+      "textAlign": "left",
+      "verticalAlign": "top",
+      "lineHeight": 1.4
+    },
+    {
+      "id": "b28",
+      "type": "rectangle",
+      "x": 1480,
+      "y": 565,
+      "width": 230,
+      "height": 180,
+      "strokeColor": "#5C2D91",
+      "backgroundColor": "#E8DAEF",
+      "fillStyle": "solid",
+      "strokeWidth": 2,
+      "roughness": 0,
+      "roundness": {
+        "type": 3
+      }
+    },
+    {
+      "id": "t29",
+      "type": "text",
+      "x": 1504,
+      "y": 587,
+      "width": 106.0,
+      "height": 80.0,
+      "text": "Agent",
+      "fontSize": 32,
+      "fontFamily": 2,
+      "strokeColor": "#000000",
+      "textAlign": "left",
+      "verticalAlign": "top",
+      "lineHeight": 1.4
+    },
+    {
+      "id": "t30",
+      "type": "text",
+      "x": 1504,
+      "y": 647,
+      "width": 182.984375,
+      "height": 135.0,
+      "text": "Consumes\nchecked result",
+      "fontSize": 27,
+      "fontFamily": 2,
+      "strokeColor": "#000000",
+      "textAlign": "left",
+      "verticalAlign": "top",
+      "lineHeight": 1.4
+    },
+    {
+      "id": "a31",
+      "type": "arrow",
+      "x": 320,
+      "y": 655,
+      "width": 55,
+      "height": 0,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          55,
+          0
+        ]
+      ],
+      "strokeColor": "#107C10",
+      "strokeWidth": 3,
+      "roughness": 0,
+      "endArrowhead": "arrow",
+      "strokeStyle": "solid"
+    },
+    {
+      "id": "a32",
+      "type": "arrow",
+      "x": 710,
+      "y": 655,
+      "width": 55,
+      "height": 0,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          55,
+          0
+        ]
+      ],
+      "strokeColor": "#107C10",
+      "strokeWidth": 3,
+      "roughness": 0,
+      "endArrowhead": "arrow",
+      "strokeStyle": "solid"
+    },
+    {
+      "id": "a33",
+      "type": "arrow",
+      "x": 1020,
+      "y": 655,
+      "width": 55,
+      "height": 0,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          55,
+          0
+        ]
+      ],
+      "strokeColor": "#107C10",
+      "strokeWidth": 3,
+      "roughness": 0,
+      "endArrowhead": "arrow",
+      "strokeStyle": "solid"
+    },
+    {
+      "id": "a34",
+      "type": "arrow",
+      "x": 1410,
+      "y": 655,
+      "width": 55,
+      "height": 0,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          55,
+          0
+        ]
+      ],
+      "strokeColor": "#107C10",
+      "strokeWidth": 3,
+      "roughness": 0,
+      "endArrowhead": "arrow",
+      "strokeStyle": "solid"
+    },
+    {
+      "id": "t35",
+      "type": "text",
+      "x": 400,
+      "y": 770,
+      "width": 788.9375,
+      "height": 72.5,
+      "text": "Tool call + tool response: Preview; supported tools only.",
+      "fontSize": 29,
+      "fontFamily": 2,
+      "strokeColor": "#000000",
+      "textAlign": "left",
+      "verticalAlign": "top",
+      "lineHeight": 1.4
+    },
+    {
+      "id": "b36",
+      "type": "rectangle",
+      "x": 80,
+      "y": 865,
+      "width": 350,
+      "height": 180,
+      "strokeColor": "#5C2D91",
+      "backgroundColor": "#E8DAEF",
+      "fillStyle": "solid",
+      "strokeWidth": 2,
+      "roughness": 0,
+      "roundness": {
+        "type": 3
+      }
+    },
+    {
+      "id": "t37",
+      "type": "text",
+      "x": 104,
+      "y": 887,
+      "width": 233.0,
+      "height": 80.0,
+      "text": "Agent runtime",
+      "fontSize": 32,
+      "fontFamily": 2,
+      "strokeColor": "#000000",
+      "textAlign": "left",
+      "verticalAlign": "top",
+      "lineHeight": 1.4
+    },
+    {
+      "id": "t38",
+      "type": "text",
+      "x": 104,
+      "y": 947,
+      "width": 278.0,
+      "height": 67.5,
+      "text": "Produces final content",
+      "fontSize": 27,
+      "fontFamily": 2,
+      "strokeColor": "#000000",
+      "textAlign": "left",
+      "verticalAlign": "top",
+      "lineHeight": 1.4
+    },
+    {
+      "id": "b39",
+      "type": "rectangle",
+      "x": 630,
+      "y": 865,
+      "width": 460,
+      "height": 180,
+      "strokeColor": "#C45B00",
+      "backgroundColor": "#FFF4CE",
+      "fillStyle": "solid",
+      "strokeWidth": 2,
+      "roughness": 0,
+      "roundness": {
+        "type": 3
+      }
+    },
+    {
+      "id": "t40",
+      "type": "text",
+      "x": 654,
+      "y": 887,
+      "width": 157.0,
+      "height": 80.0,
+      "text": "4  Output",
+      "fontSize": 32,
+      "fontFamily": 2,
+      "strokeColor": "#000000",
+      "textAlign": "left",
+      "verticalAlign": "top",
+      "lineHeight": 1.4
+    },
+    {
+      "id": "t41",
+      "type": "text",
+      "x": 654,
+      "y": 947,
+      "width": 278.0,
+      "height": 67.5,
+      "text": "Screen before release*",
+      "fontSize": 27,
+      "fontFamily": 2,
+      "strokeColor": "#000000",
+      "textAlign": "left",
+      "verticalAlign": "top",
+      "lineHeight": 1.4
+    },
+    {
+      "id": "b42",
+      "type": "rectangle",
+      "x": 1290,
+      "y": 865,
+      "width": 380,
+      "height": 180,
+      "strokeColor": "#107C10",
+      "backgroundColor": "#DFF6DD",
+      "fillStyle": "solid",
+      "strokeWidth": 2,
+      "roughness": 0,
+      "roundness": {
+        "type": 3
+      }
+    },
+    {
+      "id": "t43",
+      "type": "text",
+      "x": 1314,
+      "y": 887,
+      "width": 171.0,
+      "height": 80.0,
+      "text": "User / app",
+      "fontSize": 32,
+      "fontFamily": 2,
+      "strokeColor": "#000000",
+      "textAlign": "left",
+      "verticalAlign": "top",
+      "lineHeight": 1.4
+    },
+    {
+      "id": "t44",
+      "type": "text",
+      "x": 1314,
+      "y": 947,
+      "width": 287.984375,
+      "height": 67.5,
+      "text": "Receives approved text",
+      "fontSize": 27,
+      "fontFamily": 2,
+      "strokeColor": "#000000",
+      "textAlign": "left",
+      "verticalAlign": "top",
+      "lineHeight": 1.4
+    },
+    {
+      "id": "a45",
+      "type": "arrow",
+      "x": 440,
+      "y": 955,
+      "width": 175,
+      "height": 0,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          175,
+          0
+        ]
+      ],
+      "strokeColor": "#107C10",
+      "strokeWidth": 3,
+      "roughness": 0,
+      "endArrowhead": "arrow",
+      "strokeStyle": "solid"
+    },
+    {
+      "id": "a46",
+      "type": "arrow",
+      "x": 1100,
+      "y": 955,
+      "width": 175,
+      "height": 0,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          175,
+          0
+        ]
+      ],
+      "strokeColor": "#107C10",
+      "strokeWidth": 3,
+      "roughness": 0,
+      "endArrowhead": "arrow",
+      "strokeStyle": "solid"
+    },
+    {
+      "id": "b47",
+      "type": "rectangle",
+      "x": 1810,
+      "y": 265,
+      "width": 510,
+      "height": 310,
+      "strokeColor": "#6B7280",
+      "backgroundColor": "#F3F4F6",
+      "fillStyle": "solid",
+      "strokeWidth": 2,
+      "roughness": 0,
+      "roundness": {
+        "type": 3
+      }
+    },
+    {
+      "id": "t48",
+      "type": "text",
+      "x": 1840,
+      "y": 295,
+      "width": 327.0,
+      "height": 90.0,
+      "text": "A named guardrail",
+      "fontSize": 36,
+      "fontFamily": 2,
+      "strokeColor": "#000000",
+      "textAlign": "left",
+      "verticalAlign": "top",
+      "lineHeight": 1.4
+    },
+    {
+      "id": "t49",
+      "type": "text",
+      "x": 1840,
+      "y": 360,
+      "width": 316.0,
+      "height": 310.0,
+      "text": "Each control specifies:\nRisk to detect\nIntervention point\nResponse action",
+      "fontSize": 31,
+      "fontFamily": 2,
+      "strokeColor": "#000000",
+      "textAlign": "left",
+      "verticalAlign": "top",
+      "lineHeight": 1.4
+    },
+    {
+      "id": "b50",
+      "type": "rectangle",
+      "x": 1810,
+      "y": 625,
+      "width": 510,
+      "height": 420,
+      "strokeColor": "#D13438",
+      "backgroundColor": "#FDE7E9",
+      "fillStyle": "solid",
+      "strokeWidth": 2,
+      "roughness": 0,
+      "roundness": {
+        "type": 3
+      }
+    },
+    {
+      "id": "t51",
+      "type": "text",
+      "x": 1840,
+      "y": 655,
+      "width": 317.0,
+      "height": 90.0,
+      "text": "If a control blocks",
+      "fontSize": 36,
+      "fontFamily": 2,
+      "strokeColor": "#000000",
+      "textAlign": "left",
+      "verticalAlign": "top",
+      "lineHeight": 1.4
+    },
+    {
+      "id": "t52",
+      "type": "text",
+      "x": 1840,
+      "y": 725,
+      "width": 354.0,
+      "height": 450.0,
+      "text": "Do not advance past\nthat checkpoint.\n\nHandle the service signal;\ndo not assume HTTP 200\nmeans unfiltered content.",
+      "fontSize": 30,
+      "fontFamily": 2,
+      "strokeColor": "#000000",
+      "textAlign": "left",
+      "verticalAlign": "top",
+      "lineHeight": 1.4
+    },
+    {
+      "id": "t53",
+      "type": "text",
+      "x": 80,
+      "y": 1120,
+      "width": 1180.015625,
+      "height": 67.5,
+      "text": "*Default synchronous output mode shown. Async filtering may release content before a later block.",
+      "fontSize": 27,
+      "fontFamily": 2,
+      "strokeColor": "#000000",
+      "textAlign": "left",
+      "verticalAlign": "top",
+      "lineHeight": 1.4
+    },
+    {
+      "id": "t54",
+      "type": "text",
+      "x": 80,
+      "y": 1170,
+      "width": 1224.0,
+      "height": 67.5,
+      "text": "Arbitrary MCP tools are not listed for agent tool-call/response moderation. Verify current tool support.",
+      "fontSize": 27,
+      "fontFamily": 2,
+      "strokeColor": "#000000",
+      "textAlign": "left",
+      "verticalAlign": "top",
+      "lineHeight": 1.4
+    },
+    {
+      "id": "t55",
+      "type": "text",
+      "x": 80,
+      "y": 1250,
+      "width": 1202.015625,
+      "height": 57.5,
+      "text": "Sources: Microsoft Learn, Guardrails overview; Intervention points; Hosted agent content safety. Checked 2026-11-12.",
+      "fontSize": 23,
+      "fontFamily": 2,
+      "strokeColor": "#000000",
+      "textAlign": "left",
+      "verticalAlign": "top",
+      "lineHeight": 1.4
+    }
+  ],
+  "appState": {
+    "viewBackgroundColor": "#ffffff"
+  },
+  "files": {}
+}

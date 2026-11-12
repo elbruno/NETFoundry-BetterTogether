@@ -30,6 +30,17 @@ set `$env:FOUNDRY_AGENT_NAME = 'ebsearch-02'`. Environment variables override
 saved values. Edit the public question in `Program.cs`; expect an answer with a
 blog link. Feed content, policy decisions and answers vary.
 
+The console runs one question and is not interactive. Choose one line for
+`Program.cs` and rerun:
+
+```csharp
+const string question = "Use the .NET Blog tool to summarize one recent post and cite its URL.";
+```
+
+```csharp
+const string question = "Use the personal blog tool to summarize one recent post and cite its URL.";
+```
+
 ## Cleanup
 
 Run `dotnet user-secrets clear --project .\EBSearchClient.csproj`, unset any

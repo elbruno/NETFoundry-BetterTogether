@@ -19,8 +19,8 @@ var configuration = new ConfigurationBuilder()
     .Build();
 var endpoint = configuration["FOUNDRY_PROJECT_ENDPOINT"]
     ?? throw new InvalidOperationException("Set FOUNDRY_PROJECT_ENDPOINT using Setup-Demos.ps1.");
-var deployment = configuration["AZURE_OPENAI_DEPLOYMENT_NAME"]
-    ?? throw new InvalidOperationException("Set AZURE_OPENAI_DEPLOYMENT_NAME using Setup-Demos.ps1.");
+var deployment = configuration["BLOCKLIST_AZURE_OPENAI_DEPLOYMENT_NAME"]
+    ?? throw new InvalidOperationException("Set BLOCKLIST_AZURE_OPENAI_DEPLOYMENT_NAME using Setup-Demos.ps1.");
 
 using var capture = new ModerationCapture();
 using var http = new HttpClient(capture);
@@ -65,6 +65,10 @@ while (true)
     catch (AuthenticationFailedException error)
     {
         Console.WriteLine($"Authentication failed ({error.GetType().Name}). Check your Azure CLI sign-in and tenant.");
+    }
+    catch (ClientResultException error) when (error.Status == 404)
+    {
+        Console.WriteLine("Model deployment not found or unavailable (HTTP 404). Verify BLOCKLIST_AZURE_OPENAI_DEPLOYMENT_NAME names an active deployment in this project. This is not a guardrail signal.");
     }
     catch (ClientResultException error)
     {

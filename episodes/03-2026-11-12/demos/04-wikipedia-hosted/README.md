@@ -84,10 +84,12 @@ use only names you are authorized to manage.
 
 ## Try it in Foundry
 
-Open each named agent in the Foundry portal and ask:
+Open each named agent in the Foundry portal, start a fresh session, and use the
+same prompts for comparisons:
 
 ```text
-Use Wikipedia to find and summarize the C Sharp programming language. Cite the article.
+Use Wikipedia to summarize the C# programming language in two sentences and cite the article.
+Use Wikipedia to find who founded Wikipedia and in which year.
 ```
 
 Expect a short answer with an article link and MCP tool calls. Availability and

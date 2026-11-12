@@ -16,7 +16,7 @@ var agentName = configuration["FOUNDRY_AGENT_NAME"] ?? "mslearn-01";
 var project = new AIProjectClient(new Uri(endpoint), new AzureCliCredential());
 var agentEndpoint = new Uri($"{endpoint.TrimEnd('/')}/agents/{Uri.EscapeDataString(agentName)}/endpoint/protocols/openai");
 var agent = project.AsAIAgent(agentEndpoint);
-const string question = "Use Microsoft Learn to find official C# async programming documentation and cite the link.";
+const string question = "Use Microsoft Learn to find official Microsoft Foundry guardrail intervention-point documentation and cite the link.";
 Console.WriteLine($"Hosted agent: {agentName}");
 Console.WriteLine($"Question: {question}");
 Console.WriteLine(await agent.RunAsync(question));

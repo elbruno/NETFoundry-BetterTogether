@@ -31,6 +31,17 @@ saved values. Edit the public question in `Program.cs`; expect a cited answer.
 The community MCP service receives the question; do not send sensitive data.
 Answers and policy decisions vary.
 
+The console runs one question and is not interactive. Choose one line for
+`Program.cs` and rerun:
+
+```csharp
+const string question = "Use Wikipedia to find who founded Wikipedia and in which year. Cite the article.";
+```
+
+```csharp
+const string question = "Use Wikipedia to summarize the C# programming language in two sentences and cite the article.";
+```
+
 ## Cleanup
 
 Run `dotnet user-secrets clear --project .\WikipediaClient.csproj`, unset any

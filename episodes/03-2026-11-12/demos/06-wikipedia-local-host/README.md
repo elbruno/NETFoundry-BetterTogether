@@ -30,8 +30,14 @@ Setup stores `AZURE_AI_PROJECT_ENDPOINT`, `AZURE_AI_MODEL_DEPLOYMENT_NAME`, and
 override them. The command opens the local Agent Inspector; use
 `azd ai agent run --no-client` for a headless run.
 
-Ask: `Use Wikipedia to find who founded Wikipedia and in which year.` Expect a
-cited answer and MCP tool-call messages in the terminal. Responses vary.
+Ask in the local Agent Inspector:
+
+```text
+Use Wikipedia to summarize the C# programming language in two sentences and cite the article.
+Use Wikipedia to find who founded Wikipedia and in which year.
+```
+
+Expect a cited answer and MCP tool-call messages in the terminal. Responses vary.
 This unauthenticated local host may bind all interfaces: keep it behind a local
 firewall and do not expose or tunnel it. Local runs do not test hosted policies.
 

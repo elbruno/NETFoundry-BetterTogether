@@ -32,6 +32,14 @@ secrets. Environment variables override them. The console logs actual MCP tool
 calls, then prints answers with article links. Responses and service availability
 vary. Edit the questions in `Program.cs`.
 
+The console is not interactive. Its `questions` array runs these examples
+automatically; edit the array and rerun to change them:
+
+```text
+Use Wikipedia to summarize the C# programming language in two sentences.
+Use Wikipedia to find who founded Wikipedia and in which year.
+```
+
 ## Cleanup
 
 Run `dotnet user-secrets clear --project .\WikipediaConsole.csproj` and unset

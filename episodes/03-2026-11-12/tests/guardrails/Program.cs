@@ -23,6 +23,9 @@ var generic = FilterResult.Read(400, """{"error":{"code":"content_filter","param
 Check(generic is { Kind: FilterKind.ContentFiltered, CustomBlocklist: false }, "generic filtering");
 Check(FilterResult.Read(400, """{"error":{"code":"invalid_request","message":"content_filter"}}""")
     is { Kind: FilterKind.OtherServiceError }, "unrelated HTTP 400");
+Check(FilterResult.Read(404, """{"error":{"code":"DeploymentNotFound","message":"deployment not found"}}""")
+    is { Kind: FilterKind.OtherServiceError, Details: var details } && details.Contains("DeploymentNotFound"),
+    "missing deployment is not filtering");
 foreach (var status in new[] { 401, 403 })
     Check(FilterResult.Read(status, "{}") is { Kind: FilterKind.Authentication }, $"HTTP {status}");
 Check(FilterResult.Read(200, """{"choices":[{"finish_reason":"stop","message":{"content":"content_filter custom_blocklists"}}]}""")
