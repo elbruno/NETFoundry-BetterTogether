@@ -129,6 +129,10 @@ test('Episode 3 exposes the guardrail demos and no unconfirmed recording', () =>
   assert.ok(episode.tags.includes('MCP'));
   assert.ok(episode.tags.includes('Hosted Agents'));
   assert.deepEqual(episode.recordings, []);
+  const demoDirectories = readdirSync(`episodes/${episode.id}/demos`, { withFileTypes: true })
+    .filter((entry) => entry.isDirectory())
+    .map((entry) => entry.name);
+  assert.ok(demoDirectories.every((name) => !/toolbox/i.test(name)));
   for (const demo of episode.demos) {
     assert.ok(existsSync(`episodes/${episode.id}/${demo.path}`));
   }
