@@ -106,7 +106,7 @@ test('Episode 2 has four uniquely numbered source-backed demo directories', () =
   assert.ok(existsSync(`${root}/${directories[3]}/azure.yaml`));
 });
 
-test('Episode 3 exposes the guardrail demos and no unconfirmed recording', () => {
+test('Episode 3 exposes the guardrail demos and both confirmed recordings', () => {
   const episode = episodes[2];
   assert.match(episode.summary, /guardrails/);
   assert.match(episode.summary, /before and after applying a Wikipedia blocklist/);
@@ -131,7 +131,17 @@ test('Episode 3 exposes the guardrail demos and no unconfirmed recording', () =>
   ]);
   assert.ok(episode.tags.includes('MCP'));
   assert.ok(episode.tags.includes('Hosted Agents'));
-  assert.deepEqual(episode.recordings, []);
+  assert.deepEqual(episode.recordings, [
+    { title: 'Watch on the .NET Channel', url: 'https://www.youtube.com/watch?v=FJV3NSElLC4' },
+    { title: 'Watch on Microsoft Reactor', url: 'https://www.youtube.com/watch?v=eMoC6MblqYM' },
+  ]);
+  assert.equal(episode.recording, episode.recordings[0].url);
+  assert.equal(episodeStatus(episode), 'recorded');
+  const seriesRow = readFileSync('README.md', 'utf8').split('\n').find((line) => line.startsWith('| 3 |'));
+  assert.ok(seriesRow, 'Expected Episode 3 in the series index');
+  for (const { url } of episode.recordings) {
+    assert.ok(seriesRow.includes(url), `Expected ${url} in the series index`);
+  }
   const demoDirectories = readdirSync(`episodes/${episode.id}/demos`, { withFileTypes: true })
     .filter((entry) => entry.isDirectory())
     .map((entry) => entry.name);

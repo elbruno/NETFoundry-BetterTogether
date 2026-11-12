@@ -48,16 +48,16 @@ test('status filters and spotlight use the actual session window', async ({ page
   await expect(page.locator('#spotlight')).toBeVisible();
   await expect(page.locator('#spotlight-title')).toContainText('Episode 2');
   await page.getByRole('button', { name: 'Recorded', exact: true }).click();
-  await expect(page.locator('[data-episode]:visible')).toHaveCount(1);
+  await expect(page.locator('[data-episode]:visible')).toHaveCount(2);
   await expect(page.locator('#empty-state')).toBeHidden();
   await page.getByRole('button', { name: 'Upcoming', exact: true }).click();
-  await expect(page.locator('[data-episode]:visible')).toHaveCount(3);
+  await expect(page.locator('[data-episode]:visible')).toHaveCount(2);
   await page.clock.setSystemTime(new Date('2026-10-29T16:30:00Z'));
   await page.clock.runFor(30_000);
   await expect(page.locator('#spotlight-label')).toHaveText('LIVE NOW');
   await page.clock.setSystemTime(new Date('2026-10-29T17:01:00Z'));
   await page.clock.runFor(30_000);
-  await expect(page.locator('#spotlight-title')).toContainText('Episode 3');
+  await expect(page.locator('#spotlight-title')).toContainText('Episode 4');
   await page.getByRole('button', { name: 'All episodes' }).click();
   await expect(page.locator('[data-episode]').first().locator('[data-status]')).toHaveText('Recording available');
   await expect(page.locator('[data-episode]').nth(1).locator('[data-status]')).toHaveText('Recording pending');
@@ -121,6 +121,25 @@ test('completed episode shows both channel recordings, co-host, and guest resour
   await expect(page.getByRole('navigation', { name: 'Guest resources' }).getByRole('link', { name: /Foundry Field Notes labs/ })).toHaveAttribute('href', 'https://github.com/ppiova/foundry-field-notes-labs');
   await expect(page.getByRole('navigation', { name: 'Guest resources' }).locator('a')).toHaveCount(3);
   await expect(page.getByText('Recording not yet available.', { exact: false })).toHaveCount(0);
+});
+
+test('Episode 3 shows both channel recordings on the homepage and guide', async ({ page }) => {
+  const recordings = [
+    { title: 'Watch on the .NET Channel', url: 'https://www.youtube.com/watch?v=FJV3NSElLC4' },
+    { title: 'Watch on Microsoft Reactor', url: 'https://www.youtube.com/watch?v=eMoC6MblqYM' },
+  ];
+  await page.goto('./');
+  const card = page.locator('[data-episode]').nth(2);
+  await expect(card.locator('[data-status]')).toHaveText('Recording available');
+  for (const { title, url } of recordings) {
+    await expect(card.getByRole('link', { name: title })).toHaveAttribute('href', url);
+  }
+  await page.goto('episodes/03-2026-11-12/');
+  const header = page.locator('.episode-heading');
+  for (const { title, url } of recordings) {
+    await expect(header.getByRole('link', { name: title })).toHaveAttribute('href', url);
+  }
+  await expect(header.getByText('Recording not yet available.', { exact: false })).toHaveCount(0);
 });
 
 test('mobile layout has no horizontal overflow on homepage or guide', async ({ page }) => {

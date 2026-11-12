@@ -22,7 +22,8 @@ copy-ready prompts, the C# observer, setup, and troubleshooting.
 
 ## Recording
 
-The recording link will be added after the episode.
+- [Watch on the .NET Channel](https://www.youtube.com/watch?v=FJV3NSElLC4)
+- [Watch on Microsoft Reactor](https://www.youtube.com/watch?v=eMoC6MblqYM)
 
 ## Demos and resources
 
