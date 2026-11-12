@@ -6,9 +6,19 @@
 
 ## Overview
 
-Explore Foundry content filtering, hosted-agent guardrails, and network egress
-with C#. The EBSearch, Wikipedia, and Microsoft Learn examples use MCP tools
-and progress from local agents to hosted agents and local clients.
+This episode focuses on Foundry guardrails: compare a model in the playground
+before and after applying a Wikipedia blocklist, then explore hosted-agent
+content controls and network egress with C#. The EBSearch, Wikipedia, and
+Microsoft Learn examples use MCP tools as agent workloads.
+
+## First demo: baseline and blocklist
+
+Deploy a dedicated Azure OpenAI chat model and ask it Wikipedia questions in
+the playground. Add an existing or new Wikipedia blocklist to a prompt content
+filter, associate that filter with the dedicated deployment, then repeat the
+same questions in a fresh chat. Show the actual filtering result; the
+[blocklist demo guide](demos/05-wikipedia-blocklist-console/README.md) includes
+copy-ready prompts, the C# observer, setup, and troubleshooting.
 
 ## Recording
 
@@ -16,7 +26,7 @@ The recording link will be added after the episode.
 
 ## Demos and resources
 
-1. [Wikipedia blocklist observer](demos/05-wikipedia-blocklist-console/README.md): observe Foundry prompt and completion filtering without local word filtering.
+1. [Wikipedia blocklist observer](demos/05-wikipedia-blocklist-console/README.md): compare playground results before and after a prompt blocklist, then inspect service filtering from C#.
 2. [EBSearch local MCP console](demos/09-ebsearch-mcp-console/README.md): call two fixed-feed blog tools from a local agent.
 3. [EBSearch local Responses host](demos/02-hosted-guardrails/README.md): run the same MCP behavior with the local Agent Inspector.
 4. [EBSearch hosted agents](demos/03-hosted-guardrails/README.md): deploy the same image as `ebsearch-01`, `ebsearch-02`, and `ebsearch-03`.

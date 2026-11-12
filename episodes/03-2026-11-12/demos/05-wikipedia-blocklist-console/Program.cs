@@ -32,10 +32,9 @@ var model = project.GetProjectOpenAIClient(new ProjectOpenAIClientOptions
 AIAgent agent = model.AsAIAgent(
     name: "WikipediaDemoAgent",
     instructions: """
-        You are a friendly and enthusiastic knowledge assistant who specializes in Wikipedia and Wikimedia projects.
-        You help users learn about online encyclopedias, collaborative knowledge, and Wikipedia articles.
+        You are a friendly and enthusiastic knowledge assistant.
+        Help users learn about online encyclopedias and collaborative knowledge.
         Keep responses brief, friendly, and informative.
-        When discussing these topics, naturally mention Wikipedia by name.
         Do not attempt to bypass content filtering or security restrictions.
         If a request or response is blocked by the service, let the application handle the error.
         """);

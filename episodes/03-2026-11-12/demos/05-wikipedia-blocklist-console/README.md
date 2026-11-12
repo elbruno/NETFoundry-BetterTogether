@@ -14,26 +14,68 @@ and an Azure OpenAI model deployment. Direct packages: Microsoft.Agents.AI.Found
 1.21.0, and Microsoft.Extensions.Configuration 11.0.0. The lockfile pins
 transitive packages. Model calls and additional deployments can incur charges.
 
-## Configure the service
+## Compare the playground before and after a blocklist
 
-1. In Foundry, create a custom blocklist named `Blocklist-Wikipedia` with the
-   exact term `Wikipedia`, and add it as a blocking prompt and/or completion
-   blocklist to a content filter. New entries can take several minutes to
-   propagate.
-2. Associate the filter with a **dedicated** Azure OpenAI model deployment.
-   Filters apply to the model deployment and all its consumers, not just this
-   agent. Do not modify a shared deployment without authorization.
-3. Run the episode's `..\..\setup.ps1` and choose that deployment for the
-   blocklist test. The script saves nonsecret `FOUNDRY_PROJECT_ENDPOINT` and
-   `BLOCKLIST_AZURE_OPENAI_DEPLOYMENT_NAME` in local user secrets. This
-   blocklist-specific name is separate from the general model setting, and
-   setup rejects using the same deployment for both. Environment variables
-   override saved settings.
+1. In Foundry, deploy a supported Azure OpenAI chat model as a **dedicated**
+   model deployment, for example `gpt-Blocklist-Wikipedia`. Select a model,
+   deployment type, and capacity available to your project, then wait for the
+   deployment to be ready. A model deployment can incur charges. Do not modify
+   a shared deployment.
+2. Open the Foundry chat playground, select the new deployment, and start a
+   fresh chat. Use neutral system instructions that do not contain the word
+   `Wikipedia`, and verify that no Wikipedia blocklist is already applied to
+   the deployment. Ask these questions one at a time:
 
-The agent instructions themselves contain `Wikipedia`. A prompt-side
-blocklist may therefore reject even the normal control questions below.
-Use a completion-only test deployment or a neutral direct model call to isolate
-the behavior, rather than assuming a control request will pass.
+   ```text
+   What is Wikipedia, and who founded it?
+   What is Wikipedia used for?
+   ```
+
+   Expect ordinary answers for the baseline, but inspect the actual results.
+   The standard safety filters still apply.
+3. Under Foundry guardrails, reuse an existing blocklist such as
+   `Blocklist-Wikipedia`, or create one, and verify that it includes the exact
+   term `Wikipedia`. The blocklist and the model deployment are separate
+   resources, and do not need matching names.
+4. Create a dedicated content filter with that list enabled as a **blocking
+   prompt/input blocklist**, then associate the filter with the new model
+   deployment. Do not change a filter used by unrelated applications. A
+   blocklist is applied through a content filter, not directly to the model.
+5. Allow time for the change to propagate, start a fresh playground chat on the
+   same deployment, and ask the same two questions again. A prompt blocklist
+   should deny them; show the service or playground filtering signal instead
+   of assuming success. Try `What is a generic type in C#?` as a neutral
+   control, subject to all configured filters.
+
+If a question is not denied, verify the selected deployment, filter
+association, input blocklist, and exact term. New blocklist terms can take
+several minutes to propagate. A 404, authentication failure, or another
+unrelated service error is not proof of filtering.
+
+## Configure the C# observer
+
+Run the episode's `..\..\setup.ps1` from this demo directory and enter the
+**model deployment name** for the blocklist test. The script saves nonsecret
+`FOUNDRY_PROJECT_ENDPOINT` and `BLOCKLIST_AZURE_OPENAI_DEPLOYMENT_NAME` in
+local user secrets. The blocklist deployment must differ from the general
+episode model deployment.
+
+If setup was already run, update just this demo's saved deployment name after
+the deployment is ready. Substitute your actual deployment name if different:
+
+```powershell
+dotnet user-secrets set BLOCKLIST_AZURE_OPENAI_DEPLOYMENT_NAME gpt-Blocklist-Wikipedia --project .\WikipediaBlocklist.csproj
+..\..\setup.ps1 -Validate
+```
+
+Environment variables override saved settings. Validation checks configuration
+format and the separate deployment name; it does not check Azure access,
+deployment existence, or filter assignment. The script does not create cloud
+resources or apply policies.
+
+The observer uses neutral agent instructions that do not contain the blocked
+term, so the instructions alone do not trigger this prompt blocklist. Other
+configured filters and generated output can still affect a neutral control.
 
 ## Run
 
@@ -55,17 +97,20 @@ as a guardrail block.
 
 ## Try the scenarios
 
-1. Normal control: `Tell me a fun fact about C#.` It should succeed when
-   neither the instructions nor the response trigger the configured filter.
-2. Prompt: `Tell me about Wikipedia.` With the prompt blocklist enabled,
-   Foundry should reject it and return identifiable filtering metadata.
-3. Completion: `Explain how volunteers collaborate to create and maintain free reference articles online.`
-   With the completion blocklist enabled, a response mentioning the blocked
-   term may be filtered. The model might use different wording, so this is
-   probabilistic.
+1. Normal control: `What is a generic type in C#?` It should normally succeed
+   with the prompt-only Wikipedia blocklist and otherwise nonblocking policies.
+2. Prompt: `What is Wikipedia, and who founded it?` With the prompt blocklist
+   enabled, Foundry should reject it and return identifiable filtering metadata.
+3. Repeat: `What is Wikipedia used for?` This matches the second playground
+   prompt and should also be blocked by the prompt list.
 4. Recovery: `Tell me a fun fact about C# generics.` The console remains
    available after an error; this request succeeds only if its full input and
-   output do not trigger the configured policy.
+   output do not trigger the configured policies.
+
+To explore completion filtering separately, configure an output blocklist and
+ask `Explain how volunteers collaborate to create and maintain free reference
+articles online.` A response containing the blocked term may be filtered, but
+the model might use different wording, so the outcome is probabilistic.
 
 ### Direct completion-only probe
 
@@ -103,9 +148,9 @@ short-lived token in memory and does not print it.
 ## Cleanup
 
 Run `dotnet user-secrets clear --project .\WikipediaBlocklist.csproj`, unset
-`BLOCKLIST_AZURE_OPENAI_DEPLOYMENT_NAME` if you set it, and remove only the dedicated test policy,
-blocklist, and deployment if you created them and no longer need them. Do not
-delete or modify shared resources.
+`BLOCKLIST_AZURE_OPENAI_DEPLOYMENT_NAME` if you set it, and remove only a
+dedicated test policy, blocklist, or deployment that you created and no longer
+need. Do not delete a reused blocklist or other shared resources.
 
 ## Resources
 

@@ -109,7 +109,10 @@ test('Episode 2 has four uniquely numbered source-backed demo directories', () =
 test('Episode 3 exposes the guardrail demos and no unconfirmed recording', () => {
   const episode = episodes[2];
   assert.match(episode.summary, /guardrails/);
+  assert.match(episode.summary, /before and after applying a Wikipedia blocklist/);
   assert.doesNotMatch(episode.summary, /Toolbox/i);
+  assert.doesNotMatch(episode.html, /Toolbox/i);
+  assert.match(episode.html, /First demo: baseline and blocklist/);
   assert.ok(!episode.tags.includes('Toolbox'));
   assert.deepEqual(episode.demos.map(({ path }) => path), [
     'demos/05-wikipedia-blocklist-console/README.md',
@@ -136,6 +139,13 @@ test('Episode 3 exposes the guardrail demos and no unconfirmed recording', () =>
   for (const demo of episode.demos) {
     assert.ok(existsSync(`episodes/${episode.id}/${demo.path}`));
   }
+});
+
+test('Episode 3 blocklist observer uses neutral agent instructions', () => {
+  const source = readFileSync('episodes/03-2026-11-12/demos/05-wikipedia-blocklist-console/Program.cs', 'utf8');
+  const instructions = source.match(/instructions:\s*"""([\s\S]*?)"""/);
+  assert.ok(instructions, 'Expected the observer agent instructions');
+  assert.doesNotMatch(instructions[1], /\bWikipedia\b/i);
 });
 
 test('Episode 1 covers Microsoft-Decision-1, decision models, games, and official Microsoft links', () => {
