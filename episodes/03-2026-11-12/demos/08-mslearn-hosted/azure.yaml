@@ -1,0 +1,77 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-dev/main/schemas/v1.0/azure.yaml.json
+name: episode03-mslearn
+infra:
+  provider: microsoft.foundry
+services:
+  foundry-project:
+    host: azure.ai.project
+    endpoint: ${AZURE_AI_PROJECT_ENDPOINT}
+  mslearn-01:
+    host: azure.ai.agent
+    kind: hosted
+    name: mslearn-01
+    description: Microsoft Learn MCP assistant for manual guardrail comparisons.
+    language: docker
+    project: .
+    image: ${MSLEARN_AGENT_IMAGE}
+    docker:
+      imagePassthrough: true
+      remoteBuild: false
+    container:
+      resources:
+        cpu: "0.5"
+        memory: 1Gi
+    protocols:
+      - protocol: responses
+        version: 2.0.0
+    env:
+      AZURE_AI_PROJECT_ENDPOINT: ${AZURE_AI_PROJECT_ENDPOINT}
+      AZURE_AI_MODEL_DEPLOYMENT_NAME: ${AZURE_AI_MODEL_DEPLOYMENT_NAME}
+    uses:
+      - foundry-project
+  mslearn-02:
+    host: azure.ai.agent
+    kind: hosted
+    name: mslearn-02
+    description: Microsoft Learn MCP assistant for manual guardrail comparisons.
+    language: docker
+    project: .
+    image: ${MSLEARN_AGENT_IMAGE}
+    docker:
+      imagePassthrough: true
+      remoteBuild: false
+    container:
+      resources:
+        cpu: "0.5"
+        memory: 1Gi
+    protocols:
+      - protocol: responses
+        version: 2.0.0
+    env:
+      AZURE_AI_PROJECT_ENDPOINT: ${AZURE_AI_PROJECT_ENDPOINT}
+      AZURE_AI_MODEL_DEPLOYMENT_NAME: ${AZURE_AI_MODEL_DEPLOYMENT_NAME}
+    uses:
+      - foundry-project
+  mslearn-03:
+    host: azure.ai.agent
+    kind: hosted
+    name: mslearn-03
+    description: Microsoft Learn MCP assistant for manual guardrail comparisons.
+    language: docker
+    project: .
+    image: ${MSLEARN_AGENT_IMAGE}
+    docker:
+      imagePassthrough: true
+      remoteBuild: false
+    container:
+      resources:
+        cpu: "0.5"
+        memory: 1Gi
+    protocols:
+      - protocol: responses
+        version: 2.0.0
+    env:
+      AZURE_AI_PROJECT_ENDPOINT: ${AZURE_AI_PROJECT_ENDPOINT}
+      AZURE_AI_MODEL_DEPLOYMENT_NAME: ${AZURE_AI_MODEL_DEPLOYMENT_NAME}
+    uses:
+      - foundry-project

@@ -1,22 +1,16 @@
-# Purpose: Describe the standalone hosted egress-guardrail demo.
-# Assign the network guardrail separately in Foundry after deploying the unguarded baseline.
+# Purpose: Run the blog tools locally with AzureCliCredential, not managed identity.
 # yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-dev/main/schemas/v1.0/azure.yaml.json
-name: better-together-guardrails
+name: episode03-ebsearch-local
 services:
-  better-together-guardrails:
+  ebsearch-local:
     host: azure.ai.agent
     project: .
-    language: docker
+    language: csharp
     kind: hosted
-    name: better-together-guardrails
-    docker:
-      platform: linux/amd64
-      remoteBuild: true
+    name: ebsearch-local
+    startupCommand: dotnet run --no-launch-profile
     protocols:
       - protocol: responses
         version: 2.0.0
-    env:
-      AZURE_AI_PROJECT_ENDPOINT: ${AZURE_AI_PROJECT_ENDPOINT}
-      AZURE_AI_MODEL_DEPLOYMENT_NAME: ${AZURE_AI_MODEL_DEPLOYMENT_NAME}
 infra:
   provider: microsoft.foundry

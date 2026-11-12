@@ -1,0 +1,12 @@
+name: episode03-mslearn-local
+services:
+  mslearn-local:
+    host: azure.ai.agent
+    kind: hosted
+    name: mslearn-local
+    project: .
+    language: csharp
+    startupCommand: dotnet run --no-launch-profile
+    protocols:
+      - protocol: responses
+        version: 2.0.0

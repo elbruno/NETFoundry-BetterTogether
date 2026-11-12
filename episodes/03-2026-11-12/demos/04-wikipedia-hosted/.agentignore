@@ -1,0 +1,8 @@
+.azure/
+bin/
+obj/
+.env
+.env.*
+*.local.json
+secrets.json
+credentials.json

@@ -1,15 +1,15 @@
-// Purpose: Read short excerpts from two fixed public RSS feeds for Demo 21.
-// Requires outbound HTTPS from the hosted runtime; callers cannot supply a URL.
-// Expected result: the agent can summarize recent posts while Foundry controls host egress.
+// Goal: Expose two fixed RSS feeds as read-only MCP tools.
+// A: Fetch without redirects. B: Parse recent posts. C: Return links and excerpts.
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
-using Microsoft.Extensions.AI;
+using ModelContextProtocol.Server;
 
-public static class BlogTools
+[McpServerToolType]
+public sealed class BlogTools
 {
     private const string PersonalBlogFeed = "https://brunocapuano.wordpress.com/feed/";
     private const string DotNetBlogFeed = "https://devblogs.microsoft.com/dotnet/feed/";
@@ -27,16 +27,12 @@ public static class BlogTools
         DefaultRequestHeaders = { UserAgent = { new ProductInfoHeaderValue("DotNetConfBlogDemo", "1.0") } }
     };
 
-    public static IList<AITool> Create() =>
-    [
-        AIFunctionFactory.Create(GetLatestPersonalBlogPosts, name: nameof(GetLatestPersonalBlogPosts)),
-        AIFunctionFactory.Create(GetLatestDotNetBlogPosts, name: nameof(GetLatestDotNetBlogPosts))
-    ];
-
+    [McpServerTool(Name = nameof(GetLatestPersonalBlogPosts))]
     [Description("Read the three newest posts from Bruno Capuano's fixed personal blog feed.")]
     public static Task<string> GetLatestPersonalBlogPosts() =>
         ReadLatestPostsAsync("Bruno Capuano's personal blog", PersonalBlogFeed);
 
+    [McpServerTool(Name = nameof(GetLatestDotNetBlogPosts))]
     [Description("Read the three newest posts from the fixed .NET Blog feed.")]
     public static Task<string> GetLatestDotNetBlogPosts() =>
         ReadLatestPostsAsync("the .NET Blog", DotNetBlogFeed);

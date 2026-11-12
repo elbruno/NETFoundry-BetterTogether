@@ -23,8 +23,9 @@ All sessions run **12:00-1:00 PM Eastern Time**. UTC times below account for the
 
 Episode 2 features co-speaker [Jose Luis Latorre](https://www.linkedin.com/in/joslat/) and focuses on Hosted Agents using decision models and agent memory. The support-routing demo progresses from a direct C# decision-model call, to a local Microsoft Agent Framework agent, to that local agent with Aspire GenAI traces, and finally to a Foundry Hosted Agent. The discussion compares Foundry Memory Stores with custom AgentMemory; custom-memory integration with a Hosted Agent remains exploratory. See the [episode guide](episodes/02-2026-10-29/README.md) and its [four-stage demo progression](episodes/02-2026-10-29/demos/01-console-decision-model/README.md).
 
-Episode 3 explores Toolbox discovery and hosted-agent network guardrails through
-two C# demos. Later episode topics will be shared closer to their sessions.
+Episode 3 explores Toolbox discovery, MCP tools, hosted agents, and guardrails
+through [C# demos](episodes/03-2026-11-12/README.md) for EBSearch, Wikipedia,
+and Microsoft Learn. Later episode topics will be shared closer to their sessions.
 
 ## Episode materials
 

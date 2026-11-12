@@ -106,14 +106,28 @@ test('Episode 2 has four uniquely numbered source-backed demo directories', () =
   assert.ok(existsSync(`${root}/${directories[3]}/azure.yaml`));
 });
 
-test('Episode 3 exposes both source-backed demos and no unconfirmed recording', () => {
+test('Episode 3 exposes all source-backed MCP demos and no unconfirmed recording', () => {
   const episode = episodes[2];
   assert.match(episode.summary, /Toolbox/);
   assert.match(episode.summary, /guardrails/);
   assert.deepEqual(episode.demos.map(({ path }) => path), [
     'demos/01-toolbox-discovery/README.md',
+    'demos/09-ebsearch-mcp-console/README.md',
     'demos/02-hosted-guardrails/README.md',
+    'demos/03-hosted-guardrails/README.md',
+    'demos/11-ebsearch-hosted-client/README.md',
+    'demos/03-wikipedia-mcp-console/README.md',
+    'demos/06-wikipedia-local-host/README.md',
+    'demos/04-wikipedia-hosted/README.md',
+    'demos/12-wikipedia-hosted-client/README.md',
+    'demos/10-mslearn-mcp-console/README.md',
+    'demos/07-mslearn-local-host/README.md',
+    'demos/08-mslearn-hosted/README.md',
+    'demos/13-mslearn-hosted-client/README.md',
+    'demos/05-wikipedia-blocklist-console/README.md',
   ]);
+  assert.ok(episode.tags.includes('MCP'));
+  assert.ok(episode.tags.includes('Hosted Agents'));
   assert.deepEqual(episode.recordings, []);
   for (const demo of episode.demos) {
     assert.ok(existsSync(`episodes/${episode.id}/${demo.path}`));

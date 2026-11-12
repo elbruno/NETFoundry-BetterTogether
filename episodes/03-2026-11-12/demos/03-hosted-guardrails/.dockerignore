@@ -1,0 +1,6 @@
+**
+!Dockerfile
+!ApplicationGuardrailsHosted.csproj
+!packages.lock.json
+!Program.cs
+!BlogTools.cs

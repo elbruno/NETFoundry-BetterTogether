@@ -22,7 +22,7 @@ discovery call can use billable cloud resources; check your pricing and quotas.
 
 From the episode directory, run `.\setup.ps1` and enter the Toolbox endpoint,
 Foundry project endpoint and model deployment name. The latter two configure
-the other demo. The script writes nonsecret values to .NET user secrets, which
+the other demos. The script writes nonsecret values to .NET user secrets, which
 are unencrypted local development storage. Do not enter credentials.
 Alternatively set `TOOLBOX_ENDPOINT` as an environment variable. Environment
 variables override user secrets, including empty values.
